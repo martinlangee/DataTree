@@ -19,9 +19,9 @@ namespace DataTreeBase
             return
                     new List<Tuple<string, string>>
                     {
-                        new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                        new Tuple<string, string>(XmlHelper.Attr.Name, Name),
-                        new Tuple<string, string>(XmlHelper.Attr.Value, AsString),
+                        new Tuple<string, string>(Helper.Attr.Id, Id),
+                        new Tuple<string, string>(Helper.Attr.Name, Name),
+                        new Tuple<string, string>(Helper.Attr.Value, AsString),
                     };
         }
 
@@ -39,7 +39,7 @@ namespace DataTreeBase
 
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            AsString = parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(XmlHelper.Attr.Value).Value;
+            AsString = parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(Helper.Attr.Value).Value;
         }
 
         public abstract string AsString { get; internal set; }

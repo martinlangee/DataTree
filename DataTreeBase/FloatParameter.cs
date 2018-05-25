@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace DataTreeBase
 {
-    public class FloatParameter : DataTreeParameter<float>
+    public sealed class FloatParameter : DataTreeParameter<float>
     {
         private readonly string _formatStr;
 
@@ -17,13 +17,13 @@ namespace DataTreeBase
 
         protected override bool IsEqualValue(float value1, float value2)
         {
-            return value1.ToString(_formatStr) == value2.ToString(_formatStr);
+            return value1.ToString(_formatStr).Equals(value2.ToString(_formatStr));
         }
 
         protected override List<Tuple<string, string>> GetXmlAttributes()
         {
             var attr = base.GetXmlAttributes();
-            attr.Add(new Tuple<string, string>(XmlHelper.Attr.Unit, Unit));
+            attr.Add(new Tuple<string, string>(Helper.Attr.Unit, Unit));
 
             return attr;
         }

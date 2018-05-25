@@ -45,8 +45,8 @@ namespace DataTreeBase
 
             xmlNode.SetAttributes(new List<Tuple<string, string>>
                                   {
-                                      new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                                      new Tuple<string, string>(XmlHelper.Attr.Name, Name),
+                                      new Tuple<string, string>(Helper.Attr.Id, Id),
+                                      new Tuple<string, string>(Helper.Attr.Name, Name),
                                   });
 
             Params.ForEach(p => p.SaveToXml(xmlNode));

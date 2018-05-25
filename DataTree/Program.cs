@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using DataTreeBase;
 
 using SampleModel;
 
-namespace DataTree
+namespace DataTreeHost
 {
     class Program
     {
@@ -18,12 +14,16 @@ namespace DataTree
 
             model.LoadFromFile("D://DataTree.xml");
 
-            model.Group2.Param4.OnChanged += OnChange;
+            model.Group2.StrParam4.OnChanged += OnChange;
 
             model.Group1.IntParam.Value = 33;
-            model.Group2.Param4.Value = "slkjsdfg";
+            model.Group2.StrParam4.Value = "slkjsdfg";
 
-            model.Group2.Param3.Value = model.Group1.IntParam.Value;
+            model.Group2.IntParam3.Value = model.Group1.IntParam.Value;
+
+            model.Group2.BoolParam5.Value = false;
+            model.Group2.ChParam6.ValueIdx = 2;
+            model.Group2.BinParam7.Value = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 0 };
 
             model.SaveToFile("D://DataTree.xml");
         }

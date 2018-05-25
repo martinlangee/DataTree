@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace DataTreeBase
 {
-    public class ChoiceParameter : DataTreeParameter<int>
+    public sealed class ChoiceParameter : DataTreeParameter<int>
     {
-        // todo: ValueIdx-Value-Tupel einführen
+        private int _valueIdx;
 
-        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue)
+        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choiceList)
             : base(parent, id, name, defaultValue)
         {
+            ChoiceList = choiceList;
         }
 
-        protected override bool IsEqualValue(int value1, int value2)
+        protected override List<Tuple<string, string>> GetXmlAttributes()
         {
-            return value1 == value2;
+            var attr = base.GetXmlAttributes();
+            attr.RemoveAt(2);    // "Value"
+            attr.Add(new Tuple<string, string>(Helper.Attr.ValueIdx, ValueIdx.ToString()));
+            attr.Add(new Tuple<string, string>(Helper.Attr.ValueStr, ChoiceList[ValueIdx].Item2));
+
+            return attr;
         }
 
         public override string AsString
         {
-            get { return Value.ToString(); }
+            get { return ChoiceList[ValueIdx].Item2; }
             internal set
             {
                 int valIdx;
@@ -35,10 +38,24 @@ namespace DataTreeBase
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
             int valIdx;
-            if (int.TryParse(parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(XmlHelper.Attr.ValueIdx).Value, out valIdx))
+            if (int.TryParse(parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(Helper.Attr.ValueIdx).Value, out valIdx))
                 ValueIdx = valIdx;
         }
 
-        public int ValueIdx { get; set; }
+        public List<Tuple<int, string>> ChoiceList { get; set; }
+
+        public override int Value => ChoiceList[ValueIdx].Item1;
+
+        public int ValueIdx
+        {
+            get { return _valueIdx; }
+            set
+            {
+                if (_valueIdx == value) return;
+
+                _valueIdx = value;
+                FireOnChanged();
+            }
+        }
     }
 }

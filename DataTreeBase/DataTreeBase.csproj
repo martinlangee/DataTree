@@ -40,16 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryParameter.cs" />
     <Compile Include="DataTreeContainer.cs" />
     <Compile Include="DataTreeNode.cs" />
     <Compile Include="DataTreeParameter.cs" />
     <Compile Include="DataTreeParameterBase.cs" />
     <Compile Include="FloatParameter.cs" />
     <Compile Include="ChoiceParameter.cs" />
+    <Compile Include="BoolParameter.cs" />
     <Compile Include="StringParameter.cs" />
     <Compile Include="IntParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlHelper.cs" />
+    <Compile Include="Helper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

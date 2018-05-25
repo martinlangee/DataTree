@@ -8,17 +8,23 @@ namespace DataTreeBase
 {
     public abstract class DataTreeParameter<T>: DataTreeParameterBase
     {
+        private T _value;
         private T _bufferedValue;
 
         public DataTreeParameter(DataTreeContainer parent, string id, string name, T defaultValue)
             : base(parent, id, name)
         {
-            Value = defaultValue;
+            _value = defaultValue;
             _bufferedValue = defaultValue;
         }
 
-        private T _value;
-        public T Value
+        protected void FireOnChanged()
+        {
+            OnChanged(this);
+        }
+
+
+        public virtual T Value
         {
             get { return _value; }
             set
@@ -26,7 +32,7 @@ namespace DataTreeBase
                 if (IsEqualValue(value, _value)) return;
 
                 _value = value;
-                OnChanged(this);
+                FireOnChanged();
             } 
         }
 
@@ -44,6 +50,9 @@ namespace DataTreeBase
             Value = _bufferedValue;
         }
 
-        protected abstract bool IsEqualValue(T value, T bufferedValue);
+        protected virtual bool IsEqualValue(T value1, T value2)
+        {
+            return Comparer<T>.Default.Compare(value1, value2) == 0;
+        }
     }
 }

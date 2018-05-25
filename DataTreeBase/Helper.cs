@@ -11,10 +11,11 @@ namespace DataTreeBase
         internal string Name;
         internal string Value;
         internal string ValueIdx;
+        internal string ValueStr;
         internal string Unit;
     }
 
-    internal static class XmlHelper
+    internal static class Helper
     {
         internal static Attributes Attr = new Attributes
                                           {
@@ -22,6 +23,7 @@ namespace DataTreeBase
                                               Name = "name",
                                               Value = "val",
                                               ValueIdx = "valIdx",
+                                              ValueStr = "valStr",
                                               Unit = "unit"
                                           };
 
@@ -43,7 +45,7 @@ namespace DataTreeBase
 
         internal static void SetAttributes(this XmlNode xmlNode, List<Tuple<string, string>> attributes = null)
         {
-            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.SetAttributes: owner document not set");
+            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("Helper.SetAttributes: owner document not set");
 
             xmlNode.Attributes?.RemoveAll();
 
@@ -57,7 +59,7 @@ namespace DataTreeBase
 
         internal static XmlNode AppendChildNode(this XmlNode xmlNode, string nodeName, List<Tuple<string, string>> attributes = null)
         {
-            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.AppendChildNode: owner document not set");
+            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("Helper.AppendChildNode: owner document not set");
 
             var childNode = xmlNode.AppendChild(xmlNode.OwnerDocument.CreateElement(nodeName));
             childNode?.SetAttributes(attributes);
