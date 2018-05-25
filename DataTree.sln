@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTreeHost", "DataTree\DataTreeHost.csproj", "{D847050D-EE2F-404C-B0CA-978FF688BCB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTreeBase", "DataTreeBase\DataTreeBase.csproj", "{5081935E-0107-4733-B954-1FA18724C9D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleModel", "SampleModel\SampleModel.csproj", "{95C86014-2649-49F2-A776-9C46B220857D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D847050D-EE2F-404C-B0CA-978FF688BCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D847050D-EE2F-404C-B0CA-978FF688BCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D847050D-EE2F-404C-B0CA-978FF688BCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D847050D-EE2F-404C-B0CA-978FF688BCB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5081935E-0107-4733-B954-1FA18724C9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5081935E-0107-4733-B954-1FA18724C9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5081935E-0107-4733-B954-1FA18724C9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5081935E-0107-4733-B954-1FA18724C9D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95C86014-2649-49F2-A776-9C46B220857D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95C86014-2649-49F2-A776-9C46B220857D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95C86014-2649-49F2-A776-9C46B220857D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95C86014-2649-49F2-A776-9C46B220857D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
