@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-
-using DataTreeBase;
+﻿using DataTreeBase;
 
 namespace SampleModel
 {
@@ -14,11 +7,15 @@ namespace SampleModel
         public Group1(DataTreeContainer parent)
             : base(parent, "Group1", "Group1")
         {
-            Param1 = new IntParameter(this, "Param1", "Param1", 0);
-            Param2 = new StringParameter(this, "Param2", "Param2", "abc");
+            IntParam = new IntParameter(this, "IntParam", "IntParam", 0);
+            StrParam = new StringParameter(this, "StrParam", "StrParam", "abc");
+            FloatParam1 = new FloatParameter(this, "FloatParam1", "FloatParam1", 0.5f, "m/s", 5);
+            FloatParam2 = new FloatParameter(this, "FP2", "FloatParam2", 5.5f, "m/s", 8);
         }
 
-        public IntParameter Param1 { get; }
-        public StringParameter Param2 { get; }
+        public IntParameter IntParam { get; }
+        public StringParameter StrParam { get; }
+        public FloatParameter FloatParam1 { get; }
+        public FloatParameter FloatParam2 { get; }
     }
 }

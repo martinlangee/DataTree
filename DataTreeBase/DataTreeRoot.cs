@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Xml;
 
 namespace DataTreeBase
 {
@@ -15,12 +11,19 @@ namespace DataTreeBase
 
         public void LoadFromFile(string fileName)
         {
-            
+            var doc = new XmlDocument();
+            doc.Load(fileName);
+            LoadFromXml(doc.DocumentElement);
+            ResetModified();
         }
 
         public void SaveToFile(string fileName)
         {
-            
+            var doc = new XmlDocument();
+            doc.LoadXml("<Config/>");
+            SaveToXml(doc.DocumentElement);
+            doc.Save(fileName);
+            ResetModified();
         }
     }
 }

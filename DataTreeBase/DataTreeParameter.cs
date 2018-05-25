@@ -34,6 +34,16 @@ namespace DataTreeBase
 
         public override bool IsModified => !IsEqualValue(Value, _bufferedValue);
 
+        public override void ResetModified()
+        {
+            _bufferedValue = Value;
+        }
+
+        public override void Restore()
+        {
+            Value = _bufferedValue;
+        }
+
         protected abstract bool IsEqualValue(T value, T bufferedValue);
     }
 }

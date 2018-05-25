@@ -17,7 +17,7 @@ namespace DataTreeBase
             Containers = new List<DataTreeContainer>();
             Params = new List<DataTreeParameterBase>();
 
-            _parent?.Containers.Add(this);
+            Parent?.Containers.Add(this);
         }
 
         public IList<DataTreeContainer> Containers { get; }
@@ -28,29 +28,40 @@ namespace DataTreeBase
                 Containers.Any(c => c.IsModified) ||
                 Params.Any(p => p.IsModified);
 
-        public override void SaveToXml(XmlDocument xmlDoc, XmlNode parentXmlNode)
+        public void SaveToXml(XmlNode parentXmlNode)
         {
             var xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id) ??
-                          parentXmlNode.AppendChildNode(xmlDoc, Tagname);
+                          parentXmlNode.AppendChildNode(Tagname);
 
-            xmlNode.SetAttributes(xmlDoc,
-                                  new List<Tuple<string, string>>
+            xmlNode.SetAttributes(new List<Tuple<string, string>>
                                   {
                                       new Tuple<string, string>(XmlHelper.Attr.Id, Id),
                                       new Tuple<string, string>(XmlHelper.Attr.Name, Name),
                                   });
 
-            Params.ForEach(p => p.SaveToXml(xmlDoc, xmlNode));
-            Containers.ForEach(c => c.SaveToXml(xmlDoc, xmlNode));
+            Params.ForEach(p => p.SaveToXml(xmlNode));
+            Containers.ForEach(c => c.SaveToXml(xmlNode));
         }
 
-        public override void LoadFromXml(XmlNode parentXmlNode)
+        public void LoadFromXml(XmlNode parentXmlNode)
         {
             var xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id);
             if (xmlNode == null) return;
             
             Params.ForEach(p => p.LoadFromXml(xmlNode));
             Containers.ForEach(c => c.LoadFromXml(xmlNode));
+        }
+
+        public void ResetModified()
+        {
+            Params.ForEach(p => p.ResetModified());
+            Containers.ForEach(c => c.ResetModified());
+        }
+
+        public void Restore()
+        {
+            Params.ForEach(p => p.Restore());
+            Containers.ForEach(c => c.Restore());
         }
     }
 }

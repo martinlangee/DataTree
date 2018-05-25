@@ -10,6 +10,7 @@ namespace DataTreeBase
         internal string Id;
         internal string Name;
         internal string Value;
+        internal string ValueIdx;
         internal string Unit;
     }
 
@@ -20,6 +21,7 @@ namespace DataTreeBase
                                               Id = "id",
                                               Name = "name",
                                               Value = "val",
+                                              ValueIdx = "valIdx",
                                               Unit = "unit"
                                           };
 
@@ -39,22 +41,26 @@ namespace DataTreeBase
                            FirstOrDefault(childNode => (childNode.Name == name) && (childNode.AttributeByName(Attr.Id)?.Value == id));
         }
 
-        internal static void SetAttributes(this XmlNode xmlNode, XmlDocument xmlDoc, List<Tuple<string, string>> attributes = null)
+        internal static void SetAttributes(this XmlNode xmlNode, List<Tuple<string, string>> attributes = null)
         {
+            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.SetAttributes: owner document not set");
+
             xmlNode.Attributes?.RemoveAll();
 
             attributes?.ForEach(a =>
             {
-                var attr = xmlNode.Attributes?.Append(xmlDoc.CreateAttribute(a.Item1));
+                var attr = xmlNode.Attributes?.Append(xmlNode.OwnerDocument.CreateAttribute(a.Item1));
                 if (attr != null)
                     attr.Value = a.Item2;
             });
         }
 
-        internal static XmlNode AppendChildNode(this XmlNode xmlNode, XmlDocument xmlDoc, string nodeName, List<Tuple<string, string>> attributes = null)
+        internal static XmlNode AppendChildNode(this XmlNode xmlNode, string nodeName, List<Tuple<string, string>> attributes = null)
         {
-            var childNode = xmlNode.AppendChild(xmlDoc.CreateElement(nodeName));
-            childNode?.SetAttributes(xmlDoc, attributes);
+            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.AppendChildNode: owner document not set");
+
+            var childNode = xmlNode.AppendChild(xmlNode.OwnerDocument.CreateElement(nodeName));
+            childNode?.SetAttributes(attributes);
 
             return childNode;
         }
