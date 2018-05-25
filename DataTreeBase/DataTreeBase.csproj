@@ -44,7 +44,6 @@
     <Compile Include="DataTreeNode.cs" />
     <Compile Include="DataTreeParameter.cs" />
     <Compile Include="DataTreeParameterBase.cs" />
-    <Compile Include="DataTreeRoot.cs" />
     <Compile Include="FloatParameter.cs" />
     <Compile Include="ChoiceParameter.cs" />
     <Compile Include="StringParameter.cs" />

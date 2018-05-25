@@ -30,7 +30,7 @@ namespace DataTreeBase
 
         public override string AsString
         {
-            get { return Value.ToString(_formatStr, CultureInfo.InvariantCulture); }
+            get { return Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0'); }
             internal set
             {
                 float floatVal;

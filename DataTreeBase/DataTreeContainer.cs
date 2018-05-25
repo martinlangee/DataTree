@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace DataTreeBase
 {
     public class DataTreeContainer: DataTreeNode
     {
-        const string Tagname = "C";
+        private const string Tagname = "C";
 
         protected DataTreeContainer(DataTreeContainer parent, string id, string name) 
             : base(parent, id, name)
@@ -28,10 +26,22 @@ namespace DataTreeBase
                 Containers.Any(c => c.IsModified) ||
                 Params.Any(p => p.IsModified);
 
-        public void SaveToXml(XmlNode parentXmlNode)
+        public XmlDocument SaveToXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id) ??
+            XmlDocument doc = null;
+            XmlNode xmlNode;
+
+            if (parentXmlNode == null)
+            {
+                doc = new XmlDocument();
+                doc.LoadXml($"<{Tagname}/>");
+                xmlNode = doc.DocumentElement;
+            }
+            else
+            {
+                xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id) ??
                           parentXmlNode.AppendChildNode(Tagname);
+            }
 
             xmlNode.SetAttributes(new List<Tuple<string, string>>
                                   {
@@ -41,6 +51,8 @@ namespace DataTreeBase
 
             Params.ForEach(p => p.SaveToXml(xmlNode));
             Containers.ForEach(c => c.SaveToXml(xmlNode));
+
+            return doc;
         }
 
         public void LoadFromXml(XmlNode parentXmlNode)
@@ -50,6 +62,20 @@ namespace DataTreeBase
             
             Params.ForEach(p => p.LoadFromXml(xmlNode));
             Containers.ForEach(c => c.LoadFromXml(xmlNode));
+        }
+
+        public void LoadFromFile(string fileName)
+        {
+            var doc = new XmlDocument();
+            doc.Load(fileName);
+            LoadFromXml(doc.DocumentElement);
+            ResetModified();
+        }
+
+        public void SaveToFile(string fileName)
+        {
+            SaveToXml(null).Save(fileName);
+            ResetModified();
         }
 
         public void ResetModified()

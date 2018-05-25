@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using DataTreeBase;
+﻿using DataTreeBase;
 
 namespace SampleModel
 {
-    public sealed class Root: DataTreeRoot
+    public sealed class Root: DataTreeContainer
     {
         public static Root Create()
         {
@@ -16,6 +10,7 @@ namespace SampleModel
         }
 
         private Root()
+            : base(null, "Root", "Root")
         {
             Group1 = new Group1(this);
             Group2 = new Group2(this);
