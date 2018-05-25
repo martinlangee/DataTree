@@ -13,6 +13,8 @@
 
         public string Id { get; }
 
+        public string PathId => Parent.Id + @"\" + Id;
+
         public string Name { get; }
 
         public abstract bool IsModified { get; }

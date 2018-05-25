@@ -36,7 +36,7 @@ namespace DataTreeBase
             } 
         }
 
-        public event Action<DataTreeParameter<T>> OnChanged = parameter => {};
+        public event Action<DataTreeParameterBase> OnChanged = parameter => {};
 
         public override bool IsModified => !IsEqualValue(Value, _bufferedValue);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 using DataTreeBase;
 
@@ -28,9 +29,9 @@ namespace DataTreeHost
             model.SaveToFile("D://DataTree.xml");
         }
 
-        static void OnChange(DataTreeParameter<string> newVal)
+        static void OnChange(DataTreeParameterBase param)
         {
-            
+            Debug.WriteLine("Parameter " + param.PathId + " Val = " + param.AsString);
         }
     }
 }
