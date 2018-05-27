@@ -5,6 +5,9 @@ using System.Xml;
 
 namespace DataTreeBase
 {
+    /// <summary>
+    /// Container for the xml attributes used for serialization
+    /// </summary>
     internal struct Attributes
     {
         internal string Id;
@@ -15,8 +18,14 @@ namespace DataTreeBase
         internal string Unit;
     }
 
+    /// <summary>
+    /// Several helper function
+    /// </summary>
     internal static class Helper
     {
+        /// <summary>
+        /// Returns the initialized static Attr property
+        /// </summary>
         internal static Attributes Attr = new Attributes
                                           {
                                               Id = "id",
@@ -27,6 +36,12 @@ namespace DataTreeBase
                                               Unit = "unit"
                                           };
 
+        /// <summary>
+        /// Returns the xml attribute object of the specified xml node with the specified name,
+        /// Returns null if not attribute is not found.
+        /// </summary>
+        /// <param name="xmlNode">The xml node</param>
+        /// <param name="name">The attribute name</param>
         internal static XmlAttribute AttributeByName(this XmlNode xmlNode, string name)
         {
             for (var z = 0; z < xmlNode.Attributes?.Count; z++)
@@ -37,12 +52,24 @@ namespace DataTreeBase
             return null;
         }
 
+        /// <summary>
+        /// Returns the child xml node of the specified xml node with the specified name and id attribute.
+        /// Returns null if not found.
+        /// </summary>
+        /// <param name="xmlNode">The parent xml node</param>
+        /// <param name="name">The name attribute</param>
+        /// <param name="id"></param>
         internal static XmlNode ChildNodeByNameAndId(this XmlNode xmlNode, string name, string id)
         {
             return xmlNode.ChildNodes.Cast<XmlNode>().
                            FirstOrDefault(childNode => (childNode.Name == name) && (childNode.AttributeByName(Attr.Id)?.Value == id));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        /// <param name="attributes"></param>
         internal static void SetAttributes(this XmlNode xmlNode, List<Tuple<string, string>> attributes = null)
         {
             if (xmlNode.OwnerDocument == null) throw new NullReferenceException("Helper.SetAttributes: owner document not set");
@@ -57,6 +84,13 @@ namespace DataTreeBase
             });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="xmlNode"></param>
+        /// <param name="nodeName"></param>
+        /// <param name="attributes"></param>
+        /// <returns></returns>
         internal static XmlNode AppendChildNode(this XmlNode xmlNode, string nodeName, List<Tuple<string, string>> attributes = null)
         {
             if (xmlNode.OwnerDocument == null) throw new NullReferenceException("Helper.AppendChildNode: owner document not set");
@@ -67,6 +101,9 @@ namespace DataTreeBase
             return childNode;
         }
 
+        /// <summary>
+        /// Performs the specified action in a foreach loop over the specified list
+        /// </summary>
         internal static void ForEach<T>(this IEnumerable<T> list, Action<T> action)
         {
             foreach (var item in list)
