@@ -21,9 +21,10 @@ namespace DataTreeBase
         }
 
         /// <summary>
-        /// Creates a new sub-container in case this is a dynamic container and returns if it is overridden in implementin class
+        /// Adds a new data tree container to the list of sub containers
         /// </summary>
-        protected T CreateDynChild()
+        /// <returns>The new DataTreeContainer</returns>
+        public T Add()
         {
             var type = typeof(T);
             return Activator.CreateInstance(type, this) as T;
@@ -33,18 +34,9 @@ namespace DataTreeBase
         /// Adds a new data tree container to the list of sub containers
         /// </summary>
         /// <returns>The new DataTreeContainer</returns>
-        public T Add()
-        {
-            return CreateDynChild();
-        }
-
-        /// <summary>
-        /// Adds a new data tree container to the list of sub containers
-        /// </summary>
-        /// <returns>The new DataTreeContainer</returns>
         public T Add(Action<T> initAction)
         {
-            var child = CreateDynChild();
+            var child = Add();
             initAction?.Invoke(child);
             return child;
         }
@@ -84,7 +76,7 @@ namespace DataTreeBase
 
             Clear();
 
-            xmlNode.ChildNodes.Cast<XmlNode>().ForEach(ch => CreateDynChild().LoadFromXml(ch));
+            xmlNode.ChildNodes.Cast<XmlNode>().ForEach(ch => Add().LoadFromXml(ch));
             Params.ForEach(p => p.LoadFromXml(xmlNode));
         }
     }
