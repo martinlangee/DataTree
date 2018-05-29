@@ -5,7 +5,7 @@ namespace SampleModel
     public sealed class DynContainer: DataTreeDynContainer
     {
         public DynContainer(DataTreeContainer parent)
-            : base(parent, "DynContainer", "DynContainer")
+            : base(parent, "DynCont", "DynContainer")
         {
             IntParam4 = new IntParameter(this, "IntParam4", "IntParam4", 0);
             StrParam5 = new StringParameter(this, "StrParam5", "StrParam5", "def");

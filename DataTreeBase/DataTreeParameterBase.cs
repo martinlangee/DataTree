@@ -9,8 +9,6 @@ namespace DataTreeBase
     /// </summary>
     public abstract class DataTreeParameterBase: DataTreeNode
     {
-        protected const string Tagname = "P";
-
         /// <summary>
         /// C'tor
         /// </summary>
@@ -38,17 +36,17 @@ namespace DataTreeBase
         }
 
         /// <summary>
-        /// Creates new xml node, saves the parameter attributes to the new xml node and adds it the specified parent xml node
+        /// Creates new xml node, saves the parameter attributes to the new xml node and adds it to the specified parent xml node
         /// </summary>
         /// <param name="parentXmlNode">The parent xml node</param>
         public void SaveToXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id);
+            var xmlNode = parentXmlNode.ChildNodeByTagAndId(Helper.ParamTag, Id);
 
             var attr = GetXmlAttributes();
 
             if (xmlNode == null)
-                parentXmlNode.AppendChildNode(Tagname, attr);
+                parentXmlNode.AppendChildNode(Helper.ParamTag, attr);
             else
                 xmlNode.SetAttributes(attr);
         }
@@ -59,7 +57,7 @@ namespace DataTreeBase
         /// <param name="parentXmlNode">The parent xml node</param>
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            AsString = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id)?.AttributeByName(Helper.Attr.Value).Value;
+            AsString = parentXmlNode.ChildNodeByTagAndId(Helper.ParamTag, Id)?.AttributeByName(Helper.Attr.Value).Value;
         }
 
         /// <summary>
@@ -70,7 +68,7 @@ namespace DataTreeBase
         /// <summary>
         /// Returns the value written to xml file on save
         /// </summary>
-        public virtual string XmlValue => AsString;
+        protected virtual string XmlValue => AsString;
 
         /// <summary>
         /// Resets the modified flag to false by setting the buffered value to the current value

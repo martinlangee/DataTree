@@ -11,10 +11,8 @@ namespace DataTreeBase
     internal struct Attributes
     {
         internal string Id;
-        internal string Idx;
         internal string Name;
         internal string Value;
-        internal string ValueIdx;
         internal string ValueStr;
         internal string Unit;
     }
@@ -24,16 +22,18 @@ namespace DataTreeBase
     /// </summary>
     internal static class Helper
     {
+        // XML tags
+        internal const string ParamTag = "P";
+        internal const string ContnTag = "C";
+
         /// <summary>
         /// Returns the initialized static Attr property
         /// </summary>
         internal static Attributes Attr = new Attributes
                                           {
                                               Id = "id",
-                                              Idx = "idx",
                                               Name = "name",
                                               Value = "val",
-                                              ValueIdx = "valIdx",
                                               ValueStr = "valStr",
                                               Unit = "unit"
                                           };
@@ -61,15 +61,10 @@ namespace DataTreeBase
         /// <param name="xmlNode">The parent xml node</param>
         /// <param name="tag">The name attribute</param>
         /// <param name="id">The id attribute</param>
-        /// <param name="idx">The idx attribute</param>
-        internal static XmlNode ChildNodeByTagIdAndIdx(this XmlNode xmlNode, string tag, string id, int idx = -1)
+        internal static XmlNode ChildNodeByTagAndId(this XmlNode xmlNode, string tag, string id)
         {
-            var node = xmlNode.ChildNodes.Cast<XmlNode>().
-                           FirstOrDefault(childNode =>
-                                              childNode.Name == tag &&
-                                              childNode.AttributeByName(Attr.Id)?.Value == id /* &&
-                                              (idx == -1 || childNode.AttributeByName(Attr.Idx).Value == idx.ToString())*/);
-            return node;
+            return xmlNode.ChildNodes.Cast<XmlNode>().
+                FirstOrDefault(childNode => childNode.Name == tag && childNode.AttributeByName(Attr.Id)?.Value == id);
         }
 
         /// <summary>

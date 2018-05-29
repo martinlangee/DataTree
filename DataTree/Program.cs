@@ -17,7 +17,7 @@ namespace DataTreeHost
             model.Cont2.StrParam4.OnChanged += OnChange;
 
             model.Cont1.IntParam.Value = 33;
-            model.Cont2.StrParam4.Value = "slkjsdfg";
+            model.Cont2.StrParam4.Value = "eeeeeeeeeee";
 
             model.Cont2.IntParam3.Value = model.Cont1.IntParam.Value;
 
@@ -43,7 +43,7 @@ namespace DataTreeHost
 
         static void OnChange(DataTreeParameterBase param)
         {
-            Debug.WriteLine("Parameter " + param.PathId + " Val = " + param.AsString);
+            Debug.WriteLine("Parameter " + param.PathId + " Val=" + param.AsString);
         }
     }
 }

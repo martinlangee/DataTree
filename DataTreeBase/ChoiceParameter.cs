@@ -74,7 +74,7 @@ namespace DataTreeBase
         /// <summary>
         /// Returns the value written to xml file on save
         /// </summary>
-        public override string XmlValue => Value.ToString();
+        protected override string XmlValue => Value.ToString();
 
         /// <summary>
         /// Loads the parameter value from the id-matching child xml node of the specified parent xml node using the valueIdx attribute
@@ -82,9 +82,9 @@ namespace DataTreeBase
         /// <param name="parentXmlNode">The parent xml node</param>
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
-            int valIdx;
-            if (int.TryParse(parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id)?.AttributeByName(Helper.Attr.ValueIdx).Value, out valIdx))
-                ValueIdx = valIdx;
+            int val;
+            if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(Helper.ParamTag, Id)?.AttributeByName(Helper.Attr.Value).Value, out val))
+                Value = val;
         }
 
         /// <summary>

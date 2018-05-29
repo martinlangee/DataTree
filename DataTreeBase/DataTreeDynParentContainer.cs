@@ -71,12 +71,15 @@ namespace DataTreeBase
         /// <param name="parentXmlNode">The parent node</param>
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id);
+            var xmlNode = parentXmlNode.ChildNodeByTagAndId(Helper.ContnTag, Id);
             if (xmlNode == null) return;
 
             Clear();
 
-            xmlNode.ChildNodes.Cast<XmlNode>().ForEach(ch => Add().LoadFromXml(ch));
+            xmlNode.ChildNodes.Cast<XmlNode>().
+                Where(ch => ch.Name == Helper.ContnTag).
+                ForEach(ch => Add().LoadFromXml(ch));
+
             Params.ForEach(p => p.LoadFromXml(xmlNode));
         }
     }

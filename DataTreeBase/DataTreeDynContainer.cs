@@ -1,4 +1,7 @@
-﻿namespace DataTreeBase
+﻿using System.Linq;
+using System.Xml;
+
+namespace DataTreeBase
 {
     /// <summary>
     /// Base class for all containers that are elements of a dynamic parent container
@@ -17,8 +20,23 @@
         }
 
         /// <summary>
-        /// Returns the node index used for serialization
+        /// Loads the container and it's sub-containers from the specified own xml node
         /// </summary>
-        public override int Idx => Parent.Containers.IndexOf(this);
+        /// <param name="xmlNode">Own xml node</param>
+        public override void LoadFromXml(XmlNode xmlNode)
+        {
+            Params.ForEach(p => p.LoadFromXml(xmlNode));
+            Containers.ForEach(c => c.LoadFromXml(xmlNode));
+        }
+
+        /// <summary>
+        /// Returns the xml node as child of the parent node that shows the id of this node.
+        /// If not found new node is created and returned.
+        /// </summary>
+        /// <param name="parentXmlNode">The parent xml node</param>
+        protected override XmlNode GetOwnXmlNode(XmlNode parentXmlNode)
+        {
+            return parentXmlNode.AppendChildNode(Helper.ContnTag);
+        }
     }
 }
