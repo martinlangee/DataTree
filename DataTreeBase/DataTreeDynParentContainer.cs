@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
@@ -19,6 +20,11 @@ namespace DataTreeBase
             : base(parent, id, name)
         {
         }
+
+        /// <summary>
+        /// List of sub-containers
+        /// </summary>
+        public new IList<T> Containers { get { return base.Containers.Cast<T>().ToList(); } }
 
         /// <summary>
         /// Adds a new data tree container to the list of sub containers

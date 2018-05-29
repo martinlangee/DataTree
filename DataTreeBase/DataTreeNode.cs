@@ -1,6 +1,6 @@
 ﻿namespace DataTreeBase
 {
-    // todo: dynamische Container-Listen
+    // ok: dynamische Container-Listen
 	// todo: Import/Export
 	// todo: CRC-Check
     // todo: Unit-Tests schreiben
@@ -43,7 +43,7 @@
         /// <summary>
         /// Returns the full slash-seperated path of ids containing all parent ids
         /// </summary>
-        public string PathId => (Parent != null ? Parent.PathId + @"\": "") + Id;
+        public virtual string PathId => (Parent != null ? Parent.PathId + @"\": "") + Id;
 
         /// <summary>
         /// Returns the code name

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 
 using DataTreeBase;
 
@@ -37,6 +38,9 @@ namespace DataTreeHost
                 d.IntParam4.Value = 77;
                 d.StrParam5.Value = "xxxxxxxxxxx";
             });
+
+            model.Cont2.DynContainers[1].StrParam5.Value = "nonononononon";
+            var p = model.Cont2.DynContainers[1].PathId;
 
             model.SaveToFile("D://DataTree.xml");
         }

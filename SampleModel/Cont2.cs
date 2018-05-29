@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using DataTreeBase;
 
@@ -29,5 +30,7 @@ namespace SampleModel
         public BoolParameter BoolParam5 { get; }
         public ChoiceParameter ChParam6 { get; }
         public BinaryParameter BinParam7 { get; }
+
+        public IList<DynContainer> DynContainers => Containers;
     }
 }

@@ -19,6 +19,15 @@ namespace DataTreeBase
         {
         }
 
+        public override string PathId
+        {
+            get
+            {
+                var idx = Parent?.Containers.IndexOf(this);
+                return (Parent != null ? Parent.PathId + @"\" : "") + $"{Id}[{idx}]";
+            }
+        }
+
         /// <summary>
         /// Loads the container and it's sub-containers from the specified own xml node
         /// </summary>
