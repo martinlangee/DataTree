@@ -47,7 +47,6 @@ namespace DataTreeBase
         {
             var attr = base.GetXmlAttributes();
             attr.Add(new Tuple<string, string>(Helper.Attr.ValueStr, AsString));
-            attr.Add(new Tuple<string, string>(Helper.Attr.ValueIdx, ValueIdx.ToString()));
 
             return attr;
         }
@@ -84,7 +83,7 @@ namespace DataTreeBase
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
             int valIdx;
-            if (int.TryParse(parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(Helper.Attr.ValueIdx).Value, out valIdx))
+            if (int.TryParse(parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id)?.AttributeByName(Helper.Attr.ValueIdx).Value, out valIdx))
                 ValueIdx = valIdx;
         }
 
@@ -115,7 +114,7 @@ namespace DataTreeBase
         }
 
         /// <summary>
-        /// Main value property
+        /// Index of the value inside the choice list
         /// </summary>
         public int ValueIdx
         {

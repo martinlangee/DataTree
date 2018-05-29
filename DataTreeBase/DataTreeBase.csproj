@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="BinaryParameter.cs" />
     <Compile Include="DataTreeContainer.cs" />
+    <Compile Include="DataTreeDynContainer.cs" />
+    <Compile Include="DataTreeDynParentContainer.cs" />
     <Compile Include="DataTreeNode.cs" />
     <Compile Include="DataTreeParameter.cs" />
     <Compile Include="DataTreeParameterBase.cs" />

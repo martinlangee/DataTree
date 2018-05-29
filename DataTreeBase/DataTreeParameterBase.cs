@@ -43,7 +43,7 @@ namespace DataTreeBase
         /// <param name="parentXmlNode">The parent xml node</param>
         public void SaveToXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id);
+            var xmlNode = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id);
 
             var attr = GetXmlAttributes();
 
@@ -59,7 +59,7 @@ namespace DataTreeBase
         /// <param name="parentXmlNode">The parent xml node</param>
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            AsString = parentXmlNode.ChildNodeByNameAndId(Tagname, Id)?.AttributeByName(Helper.Attr.Value).Value;
+            AsString = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id)?.AttributeByName(Helper.Attr.Value).Value;
         }
 
         /// <summary>

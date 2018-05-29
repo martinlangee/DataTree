@@ -12,11 +12,11 @@ namespace SampleModel
         private Root()
             : base(null, "Root", "Root")
         {
-            Group1 = new Group1(this);
-            Group2 = new Group2(this);
+            Cont1 = new Cont1(this);
+            Cont2 = new Cont2(this);
         }
 
-        public Group1 Group1 { get; }
-        public Group2 Group2 { get; }
+        public Cont1 Cont1 { get; }
+        public Cont2 Cont2 { get; }
     }
 }

@@ -40,8 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Group2.cs" />
-    <Compile Include="Group1.cs" />
+    <Compile Include="DynContainer.cs" />
+    <Compile Include="Cont2.cs" />
+    <Compile Include="Cont1.cs" />
     <Compile Include="ModelRoot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -11,6 +11,7 @@ namespace DataTreeBase
     internal struct Attributes
     {
         internal string Id;
+        internal string Idx;
         internal string Name;
         internal string Value;
         internal string ValueIdx;
@@ -29,6 +30,7 @@ namespace DataTreeBase
         internal static Attributes Attr = new Attributes
                                           {
                                               Id = "id",
+                                              Idx = "idx",
                                               Name = "name",
                                               Value = "val",
                                               ValueIdx = "valIdx",
@@ -57,12 +59,17 @@ namespace DataTreeBase
         /// Returns null if not found.
         /// </summary>
         /// <param name="xmlNode">The parent xml node</param>
-        /// <param name="name">The name attribute</param>
-        /// <param name="id"></param>
-        internal static XmlNode ChildNodeByNameAndId(this XmlNode xmlNode, string name, string id)
+        /// <param name="tag">The name attribute</param>
+        /// <param name="id">The id attribute</param>
+        /// <param name="idx">The idx attribute</param>
+        internal static XmlNode ChildNodeByTagIdAndIdx(this XmlNode xmlNode, string tag, string id, int idx = -1)
         {
-            return xmlNode.ChildNodes.Cast<XmlNode>().
-                           FirstOrDefault(childNode => (childNode.Name == name) && (childNode.AttributeByName(Attr.Id)?.Value == id));
+            var node = xmlNode.ChildNodes.Cast<XmlNode>().
+                           FirstOrDefault(childNode =>
+                                              childNode.Name == tag &&
+                                              childNode.AttributeByName(Attr.Id)?.Value == id /* &&
+                                              (idx == -1 || childNode.AttributeByName(Attr.Idx).Value == idx.ToString())*/);
+            return node;
         }
 
         /// <summary>

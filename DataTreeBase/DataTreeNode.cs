@@ -1,12 +1,14 @@
 ﻿namespace DataTreeBase
 {
     // todo: dynamische Container-Listen
-    // todo: dynamische Parameter-Listen (?)
+	// todo: Import/Export
+	// todo: CRC-Check
     // todo: Unit-Tests schreiben
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen
     // todo: Thread-Sicherheit
     // todo: Rückwärtsgang
+    // todo: DB zur Serialisierung; mit Tabellen-Generierung?
 
     /// <summary>
     /// Abstract base node class

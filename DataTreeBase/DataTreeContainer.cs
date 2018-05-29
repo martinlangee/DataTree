@@ -10,7 +10,7 @@ namespace DataTreeBase
     /// </summary>
     public class DataTreeContainer: DataTreeNode
     {
-        private const string Tagname = "C";
+        protected const string Tagname = "C";
 
         /// <summary>
         /// C'tor
@@ -25,7 +25,14 @@ namespace DataTreeBase
             Params = new List<DataTreeParameterBase>();
 
             Parent?.Containers.Add(this);
+
+            Idx = -1;
         }
+
+        /// <summary>
+        /// Returns the node index used for serialization
+        /// </summary>
+        public virtual int Idx { get; }
 
         /// <summary>
         /// List of sub-containers
@@ -62,15 +69,15 @@ namespace DataTreeBase
             }
             else
             {
-                xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id) ??
+                xmlNode = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id, Idx) ??
                           parentXmlNode.AppendChildNode(Tagname);
             }
 
-            xmlNode.SetAttributes(new List<Tuple<string, string>>
-                                  {
-                                      new Tuple<string, string>(Helper.Attr.Id, Id),
-                                      new Tuple<string, string>(Helper.Attr.Name, Name),
-                                  });
+            var attributes = new List<Tuple<string, string>> { new Tuple<string, string>(Helper.Attr.Id, Id) };
+            if (Idx >= 0)
+                attributes.Add(new Tuple<string, string>(Helper.Attr.Idx, Idx.ToString()));
+            attributes.Add(new Tuple<string, string>(Helper.Attr.Name, Name));
+            xmlNode.SetAttributes(attributes);
 
             Params.ForEach(p => p.SaveToXml(xmlNode));
             Containers.ForEach(c => c.SaveToXml(xmlNode));
@@ -82,9 +89,9 @@ namespace DataTreeBase
         /// Loads the container and it's sub-containers from the specified parent xml node
         /// </summary>
         /// <param name="parentXmlNode"></param>
-        public void LoadFromXml(XmlNode parentXmlNode)
+        public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByNameAndId(Tagname, Id);
+            var xmlNode = parentXmlNode.ChildNodeByTagIdAndIdx(Tagname, Id);
             if (xmlNode == null) return;
             
             Params.ForEach(p => p.LoadFromXml(xmlNode));

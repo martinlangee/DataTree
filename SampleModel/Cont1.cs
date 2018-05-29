@@ -2,10 +2,10 @@
 
 namespace SampleModel
 {
-    public sealed class Group1: DataTreeContainer
+    public sealed class Cont1: DataTreeContainer
     {
-        public Group1(DataTreeContainer parent)
-            : base(parent, "Group1", "Group1")
+        public Cont1(DataTreeContainer parent)
+            : base(parent, "Cont1", "Cont1")
         {
             IntParam = new IntParameter(this, "IntParam", "IntParam", 0);
             StrParam = new StringParameter(this, "StrParam", "StrParam", "abc");
