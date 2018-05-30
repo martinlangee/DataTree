@@ -1,7 +1,7 @@
 ﻿namespace DataTreeBase
 {
     // ok: dynamische Container-Listen
-	// todo: Import/Export
+	// todo: Import/Export von einzelnen Containern 
 	// todo: CRC-Check
     // todo: Unit-Tests schreiben
     // todo: Anbindung an UI über Proxy oder DTO
