@@ -59,6 +59,8 @@ namespace DataTreeBase
             get { return ChoiceList[ValueIdx].Item2; }
             set
             {
+                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
+
                 for (var idx = 0; idx < ChoiceList.Count; idx++)
                 {
                     if (ChoiceList[idx].Item2 == value)
@@ -101,6 +103,8 @@ namespace DataTreeBase
             get { return ChoiceList[ValueIdx].Item1; }
             set
             {
+                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValue: changing value while executing OnChanged is not allowed");
+
                 for (var idx = 0; idx < ChoiceList.Count; idx++)
                 {
                     if (ChoiceList[idx].Item1 == value)
@@ -122,9 +126,18 @@ namespace DataTreeBase
             set
             {
                 if (_valueIdx == value) return;
+                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");
 
-                _valueIdx = value;
-                FireOnChanged();
+                IsChanging = true;
+                try
+                {
+                    _valueIdx = value;
+                    FireOnChanged();
+                }
+                finally
+                {
+                    IsChanging = false;
+                }
             }
         }
     }

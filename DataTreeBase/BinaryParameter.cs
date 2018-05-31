@@ -33,8 +33,8 @@ namespace DataTreeBase
         /// </summary>
         public override string AsString
         {
-            get { return Convert.ToBase64String(Value); }
-            set { Value = Convert.FromBase64String(value); }
+            get { return Value != null ? Convert.ToBase64String(Value) : ""; }
+            set { Value = value.Length > 0 ? Convert.FromBase64String(value): new byte[0]; }
         }
     }
 }

@@ -12,6 +12,8 @@ namespace DataTreeBase
         private T _value;
         private T _bufferedValue;
 
+        protected bool IsChanging;
+
         /// <summary>
         /// C'tor
         /// </summary>
@@ -43,9 +45,18 @@ namespace DataTreeBase
             set
             {
                 if (IsEqualValue(value, _value)) return;
+                if (IsChanging) throw new InvalidOperationException("DataTreeParameter.SetValue: changing value while executing OnChanged is not allowed");
 
-                _value = value;
-                FireOnChanged();
+                IsChanging = true;
+                try
+                {
+                    _value = value;
+                    FireOnChanged();
+                }
+                finally
+                {
+                    IsChanging = false;
+                }
             } 
         }
 
