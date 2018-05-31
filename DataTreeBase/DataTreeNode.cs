@@ -21,7 +21,7 @@
         /// <param name="parent">Parent container</param>
         /// <param name="id">Node identificator</param>
         /// <param name="name">Node name</param>
-        public DataTreeNode(DataTreeContainer parent, string id, string name)
+        protected DataTreeNode(DataTreeContainer parent, string id, string name)
         {
             Parent = parent;
             Id = id;
@@ -33,7 +33,7 @@
         /// Setting the parent container relocates the node and all of it's sub-nodes.
         /// Setting it to null detaches it from the data tree.
         /// </summary>
-        public DataTreeContainer Parent { get; }
+        protected DataTreeContainer Parent { get; }
 
         /// <summary>
         /// Returns the node identificator used for serialization
@@ -43,7 +43,7 @@
         /// <summary>
         /// Returns the full slash-seperated path of ids containing all parent ids
         /// </summary>
-        public virtual string PathId => (Parent != null ? Parent.PathId + @"\": "") + Id;
+        public virtual string PathId => (Parent != null ? Parent.PathId + $"{Helper.PathDelimiter}" : "") + Id;
 
         /// <summary>
         /// Returns the code name

@@ -25,6 +25,9 @@ namespace DataTreeBase
         // XML tags
         internal const string ParamTag = "P";
         internal const string ContnTag = "C";
+        
+        // Path delimiter
+        internal const string PathDelimiter = "/";
 
         /// <summary>
         /// Returns the initialized static Attr property

@@ -67,7 +67,7 @@ namespace DataTreeBase
                         return;
                     }
                 }
-                throw new ArgumentOutOfRangeException("ChoiceParameter.AsString: no choice for choice descriptions found");
+                throw new ArgumentException($"ChoiceParameter.SetAsString: no matching choice for string value '{value}' found.");
             }
         }
 
@@ -109,7 +109,7 @@ namespace DataTreeBase
                         return;
                     }
                 }
-                throw new ArgumentOutOfRangeException("ChoiceParameter.Value: no choice for choice value found");
+                throw new ArgumentOutOfRangeException($"ChoiceParameter.SetValue: no choice for choice value '{value}' found.");
             }
         }
 

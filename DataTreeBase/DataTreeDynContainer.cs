@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Xml;
+﻿using System.Xml;
 
 namespace DataTreeBase
 {
@@ -24,7 +23,7 @@ namespace DataTreeBase
             get
             {
                 var idx = Parent?.Containers.IndexOf(this);
-                return (Parent != null ? Parent.PathId + @"\" : "") + $"{Id}[{idx}]";
+                return (Parent != null ? Parent.PathId + $"{Helper.PathDelimiter}" : "") + $"{Id}[{idx}]";
             }
         }
 

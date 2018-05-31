@@ -1,4 +1,6 @@
-﻿namespace DataTreeBase
+﻿using System;
+
+namespace DataTreeBase
 {
     /// <summary>
     /// Represents a parameter with bool value type
@@ -29,6 +31,8 @@
                 bool boolVal;
                 if (bool.TryParse(value, out boolVal))
                     Value = boolVal;
+                else
+                    throw new ArgumentException($"BoolParameter.SetAsString: cannot convert '{value}' to bool.");
             }
         }
     }

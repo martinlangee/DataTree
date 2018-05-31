@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 
 using DataTreeBase;
 
@@ -18,7 +17,11 @@ namespace DataTreeHost
             model.Cont2.StrParam4.OnChanged += OnChange;
 
             model.Cont1.IntParam.Value = 33;
-            model.Cont2.StrParam4.Value = "eeeeeeeeeee";
+            model.Cont2.StrParam4.Value = "eeeeee";
+            model.Cont2.StrParam4.Value = "eeeeedsdfsdfsf";
+            var mod = model.Cont2.StrParam4.IsModified;
+            var n = model.Cont2.StrParam4.Name;
+            var i = model.Cont2.StrParam4.Id;
 
             model.Cont2.IntParam3.Value = model.Cont1.IntParam.Value;
 
@@ -41,6 +44,7 @@ namespace DataTreeHost
 
             model.Cont2.DynContainers[1].StrParam5.Value = "nonononononon";
             var p = model.Cont2.DynContainers[1].PathId;
+            //model.Cont2.
 
             model.SaveToFile("D://DataTree.xml");
         }

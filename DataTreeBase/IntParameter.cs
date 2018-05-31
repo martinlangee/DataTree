@@ -1,4 +1,6 @@
-﻿namespace DataTreeBase
+﻿using System;
+
+namespace DataTreeBase
 {
     /// <summary>
     /// Represents a parameter with int value type
@@ -28,6 +30,8 @@
                 int intVal;
                 if (int.TryParse(value, out intVal))
                     Value = intVal;
+                else
+                    throw new ArgumentException($"IntParameter.SetAsString: cannot convert '{value}' to int.");
             }
         }
     }

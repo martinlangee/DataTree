@@ -57,6 +57,8 @@ namespace DataTreeBase
                 float floatVal;
                 if (float.TryParse(value, out floatVal))
                     Value = floatVal;
+                else
+                    throw new ArgumentException($"FloatParameter.SetAsString: cannot convert '{value}' to float.");
             }
         }
 
