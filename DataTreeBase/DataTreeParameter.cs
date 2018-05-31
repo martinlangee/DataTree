@@ -37,6 +37,15 @@ namespace DataTreeBase
         }
 
         /// <summary>
+        /// Value is assigned from specified value and returned. May be overridden to manipulated value befor assigning it.
+        /// </summary>
+        protected virtual void AssignValueAndNotify(T value)
+        {
+            _value = value;
+            FireOnChanged();
+        }
+
+        /// <summary>
         /// Generic typed parameter value
         /// </summary>
         public virtual T Value
@@ -50,8 +59,7 @@ namespace DataTreeBase
                 IsChanging = true;
                 try
                 {
-                    _value = value;
-                    FireOnChanged();
+                    AssignValueAndNotify(value);
                 }
                 finally
                 {

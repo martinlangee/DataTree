@@ -5,11 +5,13 @@ using System.Globalization;
 namespace DataTreeBase
 {
     /// <summary>
-    /// Represents a parameter with float value type
+    /// Represents a parameter with double value type
     /// </summary>
-    public sealed class FloatParameter : DataTreeParameter<float>
+    public sealed class FloatParameter : DataTreeParameter<double>
     {
-        private readonly string _formatStr;
+        private string _formatStr;
+        private int _decimals;
+        private readonly char _currentDecimalSep = CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
 
         /// <summary>
         /// C'tor
@@ -19,18 +21,18 @@ namespace DataTreeBase
         /// <param name="name">Parameter name</param>
         /// <param name="defaultValue">Float parameter default value</param>
         /// <param name="unit">Parameter unit</param>
-        /// <param name="precision">Floating point precision</param>
-        public FloatParameter(DataTreeContainer parent, string id, string name, float defaultValue, string unit, int precision)
+        /// <param name="decimals">Floating point decimals</param>
+        public FloatParameter(DataTreeContainer parent, string id, string name, double defaultValue, string unit, int decimals)
             : base(parent, id, name, defaultValue)
         {
             Unit = unit;
-            _formatStr = "0." + new string('0', precision);
+            Decimals = decimals;
         }
 
         /// <summary>
-        /// Returns true if the two float values are equal comparing only the number of digits specified in the precision
+        /// Returns true if the two float values are equal comparing only the number of digits specified in the decimals
         /// </summary>
-        protected override bool IsEqualValue(float value1, float value2)
+        protected override bool IsEqualValue(double value1, double value2)
         {
             return value1.ToString(_formatStr).Equals(value2.ToString(_formatStr));
         }
@@ -47,16 +49,24 @@ namespace DataTreeBase
         }
 
         /// <summary>
-        /// Gets or sets the string representation considering the precision 
+        /// Value is assigned from specified value. May be overridden to manipulated value befor assigning it.
+        /// </summary>
+        protected override void AssignValueAndNotify(double value)
+        {
+            base.AssignValueAndNotify(Math.Round(value, Decimals));
+        }
+
+        /// <summary>
+        /// Gets or sets the string representation considering the decimals 
         /// </summary>
         public override string AsString
         {
-            get { return Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0'); }
+            get { return Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.'); }
             set
             {
-                float floatVal;
-                if (float.TryParse(value, out floatVal))
-                    Value = floatVal;
+                double dblVal;
+                if (double.TryParse(value, out dblVal))
+                    Value = dblVal;
                 else
                     throw new ArgumentException($"FloatParameter.SetAsString: cannot convert '{value}' to float.");
             }
@@ -66,5 +76,32 @@ namespace DataTreeBase
         /// Returns the parameter unit
         /// </summary>
         public string Unit { get; }
+
+        /// <summary>
+        /// Gets or sets the number of decimals
+        /// </summary>
+        public int Decimals
+        {
+            get { return _decimals; }
+            set
+            {
+                if (_decimals == value) return;
+
+                _decimals = value;
+                _formatStr = "0." + new string('0', _decimals);
+
+                if (Math.Round(Value, Decimals).CompareTo(Value) != 0)
+                    AssignValueAndNotify(Value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the value from string representation containing the current culture's decimal seperator
+        /// </summary>
+        public string AsStringC
+        {
+            get { return Value.ToString(_formatStr, CultureInfo.CurrentCulture).TrimEnd('0').TrimEnd(_currentDecimalSep); }
+            set { AsString = value.Replace(_currentDecimalSep, '.'); }
+        }
     }
 }

@@ -32,7 +32,7 @@ namespace DataTreeTests
         public void ModificationTest()
         {
             var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue);
-            p.OnChanged += ParamOnChanged1;
+            p.OnChanged += ParamOnChanged;
 
             _passedOnChanged = false;
             p.Value = _defValue;
@@ -54,7 +54,7 @@ namespace DataTreeTests
             Assert.IsTrue(_passedOnChanged, "OnChanged call missing");
             Assert.IsTrue(p.IsModified, "IsModified = false but must be true");
 
-            p.OnChanged -= ParamOnChanged1;
+            p.OnChanged -= ParamOnChanged;
             _passedOnChanged = false;
             p.Value = new byte[] { 50, 61, 72, 83, 234, 29 };
             Assert.IsFalse(_passedOnChanged, "OnChanged not allowed but occurred");
@@ -101,7 +101,7 @@ namespace DataTreeTests
                                       );
         }
 
-        private void ParamOnChanged1(DataTreeParameterBase dataTreeParameterBase)
+        private void ParamOnChanged(DataTreeParameterBase dataTreeParameterBase)
         {
             _passedOnChanged = true;
             Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
