@@ -46,13 +46,16 @@ namespace DataTreeTests
             _passedOnChanged = false;
             p.Value = 55.7689;
             Assert.IsTrue(_passedOnChanged, "OnChanged call missing");
-            Assert.IsTrue(p.IsModified, "IsModified = true but must be false");
+
+            p.Value = 123455.12345;
+            _passedOnChanged = false;
+            p.Value = 123455.123451234;  // more decimals then precision
+            Assert.IsFalse(_passedOnChanged, "OnChanged called without a cause");
 
             p.OnChanged -= ParamOnChanged;
             _passedOnChanged = false;
             p.Value = 345.1;
             Assert.IsFalse(_passedOnChanged, "OnChanged not allowed but occurred");
-            Assert.IsTrue(p.IsModified, "IsModified = false but must be true");
         }
 
         [TestMethod]

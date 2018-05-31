@@ -34,7 +34,7 @@ namespace DataTreeBase
         /// </summary>
         protected override bool IsEqualValue(double value1, double value2)
         {
-            return value1.ToString(_formatStr).Equals(value2.ToString(_formatStr));
+            return Math.Round(value1, Decimals).CompareTo(Math.Round(value2, Decimals)) == 0;
         }
 
         /// <summary>
