@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 using DataTreeBase;
 
@@ -8,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DataTreeTests
 {
     [TestClass]
-    public class IntParameterTests
+    public class IntParameterTests: BaseParamTests<int>
     {
         private bool _passedOnChanged;
 
@@ -68,52 +67,31 @@ namespace DataTreeTests
         public void SetValueTest()
         {
             var p = new IntParameter(null, "myIntId", "myIntName", 1);
-            try
-            {
-                p.AsString = "Otto";
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine("Expected ArgumentException occurred");
-                return;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Unexpected exception occurred: " + e);
-            }
-            Assert.Fail("ArgumentException expected but did not occur");
+
+            p.AsString = "123456789";
+
+            CheckValueSet(p, "Otto");
+            CheckValueSet(p, "1,234");
+            CheckValueSet(p, "567.345");
+            CheckValueSet(p, "45645.");
+            CheckValueSet(p, "-4545764.123e12");
         }
 
         [TestMethod]
         public void ProhibitedValueChangeTest()
         {
             var p = new IntParameter(null, "myIntId", "myIntName", 0);
-            p.OnChanged += ParamOnChanged2;
-            try
-            {
-                p.Value = 77;
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Expected InvalidOperationException occurred");
-                return;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Unexpected exception occurred: " + e);
-            }
-            Assert.Fail("InvalidOperationException expected but did not occur");
+
+            CheckProhibitedValueChange(p, 77,
+                                       param =>
+                                           ((IntParameter) param).Value = 1234
+                                      );
         }
 
         private void ParamOnChanged1(DataTreeParameterBase dataTreeParameterBase)
         {
             _passedOnChanged = true;
             Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
-        }
-
-        private void ParamOnChanged2(DataTreeParameterBase dataTreeParameterBase)
-        {
-            ((IntParameter) dataTreeParameterBase).Value = 1234;
         }
     }
 }

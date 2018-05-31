@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DataTreeTests
 {
     [TestClass]
-    public class BinaryParameterTests
+    public class BinaryParameterTests: BaseParamTests<byte[]>
     {
         readonly byte[] _defValue = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
         private bool _passedOnChanged;
@@ -94,32 +94,17 @@ namespace DataTreeTests
         public void ProhibitedValueChangeTest()
         {
             var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue);
-            p.OnChanged += ParamOnChanged2;
-            try
-            {
-                p.Value = new byte[] { 0, 1 };
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Expected InvalidOperationException occurred");
-                return;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Unexpected exception occurred: " + e);
-            }
-            Assert.Fail("InvalidOperationException expected but did not occur");
+
+            CheckProhibitedValueChange(p, new byte[] { 0, 1 },
+                                       param =>
+                                           ((BinaryParameter) param).Value = new byte[] { 9, 8, 7, 6 }
+                                      );
         }
 
         private void ParamOnChanged1(DataTreeParameterBase dataTreeParameterBase)
         {
             _passedOnChanged = true;
             Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
-        }
-
-        private void ParamOnChanged2(DataTreeParameterBase dataTreeParameterBase)
-        {
-            ((BinaryParameter) dataTreeParameterBase).Value = new byte[] { 9, 8, 7, 6 };
         }
     }
 }

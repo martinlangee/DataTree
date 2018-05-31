@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace DataTreeTests
 {
     [TestClass]
-    public class BoolParameterTests
+    public class BoolParameterTests: BaseParamTests<bool>
     {
         private bool _passedOnChanged;
 
@@ -31,7 +31,7 @@ namespace DataTreeTests
         public void ModificationTest()
         {
             var p = new BoolParameter(null, "myBoolId", "myBoolName");
-            p.OnChanged += ParamOnChanged1;
+            p.OnChanged += ParamOnChanged;
 
             _passedOnChanged = false;
             p.Value = false;
@@ -48,7 +48,7 @@ namespace DataTreeTests
             Assert.IsTrue(_passedOnChanged, "OnChanged call missing");
             Assert.IsFalse(p.IsModified, "IsModified = true but must be false");
 
-            p.OnChanged -= ParamOnChanged1;
+            p.OnChanged -= ParamOnChanged;
             _passedOnChanged = false;
             p.Value = true;
             Assert.IsFalse(_passedOnChanged, "OnChanged not allowed but occurred");
@@ -60,20 +60,7 @@ namespace DataTreeTests
         {
             var p = new BoolParameter(null, "myBoolId", "myBoolName");
 
-            try
-            {
-                p.AsString = "Otto";
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine("Expected ArgumentException occurred");
-                return;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Unexpected exception occurred: " + e);
-            }
-            Assert.Fail("ArgumentException expected but did not occur");
+            CheckValueSet(p, "Otto");
         }
 
         [TestMethod]
@@ -91,32 +78,17 @@ namespace DataTreeTests
         public void ProhibitedValueChangeTest()
         {
             var p = new BoolParameter(null, "myBoolId", "myBoolName");
-            p.OnChanged += ParamOnChanged2;
-            try
-            {
-                p.Value = true;
-            }
-            catch (InvalidOperationException)
-            {
-                Console.WriteLine("Expected InvalidOperationException occurred");
-                return;
-            }
-            catch (Exception e)
-            {
-                Assert.Fail("Unexpected exception occurred: " + e);
-            }
-            Assert.Fail("InvalidOperationException expected but did not occur");
+
+            CheckProhibitedValueChange(p, true,
+                                       param =>
+                                           ((BoolParameter) param).Value = false
+                                      );
         }
 
-        private void ParamOnChanged1(DataTreeParameterBase dataTreeParameterBase)
+        private void ParamOnChanged(DataTreeParameterBase dataTreeParameterBase)
         {
             _passedOnChanged = true;
             Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
-        }
-
-        private void ParamOnChanged2(DataTreeParameterBase dataTreeParameterBase)
-        {
-            ((BoolParameter) dataTreeParameterBase).Value = false;
         }
     }
 }

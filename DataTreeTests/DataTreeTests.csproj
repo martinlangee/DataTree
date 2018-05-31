@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BaseParamTests.cs" />
     <Compile Include="IntParameterTests.cs" />
     <Compile Include="BoolParameterTests.cs" />
     <Compile Include="BinaryParameterTests.cs" />
