@@ -10,7 +10,6 @@ namespace DataTreeBase
     public abstract class DataTreeParameter<T>: DataTreeParameterBase
     {
         private T _value;
-        private T _bufferedValue;
 
         protected bool IsChanging;
 
@@ -24,8 +23,9 @@ namespace DataTreeBase
         protected DataTreeParameter(DataTreeContainer parent, string id, string name, T defaultValue)
             : base(parent, id, name)
         {
+            DefaultValue = defaultValue;
+            BufferedValue = defaultValue;
             _value = defaultValue;
-            _bufferedValue = defaultValue;
         }
 
         /// <summary>
@@ -61,6 +61,16 @@ namespace DataTreeBase
         }
 
         /// <summary>
+        /// Returns the default value set on creation
+        /// </summary>
+        public T DefaultValue { get; private set; }
+
+        /// <summary>
+        /// Returns the buffered value set on creation or ResetModified
+        /// </summary>
+        public T BufferedValue { get; private set; }
+
+        /// <summary>
         /// Event fired when the parameter value hase changed
         /// Specifies the changed parameter object
         /// </summary>
@@ -69,14 +79,14 @@ namespace DataTreeBase
         /// <summary>
         /// Returns true if the parameter is changed compared to the buffered value
         /// </summary>
-        public override bool IsModified => !IsEqualValue(Value, _bufferedValue);
+        public override bool IsModified => !IsEqualValue(Value, BufferedValue);
 
         /// <summary>
         /// Resets the modified flag to false by setting the buffered value to the current value
         /// </summary>
         public override void ResetModified()
         {
-            _bufferedValue = Value;
+            BufferedValue = Value;
         }
 
         /// <summary>
@@ -84,7 +94,7 @@ namespace DataTreeBase
         /// </summary>
         public override void Restore()
         {
-            Value = _bufferedValue;
+            Value = BufferedValue;
         }
 
         /// <summary>

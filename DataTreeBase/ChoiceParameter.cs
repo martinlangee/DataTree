@@ -11,6 +11,7 @@ namespace DataTreeBase
     /// </summary>
     public sealed class ChoiceParameter : DataTreeParameter<int>
     {
+        // todo: Value als "Master"-Value behandeln; ValueIdx als nachrangig (wie AsString)
         private int _valueIdx;
 
         /// <summary>
