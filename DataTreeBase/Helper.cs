@@ -34,11 +34,11 @@ namespace DataTreeBase
         /// </summary>
         internal static Attributes Attr = new Attributes
                                           {
-                                              Id = "id",
-                                              Name = "name",
-                                              Value = "val",
-                                              ValueStr = "valStr",
-                                              Unit = "unit"
+                                              Id = "i",
+                                              Name = "n",
+                                              Value = "v",
+                                              ValueStr = "vs",
+                                              Unit = "u"
                                           };
 
         /// <summary>

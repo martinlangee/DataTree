@@ -13,17 +13,16 @@ namespace DataTreeTests
             try
             {
                 p.AsString = testValue;
+                Assert.Fail("ArgumentException expected but did not occur");
             }
             catch (ArgumentException)
             {
                 Console.WriteLine("Expected ArgumentException occurred");
-                return;
             }
             catch (Exception e)
             {
                 Assert.Fail("Unexpected exception occurred: " + e);
             }
-            Assert.Fail("ArgumentException expected but did not occur");
         }
 
         protected void CheckProhibitedValueChange(DataTreeParameter<T> p, T value, Action<DataTreeParameterBase> onChangedAction)
@@ -32,17 +31,16 @@ namespace DataTreeTests
             try
             {
                 p.Value = value;
+                Assert.Fail("InvalidOperationException expected but did not occur");
             }
             catch (InvalidOperationException)
             {
                 Console.WriteLine("Expected InvalidOperationException occurred");
-                return;
             }
             catch (Exception e)
             {
                 Assert.Fail("Unexpected exception occurred: " + e);
             }
-            Assert.Fail("InvalidOperationException expected but did not occur");
         }
     }
 }

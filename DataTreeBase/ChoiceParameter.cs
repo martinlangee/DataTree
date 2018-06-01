@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -8,12 +7,11 @@ namespace DataTreeBase
 {
     /// <summary>
     /// Represents a choice parameter which defines a list of choices (consisting of value/string tuples)
+    /// Remark: Tuple used (instead of KeyValuePair) due to performance reasons (ref. https://www.dotnetperls.com/tuple-keyvaluepair).
     /// </summary>
     public sealed class ChoiceParameter : DataTreeParameter<int>
     {
-        // todo: Value als "Master"-Value behandeln; ValueIdx als nachrangig (wie AsString)
-        private int _valueIdx;
-        private IList<Tuple<int, string>> _choiceList;
+        private List<Tuple<int, string>> _choices;
 
         /// <summary>
         /// C'tor
@@ -22,24 +20,30 @@ namespace DataTreeBase
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        /// <param name="choiceList"></param>
-        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, IList<Tuple<int, string>> choiceList)
+        /// <param name="choices"></param>
+        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choices)
             : base(parent, id, name, defaultValue)
         {
-            ChoiceList = choiceList;
-            CheckChoiceList();
+            CheckAndAssignChoices(choices);
         }
 
         /// <summary>
-        /// Checks if both key and value of the choice list are unique
+        /// Checks if both key and value of the choice list are unambiguously
         /// </summary>
-        private void CheckChoiceList()
+        private void CheckAndAssignChoices(List<Tuple<int, string>> choices)
         {
-            if (ChoiceList.GroupBy(ch => ch.Item1).Any(g => g.Count() > 1))
-                throw new InvalidDataException("ChoiceParameter: choice values are not unique");
+            if ((choices == null) || (choices.Count < 1))
+                throw new ArgumentNullException("ChoiceParameter: invalid or empty choice list");
 
-            if (ChoiceList.GroupBy(ch => ch.Item2).Any(g => g.Count() > 1))
-                throw new InvalidDataException("ChoiceParameter: choice descriptions are not unique");
+            if (choices.GroupBy(ch => ch.Item1).Any(g => g.Count() > 1))
+                throw new ArgumentException("ChoiceParameter: choice values are not unambiguously");
+
+            // This does not necessarily have to be checked but i prefer to be more strict. 
+            // Furthermore it makes the 'AsString' assignment unambiguously.
+            if (choices.GroupBy(ch => ch.Item2).Any(g => g.Count() > 1))
+                throw new ArgumentException("ChoiceParameter: choice descriptions are not unambiguously");
+
+            _choices = choices;
         }
 
         /// <summary>
@@ -58,12 +62,12 @@ namespace DataTreeBase
         /// </summary>
         public override string AsString
         {
-            get { return ChoiceList.First(i => i.Item1 == Value).Item2; }
+            get { return Choices.First(i => i.Item1 == Value).Item2; }
             set
             {
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
 
-                var newChoice = ChoiceList.FirstOrDefault(i => i.Item2 == value);
+                var newChoice = Choices.FirstOrDefault(i => i.Item2 == value);
                 if (newChoice == null) throw new ArgumentOutOfRangeException($"ChoiceParameter.SetAsString: no choice found for string '{value}'");
 
                 Value = newChoice.Item1;
@@ -89,18 +93,16 @@ namespace DataTreeBase
         /// <summary>
         /// Gets or sets the list of choices this parameters defines
         /// </summary>
-        public IList<Tuple<int, string>> ChoiceList 
+        public IReadOnlyCollection<Tuple<int, string>> Choices 
         {
-            get { return _choiceList; }
+            get { return _choices; }
             set
             {
-                if ((value == null) || (value.Count < 1)) 
-                    throw new ArgumentNullException("ChoiceParameter.SetChoiceList: invalid choice list set");
+                CheckAndAssignChoices(value.ToList());
 
-                _choiceList = value;
-
-                if (_choiceList.All(c => c.Item1 != Value))
-                    Value = value[0].Item1;
+                // if old current value is not apparent in the new choices list set value to first item
+                if (_choices.All(c => c.Item1 != Value))
+                    Value = _choices[0].Item1;
             }
         }
 
@@ -112,7 +114,7 @@ namespace DataTreeBase
             get { return base.Value; }
             set
             {
-                if (ChoiceList.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException("ChoiceParameter.SetValue: no such item");
+                if (_choices.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException("ChoiceParameter.SetValue: no such item");
 
                 base.Value = value;
             }
@@ -123,12 +125,12 @@ namespace DataTreeBase
         /// </summary>
         public int ValueIdx
         {
-            get { return ChoiceList.IndexOf(new Tuple<int, string>(Value, AsString)); }
+            get { return _choices.IndexOf(new Tuple<int, string>(Value, AsString)); }
             set
             {
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");
 
-                Value = ChoiceList[value].Item1;
+                Value = _choices[value].Item1;
             }
         }
     }
