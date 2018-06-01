@@ -21,6 +21,8 @@ namespace DataTreeTests
             Assert.AreEqual(p.Name, "myIntName", "Name not initialized correctly");
             Assert.AreEqual(p.PathId, "myIntId", "PathId not initialized correctly");
             Assert.AreEqual(p.Value, 55, "Value not initialized correctly");
+            Assert.AreEqual(p.DefaultValue, 55, "DefaultValue not initialized correctly");
+            Assert.AreEqual(p.BufferedValue, 55, "BufferedValue not initialized correctly");
             Assert.AreEqual(p.AsString, "55", "AsString not initialized correctly");
         }
 
@@ -70,11 +72,11 @@ namespace DataTreeTests
 
             p.AsString = "123456789";
 
-            CheckValueSet(p, "Otto");
-            CheckValueSet(p, "1,234");
-            CheckValueSet(p, "567.345");
-            CheckValueSet(p, "45645.");
-            CheckValueSet(p, "-4545764.123e12");
+            CheckSetErroneousValueAsString(p, "Otto");
+            CheckSetErroneousValueAsString(p, "1,234");
+            CheckSetErroneousValueAsString(p, "567.345");
+            CheckSetErroneousValueAsString(p, "45645.");
+            CheckSetErroneousValueAsString(p, "-4545764.123e12");
         }
 
         [TestMethod]

@@ -60,7 +60,7 @@ namespace DataTreeTests
         {
             var p = new BoolParameter(null, "myBoolId", "myBoolName");
 
-            CheckValueSet(p, "Otto");
+            CheckSetErroneousValueAsString(p, "Otto");
         }
 
         [TestMethod]

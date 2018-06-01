@@ -76,8 +76,8 @@ namespace DataTreeTests
 
             p.AsString = "123456789,23";
 
-            CheckValueSet(p, "Otto");
-            CheckValueSet(p, "true");
+            CheckSetErroneousValueAsString(p, "Otto");
+            CheckSetErroneousValueAsString(p, "true");
         }
 
         [TestMethod]

@@ -13,6 +13,7 @@ namespace DataTreeBase
     {
         // todo: Value als "Master"-Value behandeln; ValueIdx als nachrangig (wie AsString)
         private int _valueIdx;
+        private IList<Tuple<int, string>> _choiceList;
 
         /// <summary>
         /// C'tor
@@ -22,7 +23,7 @@ namespace DataTreeBase
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
         /// <param name="choiceList"></param>
-        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choiceList)
+        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, IList<Tuple<int, string>> choiceList)
             : base(parent, id, name, defaultValue)
         {
             ChoiceList = choiceList;
@@ -57,20 +58,15 @@ namespace DataTreeBase
         /// </summary>
         public override string AsString
         {
-            get { return ChoiceList[ValueIdx].Item2; }
+            get { return ChoiceList.First(i => i.Item1 == Value).Item2; }
             set
             {
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
 
-                for (var idx = 0; idx < ChoiceList.Count; idx++)
-                {
-                    if (ChoiceList[idx].Item2 == value)
-                    {
-                        ValueIdx = idx;
-                        return;
-                    }
-                }
-                throw new ArgumentException($"ChoiceParameter.SetAsString: no matching choice for string value '{value}' found.");
+                var newChoice = ChoiceList.FirstOrDefault(i => i.Item2 == value);
+                if (newChoice == null) throw new ArgumentOutOfRangeException($"ChoiceParameter.SetAsString: no choice found for string '{value}'");
+
+                Value = newChoice.Item1;
             }
         }
 
@@ -92,53 +88,47 @@ namespace DataTreeBase
 
         /// <summary>
         /// Gets or sets the list of choices this parameters defines
-        /// todo: check if current ValueIdx is still valid
         /// </summary>
-        public List<Tuple<int, string>> ChoiceList { get; set; }
+        public IList<Tuple<int, string>> ChoiceList 
+        {
+            get { return _choiceList; }
+            set
+            {
+                if ((value == null) || (value.Count < 1)) 
+                    throw new ArgumentNullException("ChoiceParameter.SetChoiceList: invalid choice list set");
+
+                _choiceList = value;
+
+                if (_choiceList.All(c => c.Item1 != Value))
+                    Value = value[0].Item1;
+            }
+        }
 
         /// <summary>
         /// Int typed parameter value
         /// </summary>
         public override int Value
         {
-            get { return ChoiceList[ValueIdx].Item1; }
+            get { return base.Value; }
             set
             {
-                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValue: changing value while executing OnChanged is not allowed");
+                if (ChoiceList.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException("ChoiceParameter.SetValue: no such item");
 
-                for (var idx = 0; idx < ChoiceList.Count; idx++)
-                {
-                    if (ChoiceList[idx].Item1 == value)
-                    {
-                        ValueIdx = idx;
-                        return;
-                    }
-                }
-                throw new ArgumentOutOfRangeException($"ChoiceParameter.SetValue: no choice for choice value '{value}' found.");
+                base.Value = value;
             }
         }
 
         /// <summary>
-        /// Index of the value inside the choice list
+        /// Index of the selected value from the choice list
         /// </summary>
         public int ValueIdx
         {
-            get { return _valueIdx; }
+            get { return ChoiceList.IndexOf(new Tuple<int, string>(Value, AsString)); }
             set
             {
-                if (_valueIdx == value) return;
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");
 
-                IsChanging = true;
-                try
-                {
-                    _valueIdx = value;
-                    FireOnChanged();
-                }
-                finally
-                {
-                    IsChanging = false;
-                }
+                Value = ChoiceList[value].Item1;
             }
         }
     }

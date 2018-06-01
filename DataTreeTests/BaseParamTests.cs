@@ -8,7 +8,7 @@ namespace DataTreeTests
 {
     public class BaseParamTests<T>
     {
-        protected void CheckValueSet(DataTreeParameter<T> p, string testValue)
+        protected void CheckSetErroneousValueAsString(DataTreeParameter<T> p, string testValue)
         {
             try
             {
