@@ -89,6 +89,7 @@ namespace DataTreeBase
         public override void ResetModified()
         {
             BufferedValue = Value;
+            FireOnChanged();   // fired since 'IsModified' has possibly changed
         }
 
         /// <summary>

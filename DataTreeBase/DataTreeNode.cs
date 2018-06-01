@@ -1,13 +1,15 @@
 ﻿namespace DataTreeBase
 {
     // ok: dynamische Container-Listen
-	// todo: Import/Export von einzelnen Containern 
-	// todo: CRC-Check
-    // todo: Unit-Tests schreiben
+    // ok: Parameter-Unit-Tests schreiben
+    // canceled: Buffer arbeitet mit Stack
+    // todo: Container-Unit-Tests schreiben
+    // todo: Import/Export von einzelnen Containern 
+    // todo: CRC-Check
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen
     // todo: Thread-Sicherheit
-    // todo: Rückwärtsgang
+    // todo: Undo/Redo
     // todo: DB zur Serialisierung; mit Tabellen-Generierung?
 
     /// <summary>
