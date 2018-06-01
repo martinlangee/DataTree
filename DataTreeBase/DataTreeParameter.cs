@@ -23,7 +23,6 @@ namespace DataTreeBase
         protected DataTreeParameter(DataTreeContainer parent, string id, string name, T defaultValue)
             : base(parent, id, name)
         {
-            DefaultValue = defaultValue;
             BufferedValue = defaultValue;
             _value = defaultValue;
         }
@@ -67,11 +66,6 @@ namespace DataTreeBase
                 }
             } 
         }
-
-        /// <summary>
-        /// Returns the default value set on creation
-        /// </summary>
-        public T DefaultValue { get; private set; }
 
         /// <summary>
         /// Returns the buffered value set on creation or ResetModified

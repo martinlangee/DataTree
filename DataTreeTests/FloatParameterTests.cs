@@ -65,7 +65,6 @@ namespace DataTreeTests
 
             p.Value = 555555.66;
             p.ResetModified();
-            Assert.AreEqual(p.DefaultValue, 123, "DefaultValue is changed but may not be");
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 

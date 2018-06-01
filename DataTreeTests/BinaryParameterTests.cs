@@ -23,7 +23,6 @@ namespace DataTreeTests
             Assert.AreEqual(p.Name, "myBinaryName", "Name not initialized correctly");
             Assert.AreEqual(p.PathId, "myBinaryId", "PathId not initialized correctly");
             Assert.IsTrue(p.Value.SequenceEqual(_defValue), "Value not initialized correctly");
-            Assert.IsTrue(p.DefaultValue.SequenceEqual(_defValue), "DefaultValue not initialized correctly");
             Assert.IsTrue(p.BufferedValue.SequenceEqual(_defValue), "BufferedValue not initialized correctly");
             Assert.AreEqual(p.AsString, Convert.ToBase64String(_defValue), "AsString not initialized correctly");
         }
@@ -71,7 +70,6 @@ namespace DataTreeTests
 
             p.Value = new byte[] { 50, 61, 72, 83, 234, 29, 44, 71 };
             p.ResetModified();
-            Assert.IsTrue(p.DefaultValue.SequenceEqual(_defValue), "DefaultValue is changed but may not be");
             Assert.IsTrue(p.BufferedValue.SequenceEqual(p.Value), "BufferedValue not set correctly");
         }
 

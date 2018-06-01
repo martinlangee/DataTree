@@ -21,7 +21,6 @@ namespace DataTreeTests
             Assert.AreEqual(p.Name, "myIntName", "Name not initialized correctly");
             Assert.AreEqual(p.PathId, "myIntId", "PathId not initialized correctly");
             Assert.AreEqual(p.Value, 55, "Value not initialized correctly");
-            Assert.AreEqual(p.DefaultValue, 55, "DefaultValue not initialized correctly");
             Assert.AreEqual(p.BufferedValue, 55, "BufferedValue not initialized correctly");
             Assert.AreEqual(p.AsString, "55", "AsString not initialized correctly");
         }
@@ -61,7 +60,6 @@ namespace DataTreeTests
 
             p.Value = 555555;
             p.ResetModified();
-            Assert.AreEqual(p.DefaultValue, 123, "DefaultValue is changed but may not be");
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 
