@@ -4,12 +4,7 @@ namespace SampleModel
 {
     public sealed class Root: DataTreeContainer
     {
-        public static Root Create()
-        {
-            return new Root();
-        }
-
-        private Root()
+        public Root()
             : base(null, "Root", "Root")
         {
             Cont1 = new Cont1(this);

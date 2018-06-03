@@ -3,13 +3,13 @@
     // ok: dynamische Container-Listen
     // ok: Parameter-Unit-Tests schreiben
     // canceled: Buffer arbeitet mit Stack
+    // canceled: Thread-Sicherheit: auf Container-Ebene: Methode zum Container-Klonen einführen (v)
+    // todo: Undo/Redo
     // todo: Container-Unit-Tests schreiben
     // todo: Import/Export von einzelnen Containern 
     // todo: CRC-Check
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen
-    // todo: Thread-Sicherheit
-    // todo: Undo/Redo
     // todo: DB zur Serialisierung; mit Tabellen-Generierung?
 
     /// <summary>

@@ -68,6 +68,15 @@ namespace DataTreeBase
         }
 
         /// <summary>
+        /// Clones the parameter state from the specified parameter
+        /// </summary>
+        internal override void CloneFrom(DataTreeParameterBase param)
+        {
+            base.CloneFrom(param);
+            BufferedValue = ((DataTreeParameter<T>) param).BufferedValue;
+        }
+
+        /// <summary>
         /// Returns the buffered value set on creation or ResetModified
         /// </summary>
         public T BufferedValue { get; private set; }

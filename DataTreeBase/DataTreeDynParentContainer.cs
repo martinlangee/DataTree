@@ -88,5 +88,25 @@ namespace DataTreeBase
 
             Params.ForEach(p => p.LoadFromXml(xmlNode));
         }
+
+        /// <summary>
+        /// Clones the sub containers and parameters from the specified container
+        /// </summary>
+        internal override void CloneFrom(DataTreeContainer aContainer)
+        {
+            if (aContainer.PathId != PathId || aContainer.GetType() != GetType())
+                throw new InvalidOperationException("DataTreeDynParentContainer.CloneFrom: container ids or types not matching");
+
+            for (var i = 0; i < aContainer.Containers.Count; i++)
+            {
+                if (Containers.Count >= i) Add();
+                Containers[i].CloneFrom(aContainer.Containers[i]);
+            }
+
+            for (var i = 0; i < Params.Count; i++)
+            {
+                Params[i].CloneFrom(aContainer.Params[i]);
+            }
+        }
     }
 }

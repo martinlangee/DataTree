@@ -23,6 +23,32 @@ namespace DataTreeBase
             Params = new List<DataTreeParameterBase>();
 
             Parent?.Containers.Add(this);
+
+            DetermineRoot();
+        }
+
+        //private List<Tuple<string, string>  UnRedoList = new List<Tuple<string, string>>();
+
+        /// <summary>
+        /// Contains the top most container (traversing upwards the first one that has a null parent container)
+        /// </summary>
+        protected DataTreeContainer Root;
+
+        /// <summary>
+        /// Determines the root container (traversing upwards the first one that has a null parent container)
+        /// </summary>
+        private void DetermineRoot()
+        {
+            var cont = this;
+            while (true)
+            {
+                if (cont?.Parent == null)
+                {
+                    Root = cont;
+                    return;
+                }
+                cont = cont?.Parent;
+            }
         }
 
         /// <summary>
@@ -34,6 +60,16 @@ namespace DataTreeBase
         /// List of parameters
         /// </summary>
         public IList<DataTreeParameterBase> Params { get; }
+
+        /// <summary>
+        /// Returns a deep clone of this container
+        /// </summary>
+        public DataTreeContainer Clone()
+        {
+            var clone = Activator.CreateInstance(GetType()) as DataTreeContainer; 
+            clone?.CloneFrom(this);
+            return clone;
+        }
 
         /// <summary>
         /// Retruns true if one of it's parameters or the parameters of one of it's sub- (and sub-sub) containers is modified
@@ -85,6 +121,25 @@ namespace DataTreeBase
         protected virtual XmlNode GetOwnXmlNode(XmlNode parentXmlNode)
         {
             return parentXmlNode.ChildNodeByTagAndId(Helper.ContnTag, Id);
+        }
+
+        /// <summary>
+        /// Clones the sub containers and parameters from the specified container
+        /// </summary>
+        internal virtual void CloneFrom(DataTreeContainer aContainer)
+        {
+            if (aContainer.PathId != PathId || aContainer.GetType() != GetType())
+                throw new InvalidOperationException("DataTreeContainer.CloneFrom: container ids or types not matching");
+
+            for (var i = 0; i < Containers.Count; i++)
+            {
+                Containers[i].CloneFrom(aContainer.Containers[i]);
+            }
+
+            for (var i = 0; i < Params.Count; i++)
+            {
+                Params[i].CloneFrom(aContainer.Params[i]);
+            }
         }
 
         /// <summary>

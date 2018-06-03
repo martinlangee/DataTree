@@ -61,6 +61,17 @@ namespace DataTreeBase
         }
 
         /// <summary>
+        /// Clones the parameter state from the specified parameter
+        /// </summary>
+        internal virtual void CloneFrom(DataTreeParameterBase param)
+        {
+            if (param.Id != Id || param.GetType() != GetType())
+                throw new InvalidOperationException("DataTreeParameterBase.CloneFrom: parameter ids or types not matching");
+
+            AsString = param.AsString;
+        }
+
+        /// <summary>
         /// Gets or sets the string representation of the parameter value
         /// </summary>
         public abstract string AsString { get; set; }
@@ -79,6 +90,5 @@ namespace DataTreeBase
         /// Sets the value to the buffered value
         /// </summary>
         public abstract void Restore();
-
     }
 }

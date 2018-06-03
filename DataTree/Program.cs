@@ -10,7 +10,7 @@ namespace DataTreeHost
     {
         static void Main(string[] args)
         {
-            var model = Root.Create();
+            var model = new Root();
 
             model.LoadFromFile("D://DataTree.xml");
 
@@ -45,6 +45,10 @@ namespace DataTreeHost
             model.Cont2.DynContainers[1].StrParam5.Value = "nonononononon";
             var p = model.Cont2.DynContainers[1].PathId;
             //model.Cont2.
+
+            var clone = model.Clone() as Root;
+            clone.Cont1.FloatParam1.Value = 99999999.1234;
+            clone.SaveToFile("D://DataTreeClone.xml");
 
             model.SaveToFile("D://DataTree.xml");
         }
