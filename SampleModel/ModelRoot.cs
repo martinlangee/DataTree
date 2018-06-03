@@ -1,7 +1,10 @@
-﻿using DataTreeBase;
+﻿using System.Diagnostics;
+
+using DataTreeBase;
 
 namespace SampleModel
 {
+    [DebuggerStepThrough]
     public sealed class Root: DataTreeContainer
     {
         public Root()

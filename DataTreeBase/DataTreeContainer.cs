@@ -10,6 +10,9 @@ namespace DataTreeBase
     /// </summary>
     public class DataTreeContainer: DataTreeNode
     {
+        private bool _isRoot = false;
+        private bool _isLoading;
+
         /// <summary>
         /// C'tor
         /// </summary>
@@ -25,14 +28,14 @@ namespace DataTreeBase
             Parent?.Containers.Add(this);
 
             DetermineRoot();
-        }
 
-        //private List<Tuple<string, string>  UnRedoList = new List<Tuple<string, string>>();
+            if (_isRoot) UndoRedo = new UndoRedoStack();
+        }
 
         /// <summary>
         /// Contains the top most container (traversing upwards the first one that has a null parent container)
         /// </summary>
-        protected DataTreeContainer Root;
+        internal DataTreeContainer Root;
 
         /// <summary>
         /// Determines the root container (traversing upwards the first one that has a null parent container)
@@ -45,6 +48,7 @@ namespace DataTreeBase
                 if (cont?.Parent == null)
                 {
                     Root = cont;
+                    _isRoot = true;
                     return;
                 }
                 cont = cont?.Parent;
@@ -60,6 +64,11 @@ namespace DataTreeBase
         /// List of parameters
         /// </summary>
         public IList<DataTreeParameterBase> Params { get; }
+
+        /// <summary>
+        /// Returns the undo/redo stack object
+        /// </summary>
+        public UndoRedoStack UndoRedo { get; }
 
         /// <summary>
         /// Returns a deep clone of this container
@@ -149,8 +158,9 @@ namespace DataTreeBase
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
             var xmlNode = parentXmlNode.ChildNodeByTagAndId(Helper.ContnTag, Id);
-            if (xmlNode == null) return;
-            
+            if (xmlNode == null)
+                return;
+
             Params.ForEach(p => p.LoadFromXml(xmlNode));
             Containers.ForEach(c => c.LoadFromXml(xmlNode));
         }
@@ -163,7 +173,15 @@ namespace DataTreeBase
         {
             var doc = new XmlDocument();
             doc.Load(fileName);
-            Containers.ForEach(c => c.LoadFromXml(doc.DocumentElement));
+            UndoRedo.Muted = true;
+            try
+            {
+                Containers.ForEach(c => c.LoadFromXml(doc.DocumentElement));
+            }
+            finally
+            {
+                UndoRedo.Muted = false;
+            }
             ResetModified();
         }
 

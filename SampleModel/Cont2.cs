@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 using DataTreeBase;
 
 namespace SampleModel
 {
+    [DebuggerStepThrough]
     public sealed class Cont2 : DataTreeDynParentContainer<DynContainer>
     {
         public Cont2(DataTreeContainer parent)

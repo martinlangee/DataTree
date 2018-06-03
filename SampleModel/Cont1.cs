@@ -1,7 +1,10 @@
-﻿using DataTreeBase;
+﻿using System.Diagnostics;
+
+using DataTreeBase;
 
 namespace SampleModel
 {
+    [DebuggerStepThrough]
     public sealed class Cont1: DataTreeContainer
     {
         public Cont1(DataTreeContainer parent)

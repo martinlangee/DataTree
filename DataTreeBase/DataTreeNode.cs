@@ -6,6 +6,7 @@
     // canceled: Thread-Sicherheit: auf Container-Ebene: Methode zum Container-Klonen einführen (v)
     // todo: Undo/Redo
     // todo: Container-Unit-Tests schreiben
+    // todo: Strings: UTF8?
     // todo: Import/Export von einzelnen Containern 
     // todo: CRC-Check
     // todo: Anbindung an UI über Proxy oder DTO

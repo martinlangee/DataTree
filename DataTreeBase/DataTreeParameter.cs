@@ -7,9 +7,10 @@ namespace DataTreeBase
     /// Represents a generic parameter base class
     /// </summary>
     /// <typeparam name="T">The value type</typeparam>
-    public abstract class DataTreeParameter<T>: DataTreeParameterBase
+    public abstract class DataTreeParameter<T>: DataTreeParameterBase, IUndoRedoNode
     {
         private T _value;
+        private readonly UndoRedoStack _undoRedo;
 
         protected bool IsChanging;
 
@@ -25,6 +26,7 @@ namespace DataTreeBase
         {
             BufferedValue = defaultValue;
             _value = defaultValue;
+            _undoRedo = Parent.Root.UndoRedo;
         }
 
         /// <summary>
@@ -40,7 +42,9 @@ namespace DataTreeBase
         /// </summary>
         protected virtual void AssignValueAndNotify(T value)
         {
+            var oldValue = _value;
             _value = value;
+            _undoRedo.OnParamChangedForUndoRedo(this, oldValue, _value);
             FireOnChanged();
         }
 
@@ -115,6 +119,27 @@ namespace DataTreeBase
         protected virtual bool IsEqualValue(T value1, T value2)
         {
             return Comparer<T>.Default.Compare(value1, value2) == 0;
+        }
+
+        /// <summary>
+        /// Action fires on change of the parameter value used by the undo/redo controller
+        /// </summary>
+        internal Action<DataTreeParameterBase, object, object> OnChangedForUndoRedo { get; set; }
+
+        /// <summary>
+        /// Undo the last change with the old value
+        /// </summary>
+        public void Undo(object oldValue)
+        {
+            Value = (T) oldValue;
+        }
+
+        /// <summary>
+        /// Redo the last change with the new  value
+        /// </summary>
+        public void Redo(object newValue)
+        {
+            Value = (T) newValue;
         }
     }
 }

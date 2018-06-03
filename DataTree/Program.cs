@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 using DataTreeBase;
 
@@ -8,15 +9,30 @@ namespace DataTreeHost
 {
     class Program
     {
+        static Root model = new Root();
+
         static void Main(string[] args)
         {
-            var model = new Root();
-
             model.LoadFromFile("D://DataTree.xml");
 
-            model.Cont2.StrParam4.OnChanged += OnChange;
+//            model.Cont2.StrParam4.OnChanged += OnChange;
 
-            model.Cont1.IntParam.Value = 33;
+            model.UndoRedo.CanUndoRedoChanged += ModelOnCanUndoRedoChanged;
+
+            model.Cont1.IntParam.Value = model.Cont1.IntParam.Value + 33;
+            model.Cont1.StrParam.Value = "xxxx" + model.Cont1.StrParam.Value;
+            model.Cont1.FloatParam1.Value = model.Cont1.FloatParam1.Value + 1.3;
+
+            while (model.UndoRedo.CanUndo)
+            {
+                model.UndoRedo.Undo();
+            }
+
+            while (model.UndoRedo.CanRedo)
+            {
+                model.UndoRedo.Redo();
+            }
+
             model.Cont2.StrParam4.Value = "eeeeee";
             model.Cont2.StrParam4.Value = "eeeeedsdfsdfsf";
             var mod = model.Cont2.StrParam4.IsModified;
@@ -53,9 +69,14 @@ namespace DataTreeHost
             model.SaveToFile("D://DataTree.xml");
         }
 
+        private static void ModelOnCanUndoRedoChanged()
+        {
+            Console.WriteLine("ModelOnCanUndoRedoChanged:" + model.UndoRedo.CanUndo + "/" + model.UndoRedo.CanRedo);
+        }
+
         static void OnChange(DataTreeParameterBase param)
         {
-            Debug.WriteLine("Parameter " + param.PathId + " Val=" + param.AsString);
+            Console.WriteLine("Parameter " + param.PathId + " Val=" + param.AsString);
         }
     }
 }

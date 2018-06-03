@@ -50,10 +50,12 @@
     <Compile Include="FloatParameter.cs" />
     <Compile Include="ChoiceParameter.cs" />
     <Compile Include="BoolParameter.cs" />
+    <Compile Include="IUndoRedoNode.cs" />
     <Compile Include="StringParameter.cs" />
     <Compile Include="IntParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper.cs" />
+    <Compile Include="UndoRedoStack.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
