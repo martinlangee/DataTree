@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 using DataTreeBase.Interfaces;
 
 namespace DataTreeBase.UndoRedo
 {
+    /// <summary>
+    /// Handling the undo/redo actions and states
+    /// </summary>
     public sealed class UndoRedoStack
     {
         /// <summary>
