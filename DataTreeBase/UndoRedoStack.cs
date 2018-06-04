@@ -20,10 +20,9 @@ namespace DataTreeBase
         private readonly List<UndoRedoItem> _stack = new List<UndoRedoItem>();
 
         /// <summary>
-        /// Executing the specified undo/redo action avoiding recursive loop
+        /// Set the specified value avoiding recursive loop
         /// </summary>
-        /// <param name="undoRedoAction">Action to be executed</param>
-        private void SafeExcute(Action undoRedoAction)
+        private void SafeSetValue(object value)
         {
             if (_undoRedoing)
                 return;
@@ -31,7 +30,7 @@ namespace DataTreeBase
             _undoRedoing = true;
             try
             {
-                undoRedoAction.Invoke();
+                _stack[_pointer].Node.Set(value);
             }
             finally
             {
@@ -47,7 +46,7 @@ namespace DataTreeBase
             if (_pointer < 0)
                 throw new InvalidOperationException("DataTreeContainer.Undo: pointer to undo stack already at lower limit");
 
-            SafeExcute(() => _stack[_pointer].Node.Undo(_stack[_pointer].OldValue));
+            SafeSetValue(_stack[_pointer].OldValue);
             _pointer--;
 
             if ((_pointer == 0) || (_pointer < (_stack.Count - 1)))
@@ -64,7 +63,7 @@ namespace DataTreeBase
                 throw new InvalidOperationException("DataTreeContainer.Undo: pointer to redo stack already at upper limit");
 
             _pointer++;
-            SafeExcute(() => _stack[_pointer].Node.Redo(_stack[_pointer].NewValue));
+            SafeSetValue(_stack[_pointer].NewValue);
 
             if ((_pointer > 0) || (_pointer) == (_stack.Count - 1))
                 CanUndoRedoChanged.Invoke();
@@ -88,12 +87,12 @@ namespace DataTreeBase
         /// <summary>
         /// Stores the change of the specified paramerter with it's old and new value in the undo/redo stack
         /// </summary>
-        /// <param name="param">The parameter who's value was changed</param>
+        /// <param name="dataNode">The data node who's value was changed</param>
         /// <param name="oldValue">The former value of the parameter</param>
         /// <param name="newValue">The new value of the parameter</param>
-        internal void OnParamChangedForUndoRedo(DataTreeParameterBase param, object oldValue, object newValue)
+        internal void NotifyChangeEvent(IUndoRedoNode dataNode, object oldValue, object newValue)
         {
-            if (_undoRedoing || Muted)
+            if (_undoRedoing || IsMuted)
                 return;
 
             // clear "Redo"-Entries when new change has occurred
@@ -102,7 +101,7 @@ namespace DataTreeBase
 
             _stack.Add(new UndoRedoItem()
                        {
-                           Node = param as IUndoRedoNode,
+                           Node = dataNode,
                            OldValue = oldValue,
                            NewValue = newValue
                        });
@@ -121,6 +120,6 @@ namespace DataTreeBase
         /// <summary>
         /// If set the undo/redo stack is not updated
         /// </summary>
-        internal bool Muted { private get; set; }
+        internal bool IsMuted { private get; set; }
     }
 }

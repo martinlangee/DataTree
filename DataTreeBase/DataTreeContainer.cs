@@ -11,7 +11,6 @@ namespace DataTreeBase
     public class DataTreeContainer: DataTreeNode
     {
         private bool _isRoot = false;
-        private bool _isLoading;
 
         /// <summary>
         /// C'tor
@@ -29,7 +28,7 @@ namespace DataTreeBase
 
             DetermineRoot();
 
-            if (_isRoot) UndoRedo = new UndoRedoStack();
+            UndoRedo = _isRoot ? new UndoRedoStack() : Root.UndoRedo;
         }
 
         /// <summary>
@@ -173,14 +172,14 @@ namespace DataTreeBase
         {
             var doc = new XmlDocument();
             doc.Load(fileName);
-            UndoRedo.Muted = true;
+            UndoRedo.IsMuted = true;
             try
             {
                 Containers.ForEach(c => c.LoadFromXml(doc.DocumentElement));
             }
             finally
             {
-                UndoRedo.Muted = false;
+                UndoRedo.IsMuted = false;
             }
             ResetModified();
         }

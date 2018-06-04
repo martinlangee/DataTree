@@ -44,7 +44,7 @@ namespace DataTreeBase
         {
             var oldValue = _value;
             _value = value;
-            _undoRedo.OnParamChangedForUndoRedo(this, oldValue, _value);
+            _undoRedo.NotifyChangeEvent(this, oldValue, _value);
             FireOnChanged();
         }
 
@@ -127,19 +127,11 @@ namespace DataTreeBase
         internal Action<DataTreeParameterBase, object, object> OnChangedForUndoRedo { get; set; }
 
         /// <summary>
-        /// Undo the last change with the old value
+        /// Set the new value as result of the undo or redo process
         /// </summary>
-        public void Undo(object oldValue)
+        public void Set(object value)
         {
-            Value = (T) oldValue;
-        }
-
-        /// <summary>
-        /// Redo the last change with the new  value
-        /// </summary>
-        public void Redo(object newValue)
-        {
-            Value = (T) newValue;
+            Value = (T) value;
         }
     }
 }

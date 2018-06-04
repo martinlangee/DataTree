@@ -3,11 +3,13 @@
 namespace DataTreeBase
 {
     /// <summary>
-    /// Interface unifying the access to the Undo and Redo command of parameters and containers
+    /// Interface unifying the access to the Undo and Redo command of parameters and dynamic containers
     /// </summary>
     internal interface IUndoRedoNode
     {
-        void Undo(object oldValue);
-        void Redo(object newValue);
+        /// <summary>
+        /// Triggering this node to load the specified value
+        /// </summary>
+        void Set(object value);
     }
 }

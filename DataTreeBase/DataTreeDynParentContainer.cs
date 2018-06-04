@@ -5,11 +5,27 @@ using System.Xml;
 
 namespace DataTreeBase
 {
+    internal enum UndoAction
+    {
+        Add,
+        Remove,
+        Clear
+    }
+
+    internal class DynContainerUndoData
+    {
+        internal UndoAction Action;
+        internal int Index;
+        internal List<DataTreeDynContainer> Containers = new List<DataTreeDynContainer>();
+    }
+
     /// <summary>
     /// Represents a container where sub-containers can be added and removed dynamically
     /// </summary>
-    public class  DataTreeDynParentContainer<T> : DataTreeContainer where T: DataTreeContainer
+    public class DataTreeDynParentContainer<T> : DataTreeContainer, IUndoRedoNode where T: DataTreeDynContainer
     {
+        private readonly UndoRedoStack _undoRedo;
+
         /// <summary>
         /// C'tor
         /// </summary>
@@ -19,6 +35,7 @@ namespace DataTreeBase
         protected DataTreeDynParentContainer(DataTreeContainer parent, string id, string name)
             : base(parent, id, name)
         {
+            _undoRedo = Root.UndoRedo;
         }
 
         /// <summary>
@@ -33,18 +50,75 @@ namespace DataTreeBase
         public T Add()
         {
             var type = typeof(T);
-            return Activator.CreateInstance(type, this) as T;
+            var cont = Activator.CreateInstance(type, this) as T;
+            _undoRedo.NotifyChangeEvent(this,
+                                       new DynContainerUndoData
+                                       {
+                                           Action = UndoAction.Add,
+                                           Index = Containers.IndexOf(cont),
+                                           Containers = new List<DataTreeDynContainer>()
+                                       },
+                                       new DynContainerUndoData
+                                       {
+                                           Action = UndoAction.Add,
+                                           Index = Containers.IndexOf(cont),
+                                           Containers = new List<DataTreeDynContainer>() { cont }
+                                       });
+            return cont;
         }
 
         /// <summary>
-        /// Adds a new data tree container to the list of sub containers
+        /// Adds a new data tree container to the list of sub containers executing the specified init action
         /// </summary>
         /// <returns>The new DataTreeContainer</returns>
         public T Add(Action<T> initAction)
         {
-            var child = Add();
-            initAction?.Invoke(child);
-            return child;
+            var cont = Add();
+            initAction?.Invoke(cont);
+            return cont;
+        }
+
+        /// <summary>
+        /// Inserts the specified container at the specified index position
+        /// </summary>
+        private void Insert(int index, T container)
+        {
+            Containers.Insert(index, container);
+            _undoRedo.NotifyChangeEvent(this,
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Add,
+                               Index = index,
+                               Containers = new List<DataTreeDynContainer>()
+                           },
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Add,
+                               Index = index,
+                               Containers = new List<DataTreeDynContainer>() { container }
+                           });
+        }
+
+        /// <summary>
+        /// Inserts a new container at the specified index position
+        /// </summary>
+        public T Insert(int index)
+        {
+            var type = typeof(T);
+            var cont = Activator.CreateInstance(type, this) as T;
+            Insert(index, cont);
+            return cont;
+        }
+
+        /// <summary>
+        /// Inserts a new container at the specified index position executing the specified init action
+        /// </summary>
+        public T Insert(int index, Action<T> initAction)
+        {
+            var cont = Insert(index);
+            initAction?.Invoke(cont);
+            Insert(index, cont);
+            return cont;
         }
 
         /// <summary>
@@ -52,7 +126,7 @@ namespace DataTreeBase
         /// </summary>
         public void Remove(T container)
         {
-            Containers.Remove(container);
+            Containers.RemoveAt(Containers.IndexOf(container));
         }
 
         /// <summary>
@@ -60,7 +134,21 @@ namespace DataTreeBase
         /// </summary>
         public void RemoveAt(int index)
         {
+            var cont = Containers[index];
             Containers.RemoveAt(index);
+            _undoRedo.NotifyChangeEvent(this,
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Add,
+                               Index = index,
+                               Containers = new List<DataTreeDynContainer>() { cont }
+                           },
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Add,
+                               Index = index,
+                               Containers = new List<DataTreeDynContainer>()
+                           });
         }
 
         /// <summary>
@@ -69,6 +157,19 @@ namespace DataTreeBase
         public void Clear()
         {
             Containers.Clear();
+            _undoRedo.NotifyChangeEvent(this,
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Clear,
+                               Index = -1,
+                               Containers = Containers.Cast<DataTreeDynContainer>().ToList()
+                           },
+                           new DynContainerUndoData
+                           {
+                               Action = UndoAction.Add,
+                               Index = -1,
+                               Containers = new List<DataTreeDynContainer>()
+                           });
         }
 
         /// <summary>
@@ -106,6 +207,43 @@ namespace DataTreeBase
             for (var i = 0; i < Params.Count; i++)
             {
                 Params[i].CloneFrom(aContainer.Params[i]);
+            }
+        }
+
+        /// <summary>
+        /// Triggering this node to load the specified value
+        /// </summary>
+        public void Set(object value)
+        {
+            var undoData = (DynContainerUndoData) value;
+
+            switch (undoData.Action)
+            {
+                // Child container added
+                case UndoAction.Add:
+                    if (undoData.Containers.Count == 0)
+                        RemoveAt(undoData.Index);                               // Undo
+                    else
+                        Insert(undoData.Index, (T) undoData.Containers[0]);     // Redo
+                    break;
+
+                // Child container removed
+                case UndoAction.Remove:
+                    if (undoData.Containers.Count > 0)
+                        Insert(undoData.Index, (T) undoData.Containers[0]);     // Undo
+                    else
+                        RemoveAt(undoData.Index);                               // Redo
+                    break;
+
+                // all child containers removed
+                case UndoAction.Clear:
+                    if (undoData.Containers.Count > 0)
+                        undoData.Containers.ForEach((i, c) => Insert(i, (T) c)); // Undo
+                    else
+                        Clear();                                                 // Redo
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

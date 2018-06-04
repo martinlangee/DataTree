@@ -116,5 +116,17 @@ namespace DataTreeBase
                 action(item);
             }
         }
+
+        /// <summary>
+        /// Performs the specified action in a foreach loop over the specified list
+        /// </summary>
+        internal static void ForEach<T>(this IEnumerable<T> list, Action<int, T> action)
+        {
+            var i = 0;
+            foreach (var item in list)
+            {
+                action(i++, item);
+            }
+        }
     }
 }

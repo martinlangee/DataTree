@@ -45,6 +45,12 @@ namespace DataTreeHost
             model.Cont2.ChParam6.ValueIdx = 2;
             model.Cont2.BinParam7.Value = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 0 };
 
+            model.Cont2.Add();
+            model.Cont2.Add();
+
+            model.UndoRedo.Undo();
+            model.UndoRedo.Undo();
+
             model.Cont2.Add(d =>
             {
                 d.BoolParam6.Value = true;

@@ -36,7 +36,7 @@
         /// Setting the parent container relocates the node and all of it's sub-nodes.
         /// Setting it to null detaches it from the data tree.
         /// </summary>
-        protected DataTreeContainer Parent { get; }
+        internal DataTreeContainer Parent { get; }
 
         /// <summary>
         /// Returns the node identificator used for serialization
