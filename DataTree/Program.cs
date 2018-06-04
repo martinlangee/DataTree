@@ -16,7 +16,7 @@ namespace DataTreeHost
             model.LoadFromFile("D://DataTree.xml");
 
 //            model.Cont2.StrParam4.OnChanged += OnChange;
-
+/*
             model.UndoRedo.CanUndoRedoChanged += ModelOnCanUndoRedoChanged;
 
             model.Cont1.IntParam.Value = model.Cont1.IntParam.Value + 33;
@@ -44,12 +44,10 @@ namespace DataTreeHost
             model.Cont2.BoolParam5.Value = false;
             model.Cont2.ChParam6.ValueIdx = 2;
             model.Cont2.BinParam7.Value = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 0 };
-
+*/
             model.Cont2.Add();
-            model.Cont2.Add();
-
             model.UndoRedo.Undo();
-            model.UndoRedo.Undo();
+            model.UndoRedo.Redo();
 
             model.Cont2.Add(d =>
             {

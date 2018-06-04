@@ -5,6 +5,9 @@ using System.Xml;
 
 namespace DataTreeBase
 {
+    /// <summary>
+    /// Specifying the type if action that has to be undone
+    /// </summary>
     internal enum UndoAction
     {
         Add,
@@ -12,9 +15,12 @@ namespace DataTreeBase
         Clear
     }
 
-    internal class DynContainerUndoData
+    /// <summary>
+    /// Data container boxing the data needed for undo/redo of dynamic container lists
+    /// </summary>
+    internal sealed class DynContainerUndoData
     {
-        internal UndoAction Action;
+        internal UndoAction ActionType;
         internal int Index;
         internal List<DataTreeDynContainer> Containers = new List<DataTreeDynContainer>();
     }
@@ -41,7 +47,31 @@ namespace DataTreeBase
         /// <summary>
         /// List of sub-containers
         /// </summary>
-        protected new IList<T> Containers => base.Containers.Cast<T>().ToList();
+        protected new IReadOnlyList<T> Containers => base.Containers.Cast<T>().ToList();
+
+        /// <summary>
+        /// Notifies to the undo/redo stack a change in the dynamic child container list
+        /// </summary>
+        /// <param name="actionType">Added (also inserted), removed or cleared</param>
+        /// <param name="index">Index of the concerning child container</param>
+        /// <param name="oldContainers">List containing the one removed container or in case of 'Clear' the whole list</param>
+        /// <param name="newContainers">List containing the one added container or (in case of 'Remove' or 'Clear') is empty</param>
+        private void NotifyUndoRedoEvent(UndoAction actionType, int index, List<DataTreeDynContainer> oldContainers, List<DataTreeDynContainer> newContainers)
+        {
+            _undoRedo.NotifyChangeEvent(this,
+                           new DynContainerUndoData
+                           {
+                               ActionType = actionType,
+                               Index = index,
+                               Containers = oldContainers
+                           },
+                           new DynContainerUndoData
+                           {
+                               ActionType = actionType,
+                               Index = index,
+                               Containers = newContainers
+                           });
+        }
 
         /// <summary>
         /// Adds a new data tree container to the list of sub containers
@@ -51,19 +81,10 @@ namespace DataTreeBase
         {
             var type = typeof(T);
             var cont = Activator.CreateInstance(type, this) as T;
-            _undoRedo.NotifyChangeEvent(this,
-                                       new DynContainerUndoData
-                                       {
-                                           Action = UndoAction.Add,
-                                           Index = Containers.IndexOf(cont),
-                                           Containers = new List<DataTreeDynContainer>()
-                                       },
-                                       new DynContainerUndoData
-                                       {
-                                           Action = UndoAction.Add,
-                                           Index = Containers.IndexOf(cont),
-                                           Containers = new List<DataTreeDynContainer>() { cont }
-                                       });
+            NotifyUndoRedoEvent(actionType: UndoAction.Add,
+                                index: base.Containers.IndexOf(cont),
+                                oldContainers: new List<DataTreeDynContainer>(),
+                                newContainers: new List<DataTreeDynContainer>() { cont });
             return cont;
         }
 
@@ -83,20 +104,11 @@ namespace DataTreeBase
         /// </summary>
         private void Insert(int index, T container)
         {
-            Containers.Insert(index, container);
-            _undoRedo.NotifyChangeEvent(this,
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Add,
-                               Index = index,
-                               Containers = new List<DataTreeDynContainer>()
-                           },
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Add,
-                               Index = index,
-                               Containers = new List<DataTreeDynContainer>() { container }
-                           });
+            base.Containers.Insert(index, container);
+            NotifyUndoRedoEvent(actionType: UndoAction.Add,
+                                index: index,
+                                oldContainers: new List<DataTreeDynContainer>(),
+                                newContainers: new List<DataTreeDynContainer>() { container });
         }
 
         /// <summary>
@@ -126,7 +138,7 @@ namespace DataTreeBase
         /// </summary>
         public void Remove(T container)
         {
-            Containers.RemoveAt(Containers.IndexOf(container));
+            base.Containers.RemoveAt(base.Containers.IndexOf(container));
         }
 
         /// <summary>
@@ -135,20 +147,11 @@ namespace DataTreeBase
         public void RemoveAt(int index)
         {
             var cont = Containers[index];
-            Containers.RemoveAt(index);
-            _undoRedo.NotifyChangeEvent(this,
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Add,
-                               Index = index,
-                               Containers = new List<DataTreeDynContainer>() { cont }
-                           },
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Add,
-                               Index = index,
-                               Containers = new List<DataTreeDynContainer>()
-                           });
+            base.Containers.RemoveAt(index);
+            NotifyUndoRedoEvent(actionType: UndoAction.Remove,
+                                index: index,
+                                oldContainers: new List<DataTreeDynContainer>() { cont },
+                                newContainers: new List<DataTreeDynContainer>());
         }
 
         /// <summary>
@@ -156,20 +159,11 @@ namespace DataTreeBase
         /// </summary>
         public void Clear()
         {
-            Containers.Clear();
-            _undoRedo.NotifyChangeEvent(this,
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Clear,
-                               Index = -1,
-                               Containers = Containers.Cast<DataTreeDynContainer>().ToList()
-                           },
-                           new DynContainerUndoData
-                           {
-                               Action = UndoAction.Add,
-                               Index = -1,
-                               Containers = new List<DataTreeDynContainer>()
-                           });
+            base.Containers.Clear();
+            NotifyUndoRedoEvent(actionType: UndoAction.Clear,
+                                index: -1,
+                                oldContainers: Containers.Cast<DataTreeDynContainer>().ToList(),
+                                newContainers: new List<DataTreeDynContainer>());
         }
 
         /// <summary>
@@ -211,13 +205,13 @@ namespace DataTreeBase
         }
 
         /// <summary>
-        /// Triggering this node to load the specified value
+        /// Set the new container as result of the undo or redo process
         /// </summary>
         public void Set(object value)
         {
             var undoData = (DynContainerUndoData) value;
 
-            switch (undoData.Action)
+            switch (undoData.ActionType)
             {
                 // Child container added
                 case UndoAction.Add:

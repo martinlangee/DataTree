@@ -32,6 +32,6 @@ namespace SampleModel
         public ChoiceParameter ChParam6 { get; }
         public BinaryParameter BinParam7 { get; }
 
-        public IList<DynContainer> DynContainers => Containers;
+        public IReadOnlyList<DynContainer> DynContainers => Containers;
     }
 }

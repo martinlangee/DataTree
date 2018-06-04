@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace DataTreeBase
 {
@@ -46,12 +47,12 @@ namespace DataTreeBase
             if (_pointer < 0)
                 throw new InvalidOperationException("DataTreeContainer.Undo: pointer to undo stack already at lower limit");
 
+            Debug.WriteLine("Undo: OldValue=" + _stack[_pointer].OldValue + " Ptr=" + _pointer);
             SafeSetValue(_stack[_pointer].OldValue);
             _pointer--;
 
             if ((_pointer == 0) || (_pointer < (_stack.Count - 1)))
                 CanUndoRedoChanged.Invoke();
-
         }
 
         /// <summary>
@@ -63,6 +64,7 @@ namespace DataTreeBase
                 throw new InvalidOperationException("DataTreeContainer.Undo: pointer to redo stack already at upper limit");
 
             _pointer++;
+            Debug.WriteLine("Redo: NewValue=" + _stack[_pointer].NewValue + " Ptr=" + _pointer);
             SafeSetValue(_stack[_pointer].NewValue);
 
             if ((_pointer > 0) || (_pointer) == (_stack.Count - 1))
@@ -99,13 +101,15 @@ namespace DataTreeBase
             if (_stack.Count > 0 && _pointer < (_stack.Count - 1))
                 _stack.RemoveRange(_pointer + 1, _stack.Count - _pointer - 1);
 
-            _stack.Add(new UndoRedoItem()
-                       {
-                           Node = dataNode,
-                           OldValue = oldValue,
-                           NewValue = newValue
-                       });
+            var undoItem = new UndoRedoItem()
+                           {
+                               Node = dataNode,
+                               OldValue = oldValue,
+                               NewValue = newValue
+                           };
+            _stack.Add(undoItem);
             _pointer++;
+            Debug.WriteLine("NotifyChangeEvent: " + undoItem.Node + " ptr=" + _pointer);
         }
 
         /// <summary>
