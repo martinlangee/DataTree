@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 
 using DataTreeBase.Interfaces;
+using DataTreeBase.UndoRedo;
 
 namespace DataTreeBase.Container
 {
@@ -43,7 +44,7 @@ namespace DataTreeBase.Container
         protected DataTreeDynParentContainer(DataTreeContainer parent, string id, string name)
             : base(parent, id, name)
         {
-            _undoRedo = Root.UndoRedo;
+            _undoRedo = Root?.UndoRedo;
         }
 
         /// <summary>

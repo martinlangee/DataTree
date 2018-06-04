@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 using DataTreeBase.Interfaces;
 
-namespace DataTreeBase
+namespace DataTreeBase.UndoRedo
 {
     public sealed class UndoRedoStack
     {

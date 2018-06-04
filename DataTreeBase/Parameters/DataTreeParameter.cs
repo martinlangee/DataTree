@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using DataTreeBase.Container;
 using DataTreeBase.Interfaces;
+using DataTreeBase.UndoRedo;
 
 namespace DataTreeBase.Parameters
 {
@@ -29,7 +30,7 @@ namespace DataTreeBase.Parameters
         {
             BufferedValue = defaultValue;
             _value = defaultValue;
-            _undoRedo = Parent?.Root.UndoRedo;
+            _undoRedo = Parent?.Root?.UndoRedo;
         }
 
         /// <summary>
