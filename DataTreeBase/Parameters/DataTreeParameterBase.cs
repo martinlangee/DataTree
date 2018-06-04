@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Xml;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents an abstract base parameter class
     /// </summary>
-    public abstract class DataTreeParameterBase: DataTreeNode
+    public abstract class DataTreeParameterBase: DataTreeBaseNode
     {
         /// <summary>
         /// C'tor

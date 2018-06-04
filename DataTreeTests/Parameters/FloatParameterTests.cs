@@ -2,10 +2,11 @@
 using System.Globalization;
 
 using DataTreeBase;
+using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests
+namespace DataTreeTests.Parameters
 {
     [TestClass]
     public class FloatParameterTests: BaseParamTests<double>

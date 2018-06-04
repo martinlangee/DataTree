@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
-namespace DataTreeBase
+using DataTreeBase.Parameters;
+
+namespace DataTreeBase.Container
 {
     /// <summary>
     /// Container owning other sub-containers and parameters
     /// </summary>
-    public class DataTreeContainer: DataTreeNode
+    public class DataTreeContainer: DataTreeBaseNode
     {
         private bool _isRoot = false;
 

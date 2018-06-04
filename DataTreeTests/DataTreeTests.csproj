@@ -50,13 +50,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="BaseParamTests.cs" />
-    <Compile Include="ChoiceParameterTests.cs" />
-    <Compile Include="StringParameterTests.cs" />
-    <Compile Include="FloatParameterTests.cs" />
-    <Compile Include="IntParameterTests.cs" />
-    <Compile Include="BoolParameterTests.cs" />
-    <Compile Include="BinaryParameterTests.cs" />
+    <Compile Include="Parameters\BaseParamTests.cs" />
+    <Compile Include="Parameters\ChoiceParameterTests.cs" />
+    <Compile Include="Parameters\StringParameterTests.cs" />
+    <Compile Include="Parameters\FloatParameterTests.cs" />
+    <Compile Include="Parameters\IntParameterTests.cs" />
+    <Compile Include="Parameters\BoolParameterTests.cs" />
+    <Compile Include="Parameters\BinaryParameterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +64,10 @@
       <Project>{5081935E-0107-4733-B954-1FA18724C9D5}</Project>
       <Name>DataTreeBase</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Container\" />
+    <Folder Include="UndoRedo\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

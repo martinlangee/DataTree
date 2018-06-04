@@ -1,6 +1,7 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 
-namespace DataTreeBase
+namespace DataTreeBase.Container
 {
     /// <summary>
     /// Base class for all containers that are elements of a dynamic parent container

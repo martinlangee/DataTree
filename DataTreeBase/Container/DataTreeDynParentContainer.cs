@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
-namespace DataTreeBase
+using DataTreeBase.Interfaces;
+
+namespace DataTreeBase.Container
 {
     /// <summary>
     /// Specifying the type if action that has to be undone
@@ -58,19 +60,19 @@ namespace DataTreeBase
         /// <param name="newContainers">List containing the one added container or (in case of 'Remove' or 'Clear') is empty</param>
         private void NotifyUndoRedoEvent(UndoAction actionType, int index, List<DataTreeDynContainer> oldContainers, List<DataTreeDynContainer> newContainers)
         {
-            _undoRedo.NotifyChangeEvent(this,
-                           new DynContainerUndoData
-                           {
-                               ActionType = actionType,
-                               Index = index,
-                               Containers = oldContainers
-                           },
-                           new DynContainerUndoData
-                           {
-                               ActionType = actionType,
-                               Index = index,
-                               Containers = newContainers
-                           });
+            _undoRedo?.NotifyChangeEvent(this,
+                                         new DynContainerUndoData
+                                         {
+                                             ActionType = actionType,
+                                             Index = index,
+                                             Containers = oldContainers
+                                         },
+                                         new DynContainerUndoData
+                                         {
+                                             ActionType = actionType,
+                                             Index = index,
+                                             Containers = newContainers
+                                         });
         }
 
         /// <summary>

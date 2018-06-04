@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with byte array value type

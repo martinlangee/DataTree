@@ -1,10 +1,11 @@
 ﻿using System;
 
 using DataTreeBase;
+using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests
+namespace DataTreeTests.Parameters
 {
     public class BaseParamTests<T>
     {

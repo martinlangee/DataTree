@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 
 using DataTreeBase;
+using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests
+namespace DataTreeTests.Parameters
 {
     [TestClass]
     public class ChoiceParameterTests : BaseParamTests<int>

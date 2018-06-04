@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with double value type

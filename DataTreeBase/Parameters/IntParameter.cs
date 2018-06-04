@@ -1,11 +1,13 @@
 ﻿using System;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
-    /// Represents a parameter with bool value type
+    /// Represents a parameter with int value type
     /// </summary>
-    public sealed class BoolParameter : DataTreeParameter<bool>
+    public sealed class IntParameter : DataTreeParameter<int>
     {
         /// <summary>
         /// C'tor
@@ -14,25 +16,24 @@ namespace DataTreeBase
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        public BoolParameter(DataTreeContainer parent, string id, string name, bool defaultValue = false)
+        public IntParameter(DataTreeContainer parent, string id, string name, int defaultValue)
             : base(parent, id, name, defaultValue)
         {
         }
 
         /// <summary>
-        /// Returns "true" if the value is true and "false" if the value is false.
-        /// Or sets the value accordingly.
+        /// Gets or sets the string representation of the value
         /// </summary>
         public override string AsString
         {
             get { return Value.ToString(); }
             set
             {
-                bool boolVal;
-                if (bool.TryParse(value, out boolVal))
-                    Value = boolVal;
+                int intVal;
+                if (int.TryParse(value, out intVal))
+                    Value = intVal;
                 else
-                    throw new ArgumentException($"BoolParameter.SetAsString: cannot convert '{value}' to bool.");
+                    throw new ArgumentException($"IntParameter.SetAsString: cannot convert '{value}' to int.");
             }
         }
     }

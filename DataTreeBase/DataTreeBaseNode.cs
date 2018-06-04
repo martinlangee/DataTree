@@ -1,4 +1,6 @@
-﻿namespace DataTreeBase
+﻿using DataTreeBase.Container;
+
+namespace DataTreeBase
 {
     // ok: dynamische Container-Listen
     // ok: Parameter-Unit-Tests schreiben
@@ -16,7 +18,7 @@
     /// <summary>
     /// Abstract base node class
     /// </summary>
-    public abstract class DataTreeNode
+    public abstract class DataTreeBaseNode
     {
         /// <summary>
         /// C'tor
@@ -24,7 +26,7 @@
         /// <param name="parent">Parent container</param>
         /// <param name="id">Node identificator</param>
         /// <param name="name">Node name</param>
-        protected DataTreeNode(DataTreeContainer parent, string id, string name)
+        protected DataTreeBaseNode(DataTreeContainer parent, string id, string name)
         {
             Parent = parent;
             Id = id;

@@ -1,4 +1,8 @@
-﻿namespace DataTreeBase
+﻿using System;
+
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with string value type

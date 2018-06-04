@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+using DataTreeBase.Interfaces;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents a generic parameter base class
@@ -26,7 +29,7 @@ namespace DataTreeBase
         {
             BufferedValue = defaultValue;
             _value = defaultValue;
-            _undoRedo = Parent.Root.UndoRedo;
+            _undoRedo = Parent?.Root.UndoRedo;
         }
 
         /// <summary>
@@ -44,7 +47,7 @@ namespace DataTreeBase
         {
             var oldValue = _value;
             _value = value;
-            _undoRedo.NotifyChangeEvent(this, oldValue, _value);
+            _undoRedo?.NotifyChangeEvent(this, oldValue, _value);
             FireOnChanged();
         }
 

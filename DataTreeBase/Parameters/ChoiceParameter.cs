@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
-namespace DataTreeBase
+using DataTreeBase.Container;
+
+namespace DataTreeBase.Parameters
 {
     /// <summary>
     /// Represents a choice parameter which defines a list of choices (consisting of value/string tuples)

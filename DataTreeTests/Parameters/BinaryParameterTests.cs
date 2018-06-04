@@ -2,10 +2,11 @@
 using System.Linq;
 
 using DataTreeBase;
+using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests
+namespace DataTreeTests.Parameters
 {
     [TestClass]
     public class BinaryParameterTests: BaseParamTests<byte[]>
