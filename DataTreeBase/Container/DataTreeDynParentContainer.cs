@@ -31,7 +31,7 @@ namespace DataTreeBase.Container
     /// <summary>
     /// Represents a container where sub-containers can be added and removed dynamically
     /// </summary>
-    public class DataTreeDynParentContainer<T> : DataTreeContainer, IUndoRedoNode where T: DataTreeDynContainer
+    public class DataTreeDynParentContainer<T> : DataTreeContainer, IUndoRedoableNode where T: DataTreeDynContainer
     {
         private readonly UndoRedoStack _undoRedo;
 

@@ -6,14 +6,16 @@ namespace DataTreeBase
     // ok: Parameter-Unit-Tests schreiben
     // canceled: Buffer arbeitet mit Stack
     // canceled: Thread-Sicherheit: auf Container-Ebene: Methode zum Container-Klonen einführen (v)
-    // todo: Undo/Redo
+    // ok: Undo/Redo
     // todo: Container-Unit-Tests schreiben
     // todo: Strings: UTF8?
+    // todo: Unit-Header mit copyright etc.
     // todo: Import/Export von einzelnen Containern 
     // todo: CRC-Check
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen
     // todo: DB zur Serialisierung; mit Tabellen-Generierung?
+    // todo: auf Github veröffentlichen
 
     /// <summary>
     /// Abstract base node class

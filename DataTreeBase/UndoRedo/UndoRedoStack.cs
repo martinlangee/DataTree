@@ -17,7 +17,7 @@ namespace DataTreeBase.UndoRedo
         /// </summary>
         internal sealed class UndoRedoItem
         {
-            public IUndoRedoNode Node { get; set; }
+            public IUndoRedoableNode Node { get; set; }
             public object OldValue { get; set; }
             public object NewValue { get; set; }
         }
@@ -132,7 +132,7 @@ namespace DataTreeBase.UndoRedo
         /// <param name="dataNode">The data node who's value was changed</param>
         /// <param name="oldValue">The former value of the parameter</param>
         /// <param name="newValue">The new value of the parameter</param>
-        internal void ValueChanged(IUndoRedoNode dataNode, object oldValue, object newValue)
+        internal void ValueChanged(IUndoRedoableNode dataNode, object oldValue, object newValue)
         {
             if (_undoRedoing || IsMuted)
                 return;

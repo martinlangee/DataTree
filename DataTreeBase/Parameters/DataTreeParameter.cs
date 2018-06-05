@@ -11,7 +11,7 @@ namespace DataTreeBase.Parameters
     /// Represents a generic parameter base class
     /// </summary>
     /// <typeparam name="T">The value type</typeparam>
-    public abstract class DataTreeParameter<T>: DataTreeParameterBase, IUndoRedoNode
+    public abstract class DataTreeParameter<T>: DataTreeParameterBase, IUndoRedoableNode
     {
         private T _value;
         private readonly UndoRedoStack _undoRedo;

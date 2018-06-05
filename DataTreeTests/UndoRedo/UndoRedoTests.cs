@@ -14,13 +14,13 @@ namespace DataTreeTests.UndoRedo
         internal static bool IsCanUndoRedoChangedCalled;
     }
 
-    internal interface IUndoRedoTestNode : IUndoRedoNode
+    internal interface IUndoRedoableTestNode : IUndoRedoableNode
     {
         UndoRedoStack Stack { get; }
         int Value { get; set; }
     }
 
-    internal sealed class TestDataNode : IUndoRedoTestNode
+    internal sealed class TestDataNode : IUndoRedoableTestNode
     {
         private int _value;
 
@@ -55,7 +55,7 @@ namespace DataTreeTests.UndoRedo
     [TestClass]
     public class UndoRedoTests
     {
-        private IUndoRedoTestNode _testNode;
+        private IUndoRedoableTestNode _testNode;
 
         [TestInitialize]
         public void Init()

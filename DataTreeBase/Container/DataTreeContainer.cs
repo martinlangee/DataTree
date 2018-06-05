@@ -21,7 +21,8 @@ namespace DataTreeBase.Container
         /// <param name="parent">Parent container</param>
         /// <param name="id">Container identfication</param>
         /// <param name="name">Container name</param>
-        protected DataTreeContainer(DataTreeContainer parent, string id, string name) 
+        /// <param name="undoRedoActivated">True if undo/redo mechanism should be activated</param>
+        protected DataTreeContainer(DataTreeContainer parent, string id, string name, bool undoRedoActivated = true) 
             : base(parent, id, name)
         {
             Containers = new List<DataTreeContainer>();
@@ -31,7 +32,9 @@ namespace DataTreeBase.Container
 
             DetermineRoot();
 
-            UndoRedo = _isRoot ? new UndoRedoStack() : Root.UndoRedo;
+            UndoRedo = undoRedoActivated
+                           ? (_isRoot ? new UndoRedoStack() : Root.UndoRedo)
+                           : null;
         }
 
         /// <summary>
