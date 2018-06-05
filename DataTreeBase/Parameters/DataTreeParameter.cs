@@ -48,7 +48,7 @@ namespace DataTreeBase.Parameters
         {
             var oldValue = _value;
             _value = value;
-            _undoRedo?.NotifyChangeEvent(this, oldValue, _value);
+            _undoRedo?.ValueChanged(this, oldValue, _value);
             FireOnChanged();
         }
 

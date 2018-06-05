@@ -128,5 +128,14 @@ namespace DataTreeBase
                 action(i++, item);
             }
         }
+
+        /// <summary>
+        /// Performs the specified action in a foreach loop over the specified list
+        /// </summary>
+        internal static void TimesDo(this int times, Action<int> action)
+        {
+            for (var i = 0; i < times; i++)
+                action(i);
+        }
     }
 }

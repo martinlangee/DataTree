@@ -59,9 +59,9 @@ namespace DataTreeBase.Container
         /// <param name="index">Index of the concerning child container</param>
         /// <param name="oldContainers">List containing the one removed container or in case of 'Clear' the whole list</param>
         /// <param name="newContainers">List containing the one added container or (in case of 'Remove' or 'Clear') is empty</param>
-        private void NotifyUndoRedoEvent(UndoAction actionType, int index, List<DataTreeDynContainer> oldContainers, List<DataTreeDynContainer> newContainers)
+        private void DynContainersChanged(UndoAction actionType, int index, List<DataTreeDynContainer> oldContainers, List<DataTreeDynContainer> newContainers)
         {
-            _undoRedo?.NotifyChangeEvent(this,
+            _undoRedo?.ValueChanged(this,
                                          new DynContainerUndoData
                                          {
                                              ActionType = actionType,
@@ -84,10 +84,10 @@ namespace DataTreeBase.Container
         {
             var type = typeof(T);
             var cont = Activator.CreateInstance(type, this) as T;
-            NotifyUndoRedoEvent(actionType: UndoAction.Add,
-                                index: base.Containers.IndexOf(cont),
-                                oldContainers: new List<DataTreeDynContainer>(),
-                                newContainers: new List<DataTreeDynContainer>() { cont });
+            DynContainersChanged(actionType: UndoAction.Add,
+                                 index: base.Containers.IndexOf(cont),
+                                 oldContainers: new List<DataTreeDynContainer>(),
+                                 newContainers: new List<DataTreeDynContainer>() { cont });
             return cont;
         }
 
@@ -108,10 +108,10 @@ namespace DataTreeBase.Container
         private void Insert(int index, T container)
         {
             base.Containers.Insert(index, container);
-            NotifyUndoRedoEvent(actionType: UndoAction.Add,
-                                index: index,
-                                oldContainers: new List<DataTreeDynContainer>(),
-                                newContainers: new List<DataTreeDynContainer>() { container });
+            DynContainersChanged(actionType: UndoAction.Add,
+                                 index: index,
+                                 oldContainers: new List<DataTreeDynContainer>(),
+                                 newContainers: new List<DataTreeDynContainer>() { container });
         }
 
         /// <summary>
@@ -151,10 +151,10 @@ namespace DataTreeBase.Container
         {
             var cont = Containers[index];
             base.Containers.RemoveAt(index);
-            NotifyUndoRedoEvent(actionType: UndoAction.Remove,
-                                index: index,
-                                oldContainers: new List<DataTreeDynContainer>() { cont },
-                                newContainers: new List<DataTreeDynContainer>());
+            DynContainersChanged(actionType: UndoAction.Remove,
+                                 index: index,
+                                 oldContainers: new List<DataTreeDynContainer>() { cont },
+                                 newContainers: new List<DataTreeDynContainer>());
         }
 
         /// <summary>
@@ -163,10 +163,10 @@ namespace DataTreeBase.Container
         public void Clear()
         {
             base.Containers.Clear();
-            NotifyUndoRedoEvent(actionType: UndoAction.Clear,
-                                index: -1,
-                                oldContainers: Containers.Cast<DataTreeDynContainer>().ToList(),
-                                newContainers: new List<DataTreeDynContainer>());
+            DynContainersChanged(actionType: UndoAction.Clear,
+                                 index: -1,
+                                 oldContainers: Containers.Cast<DataTreeDynContainer>().ToList(),
+                                 newContainers: new List<DataTreeDynContainer>());
         }
 
         /// <summary>

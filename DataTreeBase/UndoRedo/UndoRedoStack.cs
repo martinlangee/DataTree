@@ -25,6 +25,13 @@ namespace DataTreeBase.UndoRedo
         private bool _undoRedoing;
         private int _pointer = -1;
         private readonly List<UndoRedoItem> _stack = new List<UndoRedoItem>();
+        private bool _canUndo;
+        private bool _canRedo;
+
+        public UndoRedoStack()
+        {
+            UpdateCanUndoRedo();
+        }
 
         /// <summary>
         /// Set the specified value avoiding recursive loop
@@ -46,6 +53,15 @@ namespace DataTreeBase.UndoRedo
         }
 
         /// <summary>
+        /// Updates the state of the CanUndo and CanRedo properties
+        /// </summary>
+        private void UpdateCanUndoRedo()
+        {
+            CanUndo = (_stack.Count > 0) && (_pointer >= 0);
+            CanRedo = (_stack.Count > 0) && (_pointer < (_stack.Count - 1));
+        }
+
+        /// <summary>
         /// The last change made to the data tree is reverted
         /// </summary>
         public void Undo()
@@ -57,8 +73,7 @@ namespace DataTreeBase.UndoRedo
             SafeSetValue(_stack[_pointer].OldValue);
             _pointer--;
 
-            if ((_pointer == 0) || (_pointer < (_stack.Count - 1)))
-                CanUndoRedoChanged.Invoke();
+            UpdateCanUndoRedo();
         }
 
         /// <summary>
@@ -73,19 +88,38 @@ namespace DataTreeBase.UndoRedo
             Debug.WriteLine("Redo: NewValue=" + _stack[_pointer].NewValue + " Ptr=" + _pointer);
             SafeSetValue(_stack[_pointer].NewValue);
 
-            if ((_pointer > 0) || (_pointer) == (_stack.Count - 1))
-                CanUndoRedoChanged.Invoke();
+            UpdateCanUndoRedo();
         }
 
         /// <summary>
         /// Returns true if the any change to the data tree can be reverted
         /// </summary>
-        public bool CanUndo => (_stack.Count > 0) && (_pointer >= 0);
+        public bool CanUndo
+        {
+            get { return _canUndo; }
+            private set
+            {
+                if (CanUndo == value) return; 
+
+                _canUndo = value;
+                CanUndoRedoChanged.Invoke();
+            }
+        }
 
         /// <summary>
         /// Returns true if any formerly undone change to the data tree can be redone
         /// </summary>
-        public bool CanRedo => (_stack.Count > 0) && (_pointer < (_stack.Count - 1));
+        public bool CanRedo
+        {
+            get { return _canRedo; }
+            private set
+            {
+                if (CanRedo == value) return;
+
+                _canRedo = value;
+                CanUndoRedoChanged.Invoke();
+            }
+        }
 
         /// <summary>
         /// Event fired when either the CanUndo or then CanRedo propertry has changed it's state
@@ -98,7 +132,7 @@ namespace DataTreeBase.UndoRedo
         /// <param name="dataNode">The data node who's value was changed</param>
         /// <param name="oldValue">The former value of the parameter</param>
         /// <param name="newValue">The new value of the parameter</param>
-        internal void NotifyChangeEvent(IUndoRedoNode dataNode, object oldValue, object newValue)
+        internal void ValueChanged(IUndoRedoNode dataNode, object oldValue, object newValue)
         {
             if (_undoRedoing || IsMuted)
                 return;
@@ -115,7 +149,10 @@ namespace DataTreeBase.UndoRedo
                            };
             _stack.Add(undoItem);
             _pointer++;
-            Debug.WriteLine("NotifyChangeEvent: " + undoItem.Node + " ptr=" + _pointer);
+
+            UpdateCanUndoRedo();
+
+            Debug.WriteLine("ValueChanged: " + undoItem.Node + " ptr=" + _pointer);
         }
 
         /// <summary>
@@ -125,11 +162,17 @@ namespace DataTreeBase.UndoRedo
         {
             _stack.Clear();
             _pointer = -1;
+
+            UpdateCanUndoRedo();
         }
 
         /// <summary>
         /// If set the undo/redo stack is not updated
         /// </summary>
         internal bool IsMuted { private get; set; }
+
+        // for testing purposes only
+        internal int Count => _stack.Count;
+        internal int Pointer => _pointer;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 
+using DataTreeBase;
 using DataTreeBase.Interfaces;
 using DataTreeBase.UndoRedo;
 
@@ -10,22 +11,45 @@ namespace DataTreeTests.UndoRedo
     internal static class Flags
     {
         internal static bool HasSetValue;
+        internal static bool IsCanUndoRedoChangedCalled;
     }
 
     internal interface IUndoRedoTestNode : IUndoRedoNode
     {
-        object Value { get; set; }
+        UndoRedoStack Stack { get; }
+        int Value { get; set; }
     }
 
-    internal class TestDataNode : IUndoRedoTestNode
+    internal sealed class TestDataNode : IUndoRedoTestNode
     {
+        private int _value;
+
+        internal TestDataNode()
+        {
+            Stack = new UndoRedoStack();
+            _value = 0;
+        }
+
+        public UndoRedoStack Stack { get; }
+
         public void Set(object value)
         {
-            Value = value;
+            Value = (int) value;
             Flags.HasSetValue = true;
         }
 
-        public object Value { get; set; }
+        public int Value
+        {
+            get { return _value; }
+            set
+            {
+                if (value == _value) return;
+
+                var oldValue = Value;
+                _value = value;
+                Stack.ValueChanged(this, oldValue, _value);
+            }
+        }
     }
 
     [TestClass]
@@ -42,82 +66,128 @@ namespace DataTreeTests.UndoRedo
         [TestMethod]
         public void UndoAfterChangedTest()
         {
-            var stack = new UndoRedoStack();
-            stack.NotifyChangeEvent(_testNode, 123, 345);
             _testNode.Value = 345;
 
-            Assert.IsTrue(stack.CanUndo, "ur.CanUndo should be true but is not");
-            Assert.IsFalse(stack.CanRedo, "ur.CanRedo should be false but is not");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
 
             Flags.HasSetValue = false;
-            stack.Undo();
+            _testNode.Stack.Undo();
             Assert.IsTrue(Flags.HasSetValue, "TestDataNode has not been set but should have been");
-            Assert.AreEqual(_testNode.Value, 123, "TestDataNode change has not been undone but should have been");
-            Assert.IsFalse(stack.CanUndo, "ur.CanUndo should be false but is not");
-            Assert.IsTrue(stack.CanRedo, "ur.CanRedo should be true but is not");
+            Assert.AreEqual(_testNode.Value, 0, "TestDataNode change has not been undone but should have been");
+            Assert.IsFalse(_testNode.Stack.CanUndo, "CanUndo should be false but is not");
+            Assert.IsTrue(_testNode.Stack.CanRedo, "CanRedo should be true but is not");
+        }
+
+        [TestMethod]
+        public void ClearStackTest()
+        {
+            Assert.AreEqual(_testNode.Stack.Count, 0, "UndoRedoStack has not been cleared");
+            Assert.AreEqual(_testNode.Stack.Pointer, -1, "UndoRedoStack has not been cleared");
+            Assert.IsFalse(_testNode.Stack.CanUndo, "CanUndo should be false but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
+
+            20.TimesDo(i =>
+            {
+                _testNode.Value = i + 1;
+            });
+
+            Assert.AreEqual(_testNode.Stack.Count, 20, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 19, "Stack pointer not as expected");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
+
+            _testNode.Stack.Clear();
+
+            Assert.AreEqual(_testNode.Stack.Count, 0, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, -1, "Stack pointer not as expected");
+            Assert.IsFalse(_testNode.Stack.CanUndo, "CanUndo should be false but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
+
+            15.TimesDo(i =>
+            {
+                _testNode.Value = i + 1;
+            });
+
+            10.TimesDo(i =>
+            {
+                _testNode.Stack.Undo();
+            });
+
+
+            3.TimesDo(i =>
+            {
+                _testNode.Stack.Redo();
+            });
+
+            Assert.AreEqual(_testNode.Stack.Count, 15, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 7, "Stack pointer not as expected");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsTrue(_testNode.Stack.CanRedo, "CanRedo should be true but is not");
+
+            _testNode.Stack.Clear();
+
+            Assert.AreEqual(_testNode.Stack.Count, 0, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, -1, "Stack pointer not as expected");
+            Assert.IsFalse(_testNode.Stack.CanUndo, "CanUndo should be false but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
         }
 
         [TestMethod]
         public void UndoRedoWithManyChangesTest()
         {
-            var stack = new UndoRedoStack();
-
             const int changeCount = 20;
 
-            for (var i = 0; i < changeCount; i++)
-            {
-                stack.NotifyChangeEvent(_testNode, i, i + 1);
-            }
+            changeCount.TimesDo(i =>
+                              {
+                                  _testNode.Value = i + 1;
+                              });
 
-            Assert.IsTrue(stack.CanUndo, "CanUndo should be true but is not");
-            Assert.IsFalse(stack.CanRedo, "CanRedo should be false but is not");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
 
             var z = 0;
-            while (stack.CanUndo)
+            while (_testNode.Stack.CanUndo)
             {
                 Flags.HasSetValue = false;
-                stack.Undo();
+                _testNode.Stack.Undo();
                 Assert.IsTrue(Flags.HasSetValue, "TestDataNode has not been set but should have been");
+                Assert.AreEqual(_testNode.Value, changeCount - z - 1);
                 z++;
             }
-            Assert.AreEqual(z, changeCount, "Wrong number of undo's possible");
-            Assert.IsTrue(stack.CanRedo, "CanRedo should be true but is not");
+            Assert.AreEqual(z, changeCount, "Wrong number of possible undo's");
+            Assert.IsTrue(_testNode.Stack.CanRedo, "CanRedo should be true but is not");
 
             z = 0;
-            while (stack.CanRedo)
+            while (_testNode.Stack.CanRedo)
             {
                 Flags.HasSetValue = false;
-                stack.Redo();
+                _testNode.Stack.Redo();
+                Assert.AreEqual(_testNode.Value, z + 1);
                 Assert.IsTrue(Flags.HasSetValue, "TestDataNode has not been set but should have been");
                 z++;
             }
-            Assert.AreEqual(z, changeCount, "Wrong number of undo's possible");
-            Assert.IsTrue(stack.CanUndo, "CanUndo should be true but is not");
+            Assert.AreEqual(z, changeCount, "Wrong number of possible undo's");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
         }
 
         [TestMethod]
         public void UndoMustThrowExceptWhenStackPointerAtBeginningTest()
         {
-            var stack = new UndoRedoStack();
+            70.TimesDo(i =>
+                    {
+                        _testNode.Value = i + 456;
+                    });
 
-            const int changeCount = 5;
-
-            for (var i = 0; i < changeCount; i++)
-            {
-                stack.NotifyChangeEvent(_testNode, i, 2*i);
-            }
-
-            var z = 0;
-            while (stack.CanUndo)
+            while (_testNode.Stack.CanUndo)
             {
                 Flags.HasSetValue = false;
-                stack.Undo();
-                z++;
+                _testNode.Stack.Undo();
             }
 
             try
             {
-                stack.Undo();
+                _testNode.Stack.Undo();
             }
             catch (InvalidOperationException)
             {
@@ -131,33 +201,26 @@ namespace DataTreeTests.UndoRedo
         [TestMethod]
         public void RedoMustThrowExceptWhenStackPointerAtEndTest()
         {
-            var stack = new UndoRedoStack();
+            13.TimesDo(i =>
+                     {
+                         _testNode.Value = i + 5678;
+                     });
 
-            const int changeCount = 5;
-
-            for (var i = 0; i < changeCount; i++)
-            {
-                stack.NotifyChangeEvent(_testNode, i, 2 * i);
-            }
-
-            var z = 0;
-            while (stack.CanUndo)
+            while (_testNode.Stack.CanUndo)
             {
                 Flags.HasSetValue = false;
-                stack.Undo();
-                z++;
+                _testNode.Stack.Undo();
             }
 
-            while (stack.CanRedo)
+            while (_testNode.Stack.CanRedo)
             {
                 Flags.HasSetValue = false;
-                stack.Redo();
-                z++;
+                _testNode.Stack.Redo();
             }
 
             try
             {
-                stack.Redo();
+                _testNode.Stack.Redo();
             }
             catch (InvalidOperationException)
             {
@@ -171,26 +234,79 @@ namespace DataTreeTests.UndoRedo
         [TestMethod]
         public void StackMustBeShortenedWhenNodeHasChangedWithStackPointerNotAtEndTest()
         {
-            var stack = new UndoRedoStack();
+            15.TimesDo(i =>
+                     {
+                         _testNode.Value = i + 67890;
+                     });
 
-            const int changeCount = 15;
+            5.TimesDo(i =>
+                    {
+                        Flags.HasSetValue = false;
+                        _testNode.Stack.Undo();
+                    });
 
-            for (var i = 0; i < changeCount; i++)
-            {
-                stack.NotifyChangeEvent(_testNode, i, 2 * i);
-            }
+            Assert.AreEqual(_testNode.Stack.Count, 15, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 9, "Stack pointer not as expected");
 
-            var z = 0;
-            while (z++ < 5)
-            {
-                Flags.HasSetValue = false;
-                stack.Undo();
-            }
+            _testNode.Value = 2222;
 
-            stack.NotifyChangeEvent(_testNode, 1111, 2222);
+            Assert.AreEqual(_testNode.Stack.Count, 11, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 10, "Stack pointer not as expected");
 
-            Assert.IsTrue(stack.CanUndo, "CanUndo should be true but is not");
-            Assert.IsFalse(stack.CanRedo, "CanRedo should be false but is not");
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
+
+            5.TimesDo(i =>
+                    {
+                        Flags.HasSetValue = false;
+                        _testNode.Stack.Undo();
+                    });
+
+            Assert.AreEqual(_testNode.Stack.Count, 11, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 5, "Stack pointer not as expected");
+
+            _testNode.Value = 45764576;
+
+            Assert.AreEqual(_testNode.Stack.Count, 7, "Stack count not as expected");
+            Assert.AreEqual(_testNode.Stack.Pointer, 6, "Stack pointer not as expected");
+
+            Assert.IsTrue(_testNode.Stack.CanUndo, "CanUndo should be true but is not");
+            Assert.IsFalse(_testNode.Stack.CanRedo, "CanRedo should be false but is not");
+        }
+
+        [TestMethod]
+        public void CanUndoRedoChangedEventTest()
+        {
+            _testNode.Stack.CanUndoRedoChanged += OnCanUndoRedoChanged;
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Value = 22;
+            Assert.IsTrue(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged call missing");
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Value = 333;
+            Assert.IsFalse(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged called but should not");
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Value = 4444;
+            Assert.IsFalse(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged called but should not");
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Stack.Undo();
+            Assert.IsTrue(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged call missing");
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Stack.Undo();
+            Assert.IsFalse(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged called but should not");
+
+            Flags.IsCanUndoRedoChangedCalled = false;
+            _testNode.Stack.Undo();
+            Assert.IsTrue(Flags.IsCanUndoRedoChangedCalled, "OnCanUndoRedoChanged call missing");
+        }
+
+        private void OnCanUndoRedoChanged()
+        {
+            Flags.IsCanUndoRedoChangedCalled = true;
         }
     }
 }
