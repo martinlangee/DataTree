@@ -52,6 +52,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Container\ContainerTests.cs" />
+    <Compile Include="Container\DynContainerTests.cs" />
     <Compile Include="Parameters\BaseParamTests.cs" />
     <Compile Include="Parameters\ChoiceParameterTests.cs" />
     <Compile Include="Parameters\StringParameterTests.cs" />
@@ -68,9 +70,7 @@
       <Name>DataTreeBase</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Container\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

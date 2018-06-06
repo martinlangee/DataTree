@@ -67,7 +67,7 @@ namespace DataTreeBase.Parameters
             set
             {
                 double dblVal;
-                if (double.TryParse(value, out dblVal))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out dblVal))
                     Value = dblVal;
                 else
                     throw new ArgumentException($"FloatParameter.SetAsString: cannot convert '{value}' to float.");

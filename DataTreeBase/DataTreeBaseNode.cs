@@ -10,7 +10,6 @@ namespace DataTreeBase
     // todo: Container-Unit-Tests schreiben
     // todo: Strings: UTF8?
     // todo: Unit-Header mit copyright etc.
-    // todo: Import/Export von einzelnen Containern 
     // todo: CRC-Check
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen

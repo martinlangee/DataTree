@@ -174,7 +174,8 @@ namespace DataTreeBase.Container
         /// Loads the container and it's sub-containers from the specified file
         /// </summary>
         /// <param name="fileName">The file name</param>
-        public void LoadFromFile(string fileName)
+        /// <param name="resetModified">True if the modified flag should be reset after loading</param>
+        public void LoadFromFile(string fileName, bool resetModified = true)
         {
             var doc = new XmlDocument();
             doc.Load(fileName);
@@ -187,17 +188,18 @@ namespace DataTreeBase.Container
             {
                 UndoRedo.IsMuted = false;
             }
-            ResetModified();
+            if (resetModified) ResetModified();
         }
 
         /// <summary>
         /// Saves the container and it's sub-containers to the specified file
         /// </summary>
         /// <param name="fileName">The file name</param>
-        public void SaveToFile(string fileName)
+        /// <param name="resetModified">True if the modified flag should be reset after saving</param>
+        public void SaveToFile(string fileName, bool resetModified = true)
         {
             SaveToXml(null).Save(fileName);
-            ResetModified();
+            if (resetModified) ResetModified();
         }
 
         /// <summary>
