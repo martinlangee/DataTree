@@ -158,6 +158,17 @@ namespace DataTreeBase.Container
         }
 
         /// <summary>
+        /// Removes the container at the end of the list and returns it
+        /// </summary>
+        public T Pop()
+        {
+            var index = Containers.Count - 1;
+            var cont = Containers.Last();
+            RemoveAt(index);
+            return cont;
+        }
+
+        /// <summary>
         /// Removes all sub containers
         /// </summary>
         public void Clear()

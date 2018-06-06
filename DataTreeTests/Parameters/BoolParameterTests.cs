@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 
-using DataTreeBase;
 using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,9 +1,9 @@
-﻿using DataTreeBase;
-using DataTreeBase.Container;
+﻿using DataTreeBase.Container;
 using DataTreeBase.Parameters;
 
 namespace SampleModel
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public sealed class DynContainer: DataTreeDynContainer
     {
         public DynContainer(DataTreeContainer parent)

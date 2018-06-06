@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 
-using DataTreeBase;
 using DataTreeBase.Parameters;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
