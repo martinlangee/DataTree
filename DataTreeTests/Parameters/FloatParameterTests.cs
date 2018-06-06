@@ -74,7 +74,7 @@ namespace DataTreeTests.Parameters
         {
             var p = new FloatParameter(null, "myFloatId", "myFloatName", 55.076, "m/s", 5);
 
-            p.AsString = "123456789,23";
+            p.AsString = "123456789.23";
 
             CheckSetErroneousValueAsString(p, "Otto");
             CheckSetErroneousValueAsString(p, "true");

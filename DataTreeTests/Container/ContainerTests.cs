@@ -46,8 +46,8 @@ namespace DataTreeTests.Container
             Assert.AreEqual(root.Tc1.Tc3.Root, root, "Root of TC3 is not set correctly");
 
             Assert.AreEqual(root.Params.Count, 0, "Number of Root params should be 0 but are" + root.Params.Count);
-            Assert.AreEqual(root.Tc1.Params.Count, 3, "Number of TC1 params should be 3 but are" + root.Tc1.Params.Count);
-            Assert.AreEqual(root.Tc2.Params.Count, 3, "Number of TC2 params should be 3 but are" + root.Tc2.Params.Count);
+            Assert.AreEqual(root.Tc1.Params.Count, 5, "Number of TC1 params should be 5 but are" + root.Tc1.Params.Count);
+            Assert.AreEqual(root.Tc2.Params.Count, 5, "Number of TC2 params should be 5 but are" + root.Tc2.Params.Count);
             Assert.AreEqual(root.Tc1.Tc3.Params.Count, 1, "Number of TC3 params should be 1 but are" + root.Tc1.Tc3.Params.Count);
         }
 
@@ -116,7 +116,7 @@ namespace DataTreeTests.Container
 
             clone.Tc2.FloatParam.Value = clone.Tc2.FloatParam.Value + 456;
 
-            Assert.AreNotEqual(root.Tc1.FloatParam.Value, clone.Tc1.FloatParam.Value, "Parameter value in original and clone are equal but should not be");
+            Assert.AreNotEqual(root.Tc2.FloatParam.Value, clone.Tc2.FloatParam.Value, "Parameter value in original and clone are equal but should not be");
         }
 
         // todo: XML Load/Save
