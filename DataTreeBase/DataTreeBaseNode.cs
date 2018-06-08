@@ -1,16 +1,18 @@
-﻿using DataTreeBase.Container;
+﻿using System;
+
+using DataTreeBase.Container;
 
 namespace DataTreeBase
 {
     // ok: dynamische Container-Listen
     // ok: Parameter-Unit-Tests schreiben
     // canceled: Buffer arbeitet mit Stack
-    // canceled: Thread-Sicherheit: auf Container-Ebene: Methode zum Container-Klonen einführen (v)
     // ok: Undo/Redo
     // todo: Container-Unit-Tests schreiben
     // todo: Strings: UTF8?
     // todo: Unit-Header mit copyright etc.
     // todo: CRC-Check
+    // todo: Thread-Sicherheit: auf Container-Ebene, Methode zum Container-Klonen einführen (v)
     // todo: Anbindung an UI über Proxy oder DTO
     // todo: Technik zur DTO-Initialisierung überlegen
     // todo: DB zur Serialisierung; mit Tabellen-Generierung?
@@ -29,6 +31,9 @@ namespace DataTreeBase
         /// <param name="name">Node name</param>
         protected DataTreeBaseNode(DataTreeContainer parent, string id, string name)
         {
+            if (id.Contains(Helper.PathDelimiter))
+                throw new ArgumentOutOfRangeException($"DataTreeBaseNode: node id may not contain path delimiter '{Helper.PathDelimiter}'");
+
             Parent = parent;
             Id = id;
             Name = name;
