@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using DataTreeBase;
 using DataTreeBase.Container;
 using DataTreeBase.Parameters;
 
@@ -49,6 +50,45 @@ namespace DataTreeTests.Container
             Assert.AreEqual(root.Tc1.Params.Count, 5, "Number of TC1 params should be 5 but are" + root.Tc1.Params.Count);
             Assert.AreEqual(root.Tc2.Params.Count, 5, "Number of TC2 params should be 5 but are" + root.Tc2.Params.Count);
             Assert.AreEqual(root.Tc1.Tc3.Params.Count, 1, "Number of TC3 params should be 1 but are" + root.Tc1.Tc3.Params.Count);
+        }
+
+        [TestMethod]
+        public void PathIdTest()
+        {
+            var root = new TestRoot();
+
+            Assert.AreEqual(root.PathId, "TR", $"PathId '{root.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.PathId, "TR.Tc1", $"PathId '{root.Tc1.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.BinParam.PathId, "TR.Tc1.BP", $"PathId '{root.Tc1.BinParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.ChParam.PathId, "TR.Tc1.CP", $"PathId '{root.Tc1.ChParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.FloatParam.PathId, "TR.Tc1.FP", $"PathId '{root.Tc1.FloatParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.IntParam.PathId, "TR.Tc1.IP", $"PathId '{root.Tc1.IntParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.StrParam.PathId, "TR.Tc1.SP", $"PathId '{root.Tc1.StrParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.Tc3.PathId, "TR.Tc1.Tc3", $"PathId '{root.Tc1.Tc3.PathId}' is wrong");
+            Assert.AreEqual(root.Tc1.Tc3.BoolParam.PathId, "TR.Tc1.Tc3.BP", $"PathId '{root.Tc1.Tc3.BoolParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.PathId, "TR.Tc2", $"PathId '{root.Tc2.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.BinParam.PathId, "TR.Tc2.BP", $"PathId '{root.Tc2.BinParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.ChParam.PathId, "TR.Tc2.CP", $"PathId '{root.Tc2.ChParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.FloatParam.PathId, "TR.Tc2.FP", $"PathId '{root.Tc2.FloatParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.IntParam.PathId, "TR.Tc2.IP", $"PathId '{root.Tc2.IntParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.StrParam.PathId, "TR.Tc2.SP", $"PathId '{root.Tc2.StrParam.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.Tc3.PathId, "TR.Tc2.Tc3", $"PathId '{root.Tc2.Tc3.PathId}' is wrong");
+            Assert.AreEqual(root.Tc2.Tc3.BoolParam.PathId, "TR.Tc2.Tc3.BP", $"PathId '{root.Tc2.Tc3.BoolParam.PathId}' is wrong");
+
+            var allParams = new List<DataTreeBaseNode>();
+            AddNodes(allParams, root);
+            var pathIds = allParams.Select(p => p.PathId).ToList();
+            Assert.AreEqual(pathIds.Distinct().Count(), pathIds.Count, "PathIds over all parameters contain duplicates but should not");
+        }
+
+        private static void AddNodes(List<DataTreeBaseNode> plist, DataTreeContainer cont)
+        {
+            cont.Nodes.ForEach(n =>
+                               {
+                                   plist.Add(n);
+                                   if (n is DataTreeContainer)
+                                        AddNodes(plist, n as DataTreeContainer);
+                               });
         }
 
         [TestMethod]
@@ -135,10 +175,10 @@ namespace DataTreeTests.Container
             r1.Tc2.IntParam.Value = 14539;
             r1.Tc2.StrParam.Value = "wertwel";
 
-            r1.SaveToFile("c:\\ModelRoot.xml");
+            r1.SaveToFile(@"c:\\ModelRoot.xml");
 
             var r2 = new TestRoot();
-            r2.LoadFromFile("c:\\ModelRoot.xml");
+            r2.LoadFromFile(@"c:\\ModelRoot.xml");
 
             Assert.AreEqual(r2.Tc1.FloatParam.Value, 678.123);
             Assert.AreEqual(r2.Tc1.IntParam.Value, 789);

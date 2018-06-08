@@ -71,6 +71,11 @@ namespace DataTreeBase.Container
         public IList<DataTreeParameterBase> Params { get; }
 
         /// <summary>
+        /// Returns the list of child nodes unaffected if container or parameter
+        /// </summary>
+        public IList<DataTreeBaseNode> Nodes => Containers.Concat(Params.Cast<DataTreeBaseNode>()).ToList();
+
+        /// <summary>
         /// Returns the undo/redo stack object
         /// </summary>
         public UndoRedoStack UndoRedo { get; }
