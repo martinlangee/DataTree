@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-
-using DataTreeBase;
-using DataTreeBase.Container;
-using DataTreeBase.Parameters;
-
+using DataBase;
+using DataBase.Container;
+using DataBase.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.Container
+namespace Data.Tests.Container
 {
     [TestClass]
     public sealed class ContainerTests
@@ -75,19 +74,19 @@ namespace DataTreeTests.Container
             Assert.AreEqual(root.Tc2.Tc3.PathId, "TR.Tc2.Tc3", $"PathId '{root.Tc2.Tc3.PathId}' is wrong");
             Assert.AreEqual(root.Tc2.Tc3.BoolParam.PathId, "TR.Tc2.Tc3.BP", $"PathId '{root.Tc2.Tc3.BoolParam.PathId}' is wrong");
 
-            var allParams = new List<DataTreeBaseNode>();
+            var allParams = new List<DataNode>();
             AddNodes(allParams, root);
             var pathIds = allParams.Select(p => p.PathId).ToList();
             Assert.AreEqual(pathIds.Distinct().Count(), pathIds.Count, "PathIds over all parameters contain duplicates but should not");
         }
 
-        private static void AddNodes(List<DataTreeBaseNode> plist, DataTreeContainer cont)
+        private static void AddNodes(List<DataNode> plist, DataContainer cont)
         {
             cont.Nodes.ForEach(n =>
                                {
                                    plist.Add(n);
-                                   if (n is DataTreeContainer)
-                                        AddNodes(plist, n as DataTreeContainer);
+                                   if (n is DataContainer)
+                                        AddNodes(plist, n as DataContainer);
                                });
         }
 
@@ -175,10 +174,12 @@ namespace DataTreeTests.Container
             r1.Tc2.IntParam.Value = 14539;
             r1.Tc2.StrParam.Value = "wertwel";
 
-            r1.SaveToFile(@"c:\\ModelRoot.xml");
+            string tempFilePath = Path.Combine(Path.GetTempPath(), "ModelRoot.xml");
+
+            r1.SaveToFile(tempFilePath);
 
             var r2 = new TestRoot();
-            r2.LoadFromFile(@"c:\\ModelRoot.xml");
+            r2.LoadFromFile(tempFilePath);
 
             Assert.AreEqual(r2.Tc1.FloatParam.Value, 678.123);
             Assert.AreEqual(r2.Tc1.IntParam.Value, 789);
@@ -193,7 +194,7 @@ namespace DataTreeTests.Container
     }
 
     [DebuggerStepThrough]
-    public sealed class TestRoot : DataTreeContainer
+    public sealed class TestRoot : DataContainer
     {
         public TestRoot()
             : base(null, "TR", "TestRoot")
@@ -207,9 +208,9 @@ namespace DataTreeTests.Container
     }
 
     [DebuggerStepThrough]
-    public sealed class TestCont1 : DataTreeContainer
+    public sealed class TestCont1 : DataContainer
     {
-        public TestCont1(DataTreeContainer parent, string id, string name)
+        public TestCont1(DataContainer parent, string id, string name)
             : base(parent, id, name)
         {
             Tc3 = new TestCont3(this);
@@ -237,9 +238,9 @@ namespace DataTreeTests.Container
     }
 
     [DebuggerStepThrough]
-    public sealed class TestCont3 : DataTreeContainer
+    public sealed class TestCont3 : DataContainer
     {
-        public TestCont3(DataTreeContainer parent)
+        public TestCont3(DataContainer parent)
             : base(parent, "Tc3", "TestCont3")
         {
             BoolParam = new BoolParameter(this, "BP", "BoolParam", true);

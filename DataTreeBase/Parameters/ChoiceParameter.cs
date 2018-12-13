@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using DataBase.Container;
 
-using DataTreeBase.Container;
-
-namespace DataTreeBase.Parameters
+namespace DataBase.Parameters
 {
     /// <summary>
     /// Represents a choice parameter which defines a list of choices (consisting of value/string tuples)
     /// Remark: Tuple used (instead of KeyValuePair) due to performance reasons (ref. https://www.dotnetperls.com/tuple-keyvaluepair).
     /// </summary>
-    public sealed class ChoiceParameter : DataTreeParameter<int>
+    public sealed class ChoiceParameter : DataParameter<int>
     {
         private List<Tuple<int, string>> _choices;
 
@@ -23,7 +22,7 @@ namespace DataTreeBase.Parameters
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
         /// <param name="choices"></param>
-        public ChoiceParameter(DataTreeContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choices)
+        public ChoiceParameter(DataContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choices)
             : base(parent, id, name, defaultValue)
         {
             CheckAndAssignChoices(choices);
@@ -35,15 +34,15 @@ namespace DataTreeBase.Parameters
         private void CheckAndAssignChoices(List<Tuple<int, string>> choices)
         {
             if ((choices == null) || (choices.Count < 1))
-                throw new ArgumentNullException("ChoiceParameter: invalid or empty choice list");
+                throw new ArgumentNullException($"{nameof(ChoiceParameter)}: invalid or empty choice list");
 
             if (choices.GroupBy(ch => ch.Item1).Any(g => g.Count() > 1))
-                throw new ArgumentException("ChoiceParameter: choice values are not unambiguously");
+                throw new ArgumentException($"{nameof(ChoiceParameter)}: choice values are not unambiguously");
 
             // This does not necessarily have to be checked but i prefer to be more strict. 
             // Furthermore it makes the 'AsString' assignment unambiguously.
             if (choices.GroupBy(ch => ch.Item2).Any(g => g.Count() > 1))
-                throw new ArgumentException("ChoiceParameter: choice descriptions are not unambiguously");
+                throw new ArgumentException($"{nameof(ChoiceParameter)}: choice descriptions are not unambiguously");
 
             _choices = choices;
         }
@@ -54,7 +53,7 @@ namespace DataTreeBase.Parameters
         protected override List<Tuple<string, string>> GetXmlAttributes()
         {
             var attr = base.GetXmlAttributes();
-            attr.Add(new Tuple<string, string>(Helper.Attr.ValueStr, AsString));
+            attr.Add(new Tuple<string, string>(XmlHelper.Attr.ValueStr, AsString));
 
             return attr;
         }
@@ -88,7 +87,7 @@ namespace DataTreeBase.Parameters
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
             int val;
-            if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(Helper.ParamTag, Id)?.AttributeByName(Helper.Attr.Value).Value, out val))
+            if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value, out val))
                 Value = val;
         }
 
@@ -97,7 +96,7 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public IReadOnlyCollection<Tuple<int, string>> Choices 
         {
-            get { return _choices; }
+            get => _choices;
             set
             {
                 CheckAndAssignChoices(value.ToList());
@@ -113,10 +112,10 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public override int Value
         {
-            get { return base.Value; }
+            get => base.Value;
             set
             {
-                if (_choices.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException("ChoiceParameter.SetValue: no such item");
+                if (_choices.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException($"{nameof(ChoiceParameter)}.{nameof(Value)}: no such item");
 
                 base.Value = value;
             }
@@ -127,7 +126,7 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public int ValueIdx
         {
-            get { return _choices.IndexOf(new Tuple<int, string>(Value, AsString)); }
+            get => _choices.IndexOf(new Tuple<int, string>(Value, AsString));
             set
             {
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");

@@ -1,14 +1,12 @@
 ﻿using System;
-
-using DataTreeBase.Parameters;
-
+using DataBase.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.Parameters
+namespace Data.Tests.Parameters
 {
     public class BaseParamTests<T>
     {
-        protected void CheckSetErroneousValueAsString(DataTreeParameter<T> p, string testValue)
+        protected void CheckSetErroneousValueAsString(DataParameter<T> p, string testValue)
         {
             try
             {
@@ -25,7 +23,7 @@ namespace DataTreeTests.Parameters
             }
         }
 
-        protected void CheckProhibitedValueChange(DataTreeParameter<T> p, T value, Action<DataTreeParameterBase> onChangedAction)
+        protected void CheckProhibitedValueChange(DataParameter<T> p, T value, Action<DataParameterBase> onChangedAction)
         {
             p.OnChanged += onChangedAction;
             try

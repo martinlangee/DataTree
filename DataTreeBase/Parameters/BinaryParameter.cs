@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
+using DataBase.Container;
 
-using DataTreeBase.Container;
-
-namespace DataTreeBase.Parameters
+namespace DataBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with byte array value type
     /// </summary>
-    public sealed class BinaryParameter : DataTreeParameter<byte[]>
+    public sealed class BinaryParameter : DataParameter<byte[]>
     {
         /// <summary>
         /// C'tor
@@ -17,7 +16,7 @@ namespace DataTreeBase.Parameters
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        public BinaryParameter(DataTreeContainer parent, string id, string name, byte[] defaultValue)
+        public BinaryParameter(DataContainer parent, string id, string name, byte[] defaultValue)
             : base(parent, id, name, defaultValue)
         {
         }
@@ -35,8 +34,8 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Value != null ? Convert.ToBase64String(Value) : ""; }
-            set { Value = value.Length > 0 ? Convert.FromBase64String(value): new byte[0]; }
+            get => Value != null ? Convert.ToBase64String(Value) : "";
+            set => Value = value.Length > 0 ? Convert.FromBase64String(value): new byte[0];
         }
     }
 }

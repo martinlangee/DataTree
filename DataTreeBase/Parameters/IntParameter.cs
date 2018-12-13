@@ -1,13 +1,12 @@
 ﻿using System;
+using DataBase.Container;
 
-using DataTreeBase.Container;
-
-namespace DataTreeBase.Parameters
+namespace DataBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with int value type
     /// </summary>
-    public sealed class IntParameter : DataTreeParameter<int>
+    public sealed class IntParameter : DataParameter<int>
     {
         /// <summary>
         /// C'tor
@@ -16,7 +15,7 @@ namespace DataTreeBase.Parameters
         /// <param name="id"></param>
         /// <param name="name"></param>
         /// <param name="defaultValue"></param>
-        public IntParameter(DataTreeContainer parent, string id, string name, int defaultValue)
+        public IntParameter(DataContainer parent, string id, string name, int defaultValue)
             : base(parent, id, name, defaultValue)
         {
         }
@@ -26,11 +25,10 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Value.ToString(); }
+            get => Value.ToString();
             set
             {
-                int intVal;
-                if (int.TryParse(value, out intVal))
+                if (int.TryParse(value, out var intVal))
                     Value = intVal;
                 else
                     throw new ArgumentException($"IntParameter.SetAsString: cannot convert '{value}' to int.");

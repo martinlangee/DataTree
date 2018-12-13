@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-
-using DataTreeBase.Container;
-using DataTreeBase.Parameters;
-
+using DataBase.Container;
+using DataBase.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.Container
+namespace Data.Tests.Container
 {
     [TestClass]
     public sealed class DynContainerTests
@@ -33,7 +31,7 @@ namespace DataTreeTests.Container
     }
 
     [DebuggerStepThrough]
-    public sealed class DynTestRoot : DataTreeContainer
+    public sealed class DynTestRoot : DataContainer
     {
         public DynTestRoot()
             : base(null, "TR", "TestRoot")
@@ -45,9 +43,9 @@ namespace DataTreeTests.Container
     }
 
     [DebuggerStepThrough]
-    public sealed class DynTestCont1 : DataTreeDynParentContainer<DynTestCont3>
+    public sealed class DynTestCont1 : DataDynParentContainer<DynTestCont3>
     {
-        public DynTestCont1(DataTreeContainer parent, string id, string name)
+        public DynTestCont1(DataContainer parent, string id, string name)
             : base(parent, id, name)
         {
             Add(cont3 => cont3.FloatParam.Value = 5);
@@ -59,9 +57,9 @@ namespace DataTreeTests.Container
 
     [DebuggerStepThrough]
     // ReSharper disable once ClassNeverInstantiated.Global
-    public sealed class DynTestCont3 : DataTreeDynContainer
+    public sealed class DynTestCont3 : DataDynContainer
     {
-        public DynTestCont3(DataTreeContainer parent)
+        public DynTestCont3(DataContainer parent)
             : base(parent, "DTc3", "DynTestCont3")
         {
             FloatParam = new FloatParameter(this, "BP", "BoolParam", 1, "km", 6);

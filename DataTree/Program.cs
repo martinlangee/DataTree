@@ -1,10 +1,10 @@
 ﻿using System;
 
-using DataTreeBase.Parameters;
+using DataBase.Parameters;
 
 using SampleModel;
 
-namespace DataTreeHost
+namespace Data.TestApp
 {
     class Program
     {
@@ -77,7 +77,7 @@ namespace DataTreeHost
             Console.WriteLine("ModelOnCanUndoRedoChanged:" + model.UndoRedo.CanUndo + "/" + model.UndoRedo.CanRedo);
         }
 
-        static void OnChange(DataTreeParameterBase param)
+        static void OnChange(DataParameterBase param)
         {
             Console.WriteLine("Parameter " + param.PathId + " Val=" + param.AsString);
         }

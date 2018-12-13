@@ -1,12 +1,12 @@
 ﻿using System;
 
-using DataTreeBase;
-using DataTreeBase.Interfaces;
-using DataTreeBase.UndoRedo;
+using DataBase;
+using DataBase.Interfaces;
+using DataBase.UndoRedo;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.UndoRedo
+namespace Data.Tests.UndoRedo
 {
     internal static class Flags
     {
@@ -32,6 +32,8 @@ namespace DataTreeTests.UndoRedo
 
         public UndoRedoStack Stack { get; }
 
+        public string Name => "TestDataNode";
+
         public void Set(object value)
         {
             Value = (int) value;
@@ -40,7 +42,7 @@ namespace DataTreeTests.UndoRedo
 
         public int Value
         {
-            get { return _value; }
+            get => _value;
             set
             {
                 if (value == _value) return;

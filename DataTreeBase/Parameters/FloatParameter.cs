@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using DataBase.Container;
 
-using DataTreeBase.Container;
-
-namespace DataTreeBase.Parameters
+namespace DataBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with double value type
     /// </summary>
-    public sealed class FloatParameter : DataTreeParameter<double>
+    public sealed class FloatParameter : DataParameter<double>
     {
         private string _formatStr;
         private int _decimals;
@@ -24,7 +23,7 @@ namespace DataTreeBase.Parameters
         /// <param name="defaultValue">Float parameter default value</param>
         /// <param name="unit">Parameter unit</param>
         /// <param name="decimals">Floating point decimals</param>
-        public FloatParameter(DataTreeContainer parent, string id, string name, double defaultValue, string unit, int decimals)
+        public FloatParameter(DataContainer parent, string id, string name, double defaultValue, string unit, int decimals)
             : base(parent, id, name, defaultValue)
         {
             Unit = unit;
@@ -45,7 +44,7 @@ namespace DataTreeBase.Parameters
         protected override List<Tuple<string, string>> GetXmlAttributes()
         {
             var attr = base.GetXmlAttributes();
-            attr.Add(new Tuple<string, string>(Helper.Attr.Unit, Unit));
+            attr.Add(new Tuple<string, string>(XmlHelper.Attr.Unit, Unit));
 
             return attr;
         }
@@ -63,11 +62,10 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.'); }
+            get => Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
             set
             {
-                double dblVal;
-                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out dblVal))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dblVal))
                     Value = dblVal;
                 else
                     throw new ArgumentException($"FloatParameter.SetAsString: cannot convert '{value}' to float.");
@@ -84,7 +82,7 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public int Decimals
         {
-            get { return _decimals; }
+            get => _decimals;
             set
             {
                 if (_decimals == value) return;
@@ -102,8 +100,8 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public string AsStringC
         {
-            get { return Value.ToString(_formatStr, CultureInfo.CurrentCulture).TrimEnd('0').TrimEnd(_currentDecimalSep); }
-            set { AsString = value.Replace(_currentDecimalSep, '.'); }
+            get => Value.ToString(_formatStr, CultureInfo.CurrentCulture).TrimEnd('0').TrimEnd(_currentDecimalSep);
+            set => AsString = value.Replace(_currentDecimalSep, '.');
         }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Globalization;
-
-using DataTreeBase.Parameters;
-
+using DataBase.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.Parameters
+namespace Data.Tests.Parameters
 {
     [TestClass]
     public class FloatParameterTests: BaseParamTests<double>
@@ -113,10 +111,10 @@ namespace DataTreeTests.Parameters
             Assert.AreEqual(p.Value, 1.23, "Value changed by rounding");
         }
 
-        private void ParamOnChanged(DataTreeParameterBase dataTreeParameterBase)
+        private void ParamOnChanged(DataParameterBase dataParameterBase)
         {
             _passedOnChanged = true;
-            Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
+            Console.WriteLine($"Parameter {dataParameterBase.Name} value set to: {dataParameterBase.AsString}");
         }
     }
 }

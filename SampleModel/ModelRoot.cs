@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 
-using DataTreeBase.Container;
+using DataBase.Container;
 
 namespace SampleModel
 {
     [DebuggerStepThrough]
-    public sealed class Root: DataTreeContainer
+    public sealed class Root: DataContainer
     {
         public Root()
             : base(null, "Root", "Root")

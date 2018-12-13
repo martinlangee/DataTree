@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTreeTestApp", "DataTree\DataTreeTestApp.csproj", "{D847050D-EE2F-404C-B0CA-978FF688BCB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.TestApp", "DataTree\Data.TestApp.csproj", "{D847050D-EE2F-404C-B0CA-978FF688BCB2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTreeBase", "DataTreeBase\DataTreeBase.csproj", "{5081935E-0107-4733-B954-1FA18724C9D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBase", "DataTreeBase\DataBase.csproj", "{5081935E-0107-4733-B954-1FA18724C9D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleModel", "SampleModel\SampleModel.csproj", "{95C86014-2649-49F2-A776-9C46B220857D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTreeTests", "DataTreeTests\DataTreeTests.csproj", "{FA3FB7E7-F8B0-43FB-B770-F375483ACBB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Tests", "DataTreeTests\Data.Tests.csproj", "{FA3FB7E7-F8B0-43FB-B770-F375483ACBB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +36,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA0F9C4E-6113-49A7-B961-CB40A54D5C5A}
 	EndGlobalSection
 EndGlobal

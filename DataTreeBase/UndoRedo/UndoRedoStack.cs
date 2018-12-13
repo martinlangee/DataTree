@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using DataBase.Interfaces;
 
-using DataTreeBase.Interfaces;
-
-namespace DataTreeBase.UndoRedo
+namespace DataBase.UndoRedo
 {
     /// <summary>
     /// Handling the undo/redo actions and states
@@ -22,7 +21,6 @@ namespace DataTreeBase.UndoRedo
         }
 
         private bool _undoRedoing;
-        private int _pointer = -1;
         private readonly List<UndoRedoItem> _stack = new List<UndoRedoItem>();
         private bool _canUndo;
         private bool _canRedo;
@@ -43,7 +41,7 @@ namespace DataTreeBase.UndoRedo
             _undoRedoing = true;
             try
             {
-                _stack[_pointer].Node.Set(value);
+                _stack[Pointer].Node.Set(value);
             }
             finally
             {
@@ -56,38 +54,46 @@ namespace DataTreeBase.UndoRedo
         /// </summary>
         private void UpdateCanUndoRedo()
         {
-            CanUndo = (_stack.Count > 0) && (_pointer >= 0);
-            CanRedo = (_stack.Count > 0) && (_pointer < (_stack.Count - 1));
+            CanUndo = (_stack.Count > 0) && (Pointer >= 0);
+            CanRedo = (_stack.Count > 0) && (Pointer < (_stack.Count - 1));
+
+            UndoRedoListChanged?.Invoke();
         }
 
         /// <summary>
         /// The last change made to the data tree is reverted
         /// </summary>
-        public void Undo()
+        public void Undo(int count = 1)
         {
-            if (_pointer < 0)
-                throw new InvalidOperationException("DataTreeContainer.Undo: pointer to undo stack already at lower limit");
+            if (Pointer < 0)
+                throw new InvalidOperationException("DataContainer.Undo: pointer to undo stack already at lower limit");
 
-            Debug.WriteLine("Undo: OldValue=" + _stack[_pointer].OldValue + " Ptr=" + _pointer);
-            SafeSetValue(_stack[_pointer].OldValue);
-            _pointer--;
+            count.TimesDo(i =>
+            {
+                Debug.WriteLine("Undo: OldValue=" + _stack[Pointer].OldValue + " Ptr=" + Pointer);
+                SafeSetValue(_stack[Pointer].OldValue);
+                Pointer--;
 
-            UpdateCanUndoRedo();
+                UpdateCanUndoRedo();
+            });
         }
 
         /// <summary>
         /// The last undo action made to the data tree is reverted
         /// </summary>
-        public void Redo()
+        public void Redo(int count = 1)
         {
-            if (_pointer >= (_stack.Count - 1))
-                throw new InvalidOperationException("DataTreeContainer.Undo: pointer to redo stack already at upper limit");
+            if (Pointer >= (_stack.Count - 1))
+                throw new InvalidOperationException("DataContainer.Undo: pointer to redo stack already at upper limit");
 
-            _pointer++;
-            Debug.WriteLine("Redo: NewValue=" + _stack[_pointer].NewValue + " Ptr=" + _pointer);
-            SafeSetValue(_stack[_pointer].NewValue);
+            count.TimesDo(i =>
+            {
+                Pointer++;
+                Debug.WriteLine("Redo: NewValue=" + _stack[Pointer].NewValue + " Ptr=" + Pointer);
+                SafeSetValue(_stack[Pointer].NewValue);
 
-            UpdateCanUndoRedo();
+                UpdateCanUndoRedo();
+            });
         }
 
         /// <summary>
@@ -95,13 +101,13 @@ namespace DataTreeBase.UndoRedo
         /// </summary>
         public bool CanUndo
         {
-            get { return _canUndo; }
+            get => _canUndo;
             private set
             {
                 if (CanUndo == value) return; 
 
                 _canUndo = value;
-                CanUndoRedoChanged.Invoke();
+                CanUndoRedoChanged?.Invoke();
             }
         }
 
@@ -110,20 +116,25 @@ namespace DataTreeBase.UndoRedo
         /// </summary>
         public bool CanRedo
         {
-            get { return _canRedo; }
+            get => _canRedo;
             private set
             {
                 if (CanRedo == value) return;
 
                 _canRedo = value;
-                CanUndoRedoChanged.Invoke();
+                CanUndoRedoChanged?.Invoke();
             }
         }
 
         /// <summary>
-        /// Event fired when either the CanUndo or then CanRedo propertry has changed it's state
+        /// Event fired when either the CanUndo or then CanRedo property has changed it's state
         /// </summary>
-        public event Action CanUndoRedoChanged = () => { };
+        public event Action CanUndoRedoChanged;
+
+        /// <summary>
+        /// Event fired when either the UndoList and/or then RedoList has changed
+        /// </summary>
+        public event Action UndoRedoListChanged;
 
         /// <summary>
         /// Stores the change of the specified paramerter with it's old and new value in the undo/redo stack
@@ -137,8 +148,8 @@ namespace DataTreeBase.UndoRedo
                 return;
 
             // clear "Redo"-Entries when new change has occurred
-            if (_stack.Count > 0 && _pointer < (_stack.Count - 1))
-                _stack.RemoveRange(_pointer + 1, _stack.Count - _pointer - 1);
+            if (_stack.Count > 0 && Pointer < (_stack.Count - 1))
+                _stack.RemoveRange(Pointer + 1, _stack.Count - Pointer - 1);
 
             var undoItem = new UndoRedoItem()
                            {
@@ -147,11 +158,11 @@ namespace DataTreeBase.UndoRedo
                                NewValue = newValue
                            };
             _stack.Add(undoItem);
-            _pointer++;
+            Pointer++;
 
             UpdateCanUndoRedo();
 
-            Debug.WriteLine("ValueChanged: " + undoItem.Node + " ptr=" + _pointer);
+            Debug.WriteLine("ValueChanged: " + undoItem.Node + " ptr=" + Pointer);
         }
 
         /// <summary>
@@ -160,9 +171,46 @@ namespace DataTreeBase.UndoRedo
         public void Clear()
         {
             _stack.Clear();
-            _pointer = -1;
+            Pointer = -1;
 
             UpdateCanUndoRedo();
+        }
+
+        /// <summary>
+        /// Returns a list of the changes on the undo stack that can be undone
+        /// </summary>
+        public IList<string> UndoList
+        {
+            get
+            {
+                var result = new List<string>();
+                if (Pointer < 0) return result;
+
+                for (var i = Pointer; i >= 0; i--)
+                {
+                    result.Add($"{_stack[i].Node.Name}: {_stack[i].NewValue} -> {_stack[i].OldValue}");
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Returns a list of the changes on the redo stack that can be undone
+        /// </summary>
+        public IList<string> RedoList
+        {
+            get
+            {
+                var result = new List<string>();
+
+                for (var i = Pointer + 1; i < _stack.Count; i++)
+                {
+                    result.Add($"{_stack[i].Node.Name}: {_stack[i].OldValue} -> {_stack[i].NewValue}");
+                }
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -170,8 +218,13 @@ namespace DataTreeBase.UndoRedo
         /// </summary>
         internal bool IsMuted { private get; set; }
 
+
+        /// <summary>
+        /// Returns the current state of the stack pointer
+        /// </summary>
+        public int Pointer { get; private set; } = -1;
+
         // for testing purposes only
         internal int Count => _stack.Count;
-        internal int Pointer => _pointer;
     }
 }

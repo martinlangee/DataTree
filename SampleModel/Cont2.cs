@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using DataTreeBase.Container;
-using DataTreeBase.Parameters;
+using DataBase.Container;
+using DataBase.Parameters;
 
 namespace SampleModel
 {
     [DebuggerStepThrough]
-    public sealed class Cont2 : DataTreeDynParentContainer<DynContainer>
+    public sealed class Cont2 : DataDynParentContainer<DynContainer>
     {
-        public Cont2(DataTreeContainer parent)
+        public Cont2(DataContainer parent)
             : base(parent, "Cont2", "Cont2")
         {
             IntParam3 = new IntParameter(this, "IntParam3", "IntParam3", 0);

@@ -1,13 +1,12 @@
 ﻿using System;
+using DataBase.Container;
 
-using DataTreeBase.Container;
-
-namespace DataTreeBase.Parameters
+namespace DataBase.Parameters
 {
     /// <summary>
     /// Represents a parameter with string value type
     /// </summary>
-    public sealed class StringParameter: DataTreeParameter<string>
+    public sealed class StringParameter: DataParameter<string>
     {
         /// <summary>
         /// C'tor
@@ -16,7 +15,7 @@ namespace DataTreeBase.Parameters
         /// <param name="id">Parameter identificator</param>
         /// <param name="name">Parameter name</param>
         /// <param name="defaultValue">Float parameter default value</param>
-        public StringParameter(DataTreeContainer parent, string id, string name, string defaultValue)
+        public StringParameter(DataContainer parent, string id, string name, string defaultValue)
             : base(parent, id, name, defaultValue)
         {
         }
@@ -26,8 +25,8 @@ namespace DataTreeBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Value; }
-            set { Value = value; }
+            get => Value;
+            set => Value = value;
         }
     }
 }

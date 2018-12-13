@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using DataTreeBase.Parameters;
-
+using DataBase.Parameters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace DataTreeTests.Parameters
+namespace Data.Tests.Parameters
 {
     [TestClass]
     public class ChoiceParameterTests : BaseParamTests<int>
@@ -292,10 +290,10 @@ namespace DataTreeTests.Parameters
             }
         }
 
-        private void ParamOnChanged(DataTreeParameterBase dataTreeParameterBase)
+        private void ParamOnChanged(DataParameterBase dataParameterBase)
         {
             _passedOnChanged = true;
-            Console.WriteLine($"Parameter {dataTreeParameterBase.Name} value set to: {dataTreeParameterBase.AsString}");
+            Console.WriteLine($"Parameter {dataParameterBase.Name} value set to: {dataParameterBase.AsString}");
         }
     }
 }

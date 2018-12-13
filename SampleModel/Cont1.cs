@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 
-using DataTreeBase.Container;
-using DataTreeBase.Parameters;
+using DataBase.Container;
+using DataBase.Parameters;
 
 namespace SampleModel
 {
     [DebuggerStepThrough]
-    public sealed class Cont1: DataTreeContainer
+    public sealed class Cont1: DataContainer
     {
-        public Cont1(DataTreeContainer parent)
+        public Cont1(DataContainer parent)
             : base(parent, "Cont1", "Cont1")
         {
             IntParam = new IntParameter(this, "IntParam", "IntParam", 0);

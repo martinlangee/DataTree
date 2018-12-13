@@ -50,9 +50,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataTreeBase\DataTreeBase.csproj">
+    <ProjectReference Include="..\DataTreeBase\DataBase.csproj">
       <Project>{5081935E-0107-4733-B954-1FA18724C9D5}</Project>
-      <Name>DataTreeBase</Name>
+      <Name>DataBase</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

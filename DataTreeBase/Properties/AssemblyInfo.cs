@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DataTreeBase")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("DataBase")]
+[assembly: AssemblyDescription("Collection of classes to implement a generic tree oriented data model containing XML load/save, modification tracking and undo/redo mechanism")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DataTreeBase")]
+[assembly: AssemblyCompany("CSA Computer & Antriebstechnik GmbH")]
+[assembly: AssemblyProduct("DataBase")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("5081935e-0107-4733-b954-1fa18724c9d5")]
-[assembly: InternalsVisibleTo("DataTreeTests")]
+[assembly: InternalsVisibleTo("Data.Tests")]
 
 // Version information for an assembly consists of the following four values:
 //
