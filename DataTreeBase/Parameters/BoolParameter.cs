@@ -13,10 +13,10 @@ namespace DataBase.Parameters
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="id"></param>
-        /// <param name="name"></param>
+        /// <param name="designation"></param>
         /// <param name="defaultValue"></param>
-        public BoolParameter(DataContainer parent, string id, string name, bool defaultValue = false)
-            : base(parent, id, name, defaultValue)
+        public BoolParameter(DataContainer parent, string id, string designation, bool defaultValue = false)
+            : base(parent, id, designation, defaultValue)
         {
         }
 

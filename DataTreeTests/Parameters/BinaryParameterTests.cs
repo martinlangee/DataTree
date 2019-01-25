@@ -18,7 +18,7 @@ namespace Data.Tests.Parameters
             Assert.IsNotNull(p, "Parameter object could not be created");
 
             Assert.AreEqual(p.Id, "myBinaryId", "Id not initialized correctly");
-            Assert.AreEqual(p.Name, "myBinaryName", "Name not initialized correctly");
+            Assert.AreEqual(p.Designation, "myBinaryName", "Name not initialized correctly");
             Assert.AreEqual(p.PathId, "myBinaryId", "PathId not initialized correctly");
             Assert.IsTrue(p.Value.SequenceEqual(_defValue), "Value not initialized correctly");
             Assert.IsTrue(p.BufferedValue.SequenceEqual(_defValue), "BufferedValue not initialized correctly");
@@ -100,7 +100,7 @@ namespace Data.Tests.Parameters
         private void ParamOnChanged(DataParameterBase dataParameterBase)
         {
             _passedOnChanged = true;
-            Console.WriteLine($"Parameter {dataParameterBase.Name} value set to: {dataParameterBase.AsString}");
+            Console.WriteLine($"Parameter {dataParameterBase.Designation} value set to: {dataParameterBase.AsString}");
         }
     }
 }

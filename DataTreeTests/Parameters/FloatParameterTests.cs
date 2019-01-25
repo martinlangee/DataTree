@@ -17,7 +17,7 @@ namespace Data.Tests.Parameters
             Assert.IsNotNull(p, "Parameter object could not be created");
 
             Assert.AreEqual(p.Id, "myFloatId", "Id not initialized correctly");
-            Assert.AreEqual(p.Name, "myFloatName", "Name not initialized correctly");
+            Assert.AreEqual(p.Designation, "myFloatName", "Name not initialized correctly");
             Assert.AreEqual(p.PathId, "myFloatId", "PathId not initialized correctly");
             Assert.AreEqual(p.Value, 55, "Value not initialized correctly");
             Assert.AreEqual(p.AsString, "55", "AsString not initialized correctly");
@@ -71,7 +71,7 @@ namespace Data.Tests.Parameters
         {
             var p = new FloatParameter(null, "myFloatId", "myFloatName", 55.076, "m/s", 5);
 
-            p.AsString = "123456789.23";
+            p.AsString = $"123456789{CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator}23";
 
             CheckSetErroneousValueAsString(p, "Otto");
             CheckSetErroneousValueAsString(p, "true");
@@ -92,8 +92,8 @@ namespace Data.Tests.Parameters
         public void FloatFormatTest()
         {
             var p = new FloatParameter(null, "myFloatId", "myFloatName", 55.076, "m/s", 5);
-            Assert.AreEqual(p.AsString, "55.076", "AsString representation not correct");
-            Assert.AreEqual(p.AsStringC, "55.076".Replace('.', CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0]), "AsStringC representation not correct");
+            Assert.AreEqual(p.AsStringInvCult, "55.076", "AsString representation not correct");
+            Assert.AreEqual(p.AsString, "55.076".Replace('.', CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0]), "AsStringInvCult representation not correct");
 
             p.Value = 1.23456789;
             Assert.AreEqual(p.Value, 1.23457, "Value not correctly assigned or rounded");
@@ -114,7 +114,7 @@ namespace Data.Tests.Parameters
         private void ParamOnChanged(DataParameterBase dataParameterBase)
         {
             _passedOnChanged = true;
-            Console.WriteLine($"Parameter {dataParameterBase.Name} value set to: {dataParameterBase.AsString}");
+            Console.WriteLine($"Parameter {dataParameterBase.Designation} value set to: {dataParameterBase.AsString}");
         }
     }
 }

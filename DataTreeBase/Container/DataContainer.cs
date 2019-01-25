@@ -20,10 +20,10 @@ namespace DataBase.Container
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Container identfication</param>
-        /// <param name="name">Container name</param>
+        /// <param name="designation">Container name</param>
         /// <param name="undoRedoActivated">True if undo/redo mechanism should be activated</param>
-        protected DataContainer(DataContainer parent, string id, string name, bool undoRedoActivated = true) 
-            : base(parent, id, name)
+        protected DataContainer(DataContainer parent, string id, string designation = "", bool undoRedoActivated = true) 
+            : base(parent, id, designation)
         {
             Containers = new List<DataContainer>();
             Params = new List<DataParameterBase>();
@@ -122,7 +122,7 @@ namespace DataBase.Container
             xmlNode.SetAttributes(new List<Tuple<string, string>>
                                   {
                                       new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                                      new Tuple<string, string>(XmlHelper.Attr.Name, Name)
+                                      new Tuple<string, string>(XmlHelper.Attr.Name, Designation)
                                   });
 
             Params.ForEach(p => p.SaveToXml(xmlNode));

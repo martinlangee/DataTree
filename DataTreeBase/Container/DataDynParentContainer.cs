@@ -41,10 +41,10 @@ namespace DataBase.Container
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Container identfication</param>
-        /// <param name="name">Container name</param>
+        /// <param name="designation">Container name</param>
         /// <param name="initDefaultContainers">Action that initializes the default configuration of this container's dynamic sub containers</param>
-        protected DataDynParentContainer(DataContainer parent, string id, string name, Action<DataDynParentContainer<T>> initDefaultContainers = null)
-            : base(parent, id, name)
+        protected DataDynParentContainer(DataContainer parent, string id, string designation, Action<DataDynParentContainer<T>> initDefaultContainers = null)
+            : base(parent, id, designation)
         {
             _initDefaultContainers = initDefaultContainers;
             _initDefaultContainers?.Invoke(this);
@@ -57,7 +57,7 @@ namespace DataBase.Container
         /// <summary>
         /// List of sub-containers
         /// </summary>
-        protected new IReadOnlyList<T> Containers => base.Containers.Cast<T>().ToList();
+        public new IReadOnlyList<T> Containers => base.Containers.Cast<T>().ToList();
 
         /// <summary>
         /// Notifies to the undo/redo stack a change in the dynamic child container list

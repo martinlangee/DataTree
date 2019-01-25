@@ -29,15 +29,15 @@ namespace DataBase
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Node identificator</param>
-        /// <param name="name">Node name</param>
-        protected DataNode(DataContainer parent, string id, string name)
+        /// <param name="designation">Node name</param>
+        protected DataNode(DataContainer parent, string id, string designation= "")
         {
             if (id.Contains(XmlHelper.PathDelimiter))
                 throw new ArgumentOutOfRangeException($"DataNode: node id may not contain path delimiter '{XmlHelper.PathDelimiter}'");
 
             Parent = parent;
             Id = id;
-            Name = name;
+            Designation = string.IsNullOrEmpty(designation) ? id : designation;
         }
 
         /// <summary>
@@ -58,9 +58,9 @@ namespace DataBase
         public virtual string PathId => (Parent != null ? Parent.PathId + $"{XmlHelper.PathDelimiter}" : "") + Id;
 
         /// <summary>
-        /// Returns the code name
+        /// Returns the Node name
         /// </summary>
-        public string Name { get; }
+        public string Designation { get; }
 
         /// <summary>
         /// Returns true if the node has been modified since last modified reset

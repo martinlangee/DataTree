@@ -19,11 +19,11 @@ namespace DataBase.Parameters
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="id"></param>
-        /// <param name="name"></param>
+        /// <param name="designation"></param>
         /// <param name="defaultValue"></param>
         /// <param name="choices"></param>
-        public ChoiceParameter(DataContainer parent, string id, string name, int defaultValue, List<Tuple<int, string>> choices)
-            : base(parent, id, name, defaultValue)
+        public ChoiceParameter(DataContainer parent, string id, string designation, int defaultValue, List<Tuple<int, string>> choices)
+            : base(parent, id, designation, defaultValue)
         {
             CheckAndAssignChoices(choices);
         }
@@ -63,7 +63,7 @@ namespace DataBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Choices.First(i => i.Item1 == Value).Item2; }
+            get { return Choices.First(ch => ch.Item1 == Value).Item2; }
             set
             {
                 if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
@@ -94,9 +94,9 @@ namespace DataBase.Parameters
         /// <summary>
         /// Gets or sets the list of choices this parameters defines
         /// </summary>
-        public IReadOnlyCollection<Tuple<int, string>> Choices 
-        {
-            get => _choices;
+        public IReadOnlyCollection<Tuple<int, string>> Choices => _choices;
+        /*
+            // TODO: wieder in Betrieb nehmen, wenn Konzept für Undo/Redo von Änderungen an der Choice-List implementiert sind
             set
             {
                 CheckAndAssignChoices(value.ToList());
@@ -105,7 +105,7 @@ namespace DataBase.Parameters
                 if (_choices.All(c => c.Item1 != Value))
                     Value = _choices[0].Item1;
             }
-        }
+        */
 
         /// <summary>
         /// Int typed parameter value

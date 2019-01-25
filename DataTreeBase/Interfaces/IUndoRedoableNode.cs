@@ -8,9 +8,9 @@ namespace DataBase.Interfaces
     internal interface IUndoRedoableNode
     {
         /// <summary>
-        /// Returns the code name
+        /// Returns the node designation
         /// </summary>
-        string Name { get; }
+        string Designation { get; }
 
         /// <summary>
         /// Set the new value as result of the undo or redo process

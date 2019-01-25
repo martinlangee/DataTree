@@ -17,9 +17,9 @@ namespace DataBase.Parameters
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Parameter identificator</param>
-        /// <param name="name">Parameter name</param>
-        protected DataParameterBase(DataContainer parent, string id, string name)
-            : base(parent, id, name)
+        /// <param name="designation">Parameter name</param>
+        protected DataParameterBase(DataContainer parent, string id, string designation)
+            : base(parent, id, designation)
         {
             Parent?.Params.Add(this);
         }
@@ -33,7 +33,7 @@ namespace DataBase.Parameters
                     new List<Tuple<string, string>>
                     {
                         new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                        new Tuple<string, string>(XmlHelper.Attr.Name, Name),
+                        new Tuple<string, string>(XmlHelper.Attr.Name, Designation),
                         new Tuple<string, string>(XmlHelper.Attr.Value, XmlValue),
                     };
         }
@@ -60,7 +60,7 @@ namespace DataBase.Parameters
         /// <param name="parentXmlNode">The parent xml node</param>
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            AsString = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value;
+            AsStringInvCult = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value;
         }
 
         /// <summary>
@@ -75,13 +75,22 @@ namespace DataBase.Parameters
         }
 
         /// <summary>
-        /// Gets or sets the string representation of the parameter value
+        /// Gets or sets the string representation of the parameter value using the current culture
         /// </summary>
         public abstract string AsString { get; set; }
 
         /// <summary>
+        /// Gets or sets the string representation of the parameter value using the invariant culture
+        /// </summary>
+        public virtual string AsStringInvCult
+        {
+            get => AsString;
+            set => AsString = value;
+        }
+
+        /// <summary>
         /// Returns the value written to xml file on save
         /// </summary>
-        protected virtual string XmlValue => AsString;
+        protected virtual string XmlValue => AsStringInvCult;
     }
 }

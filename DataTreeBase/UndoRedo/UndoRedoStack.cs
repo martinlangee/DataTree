@@ -162,7 +162,7 @@ namespace DataBase.UndoRedo
 
             UpdateCanUndoRedo();
 
-            Debug.WriteLine("ValueChanged: " + undoItem.Node + " ptr=" + Pointer);
+            Debug.WriteLine("ValueChanged: " + undoItem.Node + " => " + newValue + " ptr=" + Pointer);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace DataBase.UndoRedo
 
                 for (var i = Pointer; i >= 0; i--)
                 {
-                    result.Add($"{_stack[i].Node.Name}: {_stack[i].NewValue} -> {_stack[i].OldValue}");
+                    result.Add($"{_stack[i].Node.Designation}: {_stack[i].NewValue} -> {_stack[i].OldValue}");
                 }
 
                 return result;
@@ -206,7 +206,7 @@ namespace DataBase.UndoRedo
 
                 for (var i = Pointer + 1; i < _stack.Count; i++)
                 {
-                    result.Add($"{_stack[i].Node.Name}: {_stack[i].OldValue} -> {_stack[i].NewValue}");
+                    result.Add($"{_stack[i].Node.Designation}: {_stack[i].OldValue} -> {_stack[i].NewValue}");
                 }
 
                 return result;

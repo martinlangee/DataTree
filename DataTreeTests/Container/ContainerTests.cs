@@ -29,9 +29,9 @@ namespace Data.Tests.Container
             Assert.AreEqual(root.Tc1.Containers[0], root.Tc1.Tc3, "TestCont3 was not inserted into container list");
             Assert.AreEqual(root.Tc1.Containers.Count, 1, "Number of containers should be 1 but was " + root.Tc1.Containers.Count);
 
-            Assert.AreEqual(root.Tc1.Name, "TestCont1", "Name of TestCont1 should be 'TestCont1' but was " + root.Tc1.Name);
-            Assert.AreEqual(root.Tc2.Name, "TestCont2", "Name of TestCont2 should be 'TestCont2' but was " + root.Tc2.Name);
-            Assert.AreEqual(root.Tc1.Tc3.Name, "TestCont3", "Name of TestCont3 should be 'TestCont3' but was " + root.Tc1.Tc3.Name);
+            Assert.AreEqual(root.Tc1.Designation, "TestCont1", "Name of TestCont1 should be 'TestCont1' but was " + root.Tc1.Designation);
+            Assert.AreEqual(root.Tc2.Designation, "TestCont2", "Name of TestCont2 should be 'TestCont2' but was " + root.Tc2.Designation);
+            Assert.AreEqual(root.Tc1.Tc3.Designation, "TestCont3", "Name of TestCont3 should be 'TestCont3' but was " + root.Tc1.Tc3.Designation);
 
             Assert.AreEqual(root.Tc1.Id, "Tc1", "Id of TestCont1 should be 'Tc1' but was " + root.Tc1.Id);
             Assert.AreEqual(root.Tc2.Id, "Tc2", "Id of TestCont2 should be 'Tc2' but was " + root.Tc2.Id);

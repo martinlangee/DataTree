@@ -13,10 +13,10 @@ namespace DataBase.Parameters
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Parameter identificator</param>
-        /// <param name="name">Parameter name</param>
+        /// <param name="designation">Parameter name</param>
         /// <param name="defaultValue">Float parameter default value</param>
-        public StringParameter(DataContainer parent, string id, string name, string defaultValue)
-            : base(parent, id, name, defaultValue)
+        public StringParameter(DataContainer parent, string id, string designation, string defaultValue)
+            : base(parent, id, designation, defaultValue)
         {
         }
 

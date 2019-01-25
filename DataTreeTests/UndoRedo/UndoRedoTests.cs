@@ -32,7 +32,7 @@ namespace Data.Tests.UndoRedo
 
         public UndoRedoStack Stack { get; }
 
-        public string Name => "TestDataNode";
+        public string Designation => "TestDataNode";
 
         public void Set(object value)
         {

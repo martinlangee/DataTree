@@ -13,18 +13,19 @@ namespace DataBase.Parameters
         private string _formatStr;
         private int _decimals;
         private readonly char _currentDecimalSep = CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+        private readonly char _invariantDecimalSep = CultureInfo.InvariantCulture.NumberFormat.CurrencyDecimalSeparator[0];
 
         /// <summary>
         /// C'tor
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Parameter identificator</param>
-        /// <param name="name">Parameter name</param>
+        /// <param name="designation">Parameter name</param>
         /// <param name="defaultValue">Float parameter default value</param>
         /// <param name="unit">Parameter unit</param>
         /// <param name="decimals">Floating point decimals</param>
-        public FloatParameter(DataContainer parent, string id, string name, double defaultValue, string unit, int decimals)
-            : base(parent, id, name, defaultValue)
+        public FloatParameter(DataContainer parent, string id, string designation, double defaultValue, string unit, int decimals)
+            : base(parent, id, designation, defaultValue)
         {
             Unit = unit;
             Decimals = decimals;
@@ -58,17 +59,32 @@ namespace DataBase.Parameters
         }
 
         /// <summary>
-        /// Gets or sets the string representation considering the decimals 
+        /// 
+        /// </summary>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        private string ToString(CultureInfo culture)
+        {
+            string decimalSeperator = culture.NumberFormat.NumberDecimalSeparator;
+            string valueStr = Value.ToString(_formatStr, culture);
+
+            return valueStr.Contains(decimalSeperator) ? 
+                valueStr.TrimEnd('0').TrimEnd(decimalSeperator[0]) : 
+                valueStr;
+        }
+
+        /// <summary>
+        /// Gets or sets the string representation considering the decimals using invariant culture
         /// </summary>
         public override string AsString
         {
-            get => Value.ToString(_formatStr, CultureInfo.InvariantCulture).TrimEnd('0').TrimEnd('.');
+            get => ToString(CultureInfo.CurrentCulture);
             set
             {
-                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dblVal))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentCulture, out double dblVal))
                     Value = dblVal;
                 else
-                    throw new ArgumentException($"FloatParameter.SetAsString: cannot convert '{value}' to float.");
+                    throw new ArgumentException($"'{value}' ist kein korrekter Dezimal-Wert.");   // TODO: Übersetzung
             }
         }
 
@@ -98,10 +114,10 @@ namespace DataBase.Parameters
         /// <summary>
         /// Gets or sets the value from string representation containing the current culture's decimal seperator
         /// </summary>
-        public string AsStringC
+        public override string AsStringInvCult
         {
-            get => Value.ToString(_formatStr, CultureInfo.CurrentCulture).TrimEnd('0').TrimEnd(_currentDecimalSep);
-            set => AsString = value.Replace(_currentDecimalSep, '.');
+            get => ToString(CultureInfo.InvariantCulture);
+            set => AsString = value.Replace(_invariantDecimalSep, _currentDecimalSep);
         }
     }
 }

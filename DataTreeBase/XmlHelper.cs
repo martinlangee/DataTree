@@ -23,9 +23,9 @@ namespace DataBase
     internal static class XmlHelper
     {
         // XML tags
-        internal const string ParamTag = "P";
-        internal const string ContnTag = "C";
-        
+        internal const string ContnTag = "Cnt";
+        internal const string ParamTag = "Pm";
+
         // Path delimiter
         internal const string PathDelimiter = ".";
 
@@ -34,11 +34,11 @@ namespace DataBase
         /// </summary>
         internal static Attributes Attr = new Attributes
                                           {
-                                              Id = "i",
-                                              Name = "n",
-                                              Value = "v",
-                                              ValueStr = "vs",
-                                              Unit = "u"
+                                              Id = "id",
+                                              Name = "name",
+                                              Value = "val",
+                                              ValueStr = "valStr",
+                                              Unit = "unit"
                                           };
 
         /// <summary>

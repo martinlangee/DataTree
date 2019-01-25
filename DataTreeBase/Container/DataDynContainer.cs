@@ -13,9 +13,9 @@ namespace DataBase.Container
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Identificator</param>
-        /// <param name="name">Container name</param>
-        protected DataDynContainer(DataContainer parent, string id, string name)
-            : base(parent, id, name)
+        /// <param name="designation">Container name</param>
+        protected DataDynContainer(DataContainer parent, string id, string designation)
+            : base(parent, id, designation)
         {
         }
 

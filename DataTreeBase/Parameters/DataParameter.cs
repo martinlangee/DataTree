@@ -23,10 +23,10 @@ namespace DataBase.Parameters
         /// </summary>
         /// <param name="parent">Parent container</param>
         /// <param name="id">Parameter identificator</param>
-        /// <param name="name">Parameter name</param>
+        /// <param name="designation">Parameter name</param>
         /// <param name="defaultValue">Generic typed parameter default value</param>
-        protected DataParameter(DataContainer parent, string id, string name, T defaultValue)
-            : base(parent, id, name)
+        protected DataParameter(DataContainer parent, string id, string designation, T defaultValue)
+            : base(parent, id, designation)
         {
             _defaultValue = defaultValue;
             BufferedValue = _defaultValue;
@@ -47,10 +47,21 @@ namespace DataBase.Parameters
         /// </summary>
         protected virtual void AssignValueAndNotify(T value)
         {
-            var oldValue = _value;
+            string oldValue = AsString;
             _value = value;
-            _undoRedo?.ValueChanged(this, oldValue, _value);
+            _undoRedo?.ValueChanged(this, oldValue, AsString);
             FireOnChanged();
+        }
+
+        /// <summary>
+        /// Value, BufferedValue and DefaultValue are set to the passed value
+        /// </summary>
+        /// <param name="value"></param>
+        public void Init(T value)
+        {
+            _value = value;
+            BufferedValue = value;
+            _defaultValue = value;
         }
 
         /// <summary>
@@ -144,7 +155,7 @@ namespace DataBase.Parameters
         /// </summary>
         public void Set(object value)
         {
-            Value = (T) value;
+            AsString = (string) value;
         }
     }
 }
