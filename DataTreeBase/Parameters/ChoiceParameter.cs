@@ -86,8 +86,7 @@ namespace DataBase.Parameters
         /// <param name="parentXmlNode">The parent xml node</param>
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
-            int val;
-            if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value, out val))
+            if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value, out var val))
                 Value = val;
         }
 
