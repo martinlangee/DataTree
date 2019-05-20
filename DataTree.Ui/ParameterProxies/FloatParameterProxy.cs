@@ -22,35 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 #endregion
 
+using DataBase.Parameters;
 using System;
-using DataBase.Container;
+using System.Diagnostics;
 
-namespace DataBase.Parameters
+namespace DataTree.Ui.ParameterProxies
 {
     /// <summary>
-    /// Represents a parameter with string value type
+    /// Implements a common proxy class used to bind a <see cref="DataParameterBase"/> to a UI element.
+    /// Bidirectional change notification is ensured.
     /// </summary>
-    public sealed class StringParameter: DataParameter<string>
+    [DebuggerDisplay("{Param.PathId}, {Value}")]
+    public class FloatParameterProxy : ParameterProxy<double>, IDisposable
     {
+        private FloatParameter FloatParam => (FloatParameter) Param;
+
         /// <summary>
         /// C'tor
         /// </summary>
-        /// <param name="parent">Parent container</param>
-        /// <param name="id">Parameter identificator</param>
-        /// <param name="designation">Parameter name</param>
-        /// <param name="defaultValue">Float parameter default value</param>
-        public StringParameter(DataContainer parent, string id, string designation, string defaultValue)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
+        /// <param name="param">The <see cref="FloatParameter"/> this proxy is connected to</param>
+        public FloatParameterProxy(FloatParameter param) : base(param) { }
 
         /// <summary>
-        /// Gets or sets the string representation of the value
+        /// Gets the physical unit of the attached parameter
         /// </summary>
-        public override string AsString
-        {
-            get => Value;
-            set => Value = value;
-        }
+        public string Unit => FloatParam.Unit;
     }
 }

@@ -23,34 +23,14 @@ SOFTWARE. */
 #endregion
 
 using System;
-using DataBase.Container;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DataBase.Parameters
+namespace DataTree.Ui.ViewModels
 {
-    /// <summary>
-    /// Represents a parameter with string value type
-    /// </summary>
-    public sealed class StringParameter: DataParameter<string>
+    public class DataNodeViewModel: BaseNodeViewModel
     {
-        /// <summary>
-        /// C'tor
-        /// </summary>
-        /// <param name="parent">Parent container</param>
-        /// <param name="id">Parameter identificator</param>
-        /// <param name="designation">Parameter name</param>
-        /// <param name="defaultValue">Float parameter default value</param>
-        public StringParameter(DataContainer parent, string id, string designation, string defaultValue)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the string representation of the value
-        /// </summary>
-        public override string AsString
-        {
-            get => Value;
-            set => Value = value;
-        }
     }
 }
