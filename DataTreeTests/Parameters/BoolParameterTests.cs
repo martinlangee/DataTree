@@ -65,7 +65,7 @@ namespace Data.Tests.Parameters
             var p = new BoolParameter(null, "myBoolId", "myBoolName");
 
             p.Value = !p.Value;
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 

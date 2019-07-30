@@ -17,17 +17,12 @@ namespace DataBase.Parameters
         /// <param name="designation"></param>
         /// <param name="defaultValue"></param>
         public BinaryParameter(DataContainer parent, string id, string designation, byte[] defaultValue)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
+            : base(parent, id, designation, defaultValue) { }
 
         /// <summary>
         /// Returns true if the two byte arrays are equal
         /// </summary>
-        protected override bool IsEqualValue(byte[] value1, byte[] value2)
-        {
-            return (value1 != null) && (value2 != null) && value1.SequenceEqual(value2);
-        }
+        protected override bool IsEqualValue(byte[] value1, byte[] value2) => (value1 != null) && (value2 != null) && value1.SequenceEqual(value2);
 
         /// <summary>
         /// Returns the base-64 representation of the value
@@ -35,7 +30,7 @@ namespace DataBase.Parameters
         public override string AsString
         {
             get => Value != null ? Convert.ToBase64String(Value) : "";
-            set => Value = value.Length > 0 ? Convert.FromBase64String(value): new byte[0];
+            set => Value = value.Length > 0 ? Convert.FromBase64String(value) : new byte[0];
         }
     }
 }

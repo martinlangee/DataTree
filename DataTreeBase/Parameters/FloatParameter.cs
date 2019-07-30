@@ -34,10 +34,8 @@ namespace DataBase.Parameters
         /// <summary>
         /// Returns true if the two float values are equal comparing only the number of digits specified in the decimals
         /// </summary>
-        protected override bool IsEqualValue(double value1, double value2)
-        {
-            return Math.Round(value1, Decimals).CompareTo(Math.Round(value2, Decimals)) == 0;
-        }
+        protected override bool IsEqualValue(double value1, double value2) =>
+            Math.Round(value1, Decimals).CompareTo(Math.Round(value2, Decimals)) == 0;
 
         /// <summary>
         /// Returns the attributes the float parameter needs to be saved to xml
@@ -46,17 +44,13 @@ namespace DataBase.Parameters
         {
             var attr = base.GetXmlAttributes();
             attr.Add(new Tuple<string, string>(XmlHelper.Attr.Unit, Unit));
-
             return attr;
         }
 
         /// <summary>
         /// Value is assigned from specified value. May be overridden to manipulated value befor assigning it.
         /// </summary>
-        protected override void AssignValueAndNotify(double value)
-        {
-            base.AssignValueAndNotify(Math.Round(value, Decimals));
-        }
+        protected override void AssignValueAndNotify(double value) => base.AssignValueAndNotify(Math.Round(value, Decimals));
 
         /// <summary>
         /// 
@@ -68,9 +62,9 @@ namespace DataBase.Parameters
             string decimalSeperator = culture.NumberFormat.NumberDecimalSeparator;
             string valueStr = Value.ToString(_formatStr, culture);
 
-            return valueStr.Contains(decimalSeperator) ? 
-                valueStr.TrimEnd('0').TrimEnd(decimalSeperator[0]) : 
-                valueStr;
+            return valueStr.Contains(decimalSeperator) 
+                ? valueStr.TrimEnd('0').TrimEnd(decimalSeperator[0])
+                : valueStr;
         }
 
         /// <summary>
@@ -82,9 +76,13 @@ namespace DataBase.Parameters
             set
             {
                 if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentCulture, out double dblVal))
+                {
                     Value = dblVal;
+                }
                 else
+                {
                     throw new ArgumentException($"'{value}' ist kein korrekter Dezimal-Wert.");   // TODO: Übersetzung
+                }
             }
         }
 
@@ -101,13 +99,18 @@ namespace DataBase.Parameters
             get => _decimals;
             set
             {
-                if (_decimals == value) return;
+                if (_decimals == value)
+                {
+                    return;
+                }
 
                 _decimals = value;
                 _formatStr = "0." + new string('0', _decimals);
 
                 if (Math.Round(Value, Decimals).CompareTo(Value) != 0)
+                {
                     AssignValueAndNotify(Value);
+                }
             }
         }
 

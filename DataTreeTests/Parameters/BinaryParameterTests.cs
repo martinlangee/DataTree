@@ -57,7 +57,7 @@ namespace Data.Tests.Parameters
             Assert.IsFalse(_passedOnChanged, "OnChanged not allowed but occurred");
             Assert.IsTrue(p.IsModified, "IsModified = false but must be true");
 
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.IsFalse(p.IsModified, "IsModified = false but must be true");
         }
 
@@ -67,7 +67,7 @@ namespace Data.Tests.Parameters
             var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue);
 
             p.Value = new byte[] { 50, 61, 72, 83, 234, 29, 44, 71 };
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.IsTrue(p.BufferedValue.SequenceEqual(p.Value), "BufferedValue not set correctly");
         }
 

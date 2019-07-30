@@ -57,7 +57,7 @@ namespace Data.Tests.Parameters
             var p = new StringParameter(null, "myStringId", "myStringName", "default");
 
             p.Value = "hjdsfkkjsdhfkdsj";
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 

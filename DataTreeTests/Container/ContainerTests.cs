@@ -22,12 +22,12 @@ namespace Data.Tests.Container
             Assert.IsNotNull(root.Tc2, "TestCont2 is null but should not be");
             Assert.IsNotNull(root.Tc1.Tc3, "TestCont3 is null but should not be");
 
-            Assert.AreEqual(root.Containers[0], root.Tc1, "TestCont1 was not inserted into container list");
-            Assert.AreEqual(root.Containers[1], root.Tc2, "TestCont2 was not inserted into container list");
-            Assert.AreEqual(root.Containers.Count, 2, "Number of containers should be 2 but was " + root.Containers.Count);
+            Assert.AreEqual(root.Children[0], root.Tc1, "TestCont1 was not inserted into container list");
+            Assert.AreEqual(root.Children[1], root.Tc2, "TestCont2 was not inserted into container list");
+            Assert.AreEqual(root.Children.Count, 2, "Number of containers should be 2 but was " + root.Children.Count);
 
-            Assert.AreEqual(root.Tc1.Containers[0], root.Tc1.Tc3, "TestCont3 was not inserted into container list");
-            Assert.AreEqual(root.Tc1.Containers.Count, 1, "Number of containers should be 1 but was " + root.Tc1.Containers.Count);
+            Assert.AreEqual(root.Tc1.Children[0], root.Tc1.Tc3, "TestCont3 was not inserted into container list");
+            Assert.AreEqual(root.Tc1.Children.Count, 1, "Number of containers should be 1 but was " + root.Tc1.Children.Count);
 
             Assert.AreEqual(root.Tc1.Designation, "TestCont1", "Name of TestCont1 should be 'TestCont1' but was " + root.Tc1.Designation);
             Assert.AreEqual(root.Tc2.Designation, "TestCont2", "Name of TestCont2 should be 'TestCont2' but was " + root.Tc2.Designation);
@@ -129,7 +129,7 @@ namespace Data.Tests.Container
 
             root.Tc1.FloatParam.Value = oldValue + 123;
             root.Tc1.Tc3.BoolParam.Value = !root.Tc1.Tc3.BoolParam.Value;
-            root.ResetModified();
+            root.ResetModifiedState();
 
             Assert.AreEqual(root.Tc1.FloatParam.Value, oldValue + 123, "FloatParam should have value 123.5 but was " + root.Tc1.FloatParam.Value);
             Assert.AreEqual(root.Tc1.Tc3.BoolParam.Value, false, "BoolParam should have value false but was " + root.Tc1.Tc3.BoolParam.Value);
@@ -146,8 +146,8 @@ namespace Data.Tests.Container
 
             var clone = root.Clone() as TestRoot;
 
-            Assert.AreEqual(clone?.Containers.Count, 2, "Number of containers not as expected");
-            Assert.AreEqual(clone?.Tc1.Containers.Count, 1, "Number of containers not as expected");
+            Assert.AreEqual(clone?.Children.Count, 2, "Number of containers not as expected");
+            Assert.AreEqual(clone?.Tc1.Children.Count, 1, "Number of containers not as expected");
 
             root.Tc1.Tc3.BoolParam.Value = !root.Tc1.Tc3.BoolParam.Value;
 

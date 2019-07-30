@@ -16,9 +16,7 @@ namespace DataBase.Parameters
         /// <param name="designation"></param>
         /// <param name="defaultValue"></param>
         public BoolParameter(DataContainer parent, string id, string designation, bool defaultValue = false)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
+            : base(parent, id, designation, defaultValue) { }
 
         /// <summary>
         /// Returns "true" if the value is true and "false" if the value is false.
@@ -30,9 +28,13 @@ namespace DataBase.Parameters
             set
             {
                 if (bool.TryParse(value, out var boolVal))
+                {
                     Value = boolVal;
+                }
                 else
+                {
                     throw new ArgumentException($"BoolParameter.SetAsString: cannot convert '{value}' to bool.");
+                }
             }
         }
     }

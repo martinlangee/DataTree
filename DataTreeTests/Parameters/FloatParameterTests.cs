@@ -62,7 +62,7 @@ namespace Data.Tests.Parameters
             var p = new FloatParameter(null, "myFloatId", "myFloatName", 123.0, "m/s", 5);
 
             p.Value = 555555.66;
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 

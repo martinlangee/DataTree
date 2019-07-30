@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -30,7 +31,7 @@ namespace DataBase.Container
     /// <summary>
     /// Represents a container where sub-containers can be added and removed dynamically
     /// </summary>
-    public class DataDynParentContainer<T> : DataContainer, IUndoRedoableNode where T: DataDynContainer
+    public class DataDynParentContainer<T> : DataContainer, IUndoRedoableNode, IEnumerable<T> where T : DataDynContainer
     {
         private readonly UndoRedoStack _undoRedo;
         private readonly Action<DataDynParentContainer<T>> _initDefaultContainers;
@@ -49,15 +50,17 @@ namespace DataBase.Container
             _initDefaultContainers = initDefaultContainers;
             _initDefaultContainers?.Invoke(this);
 
-            Containers.ForEach(c => _bufferedContainers.Add(c));
+            Items.ForEach(c => _bufferedContainers.Add(c));
 
             _undoRedo = Root?.UndoRedo;
         }
 
+        public T this[int index] => Items[index];
+
         /// <summary>
         /// List of sub-containers
         /// </summary>
-        public new IReadOnlyList<T> Containers => base.Containers.Cast<T>().ToList();
+        public IReadOnlyList<T> Items => Children.Cast<T>().ToList();
 
         /// <summary>
         /// Notifies to the undo/redo stack a change in the dynamic child container list
@@ -68,19 +71,20 @@ namespace DataBase.Container
         /// <param name="newContainers">List containing the one added container or (in case of 'Remove' or 'Clear') is empty</param>
         private void DynContainersChanged(UndoAction actionType, int index, List<DataDynContainer> oldContainers, List<DataDynContainer> newContainers)
         {
-            _undoRedo?.ValueChanged(this,
-                                         new DynContainerUndoData
-                                         {
-                                             ActionType = actionType,
-                                             Index = index,
-                                             Containers = oldContainers
-                                         },
-                                         new DynContainerUndoData
-                                         {
-                                             ActionType = actionType,
-                                             Index = index,
-                                             Containers = newContainers
-                                         });
+            _undoRedo?.ValueChanged(
+                this,
+                new DynContainerUndoData
+                {
+                    ActionType = actionType,
+                    Index = index,
+                    Containers = oldContainers
+                },
+                new DynContainerUndoData
+                {
+                    ActionType = actionType,
+                    Index = index,
+                    Containers = newContainers
+                });
         }
 
         /// <summary>
@@ -89,13 +93,13 @@ namespace DataBase.Container
         /// <returns>The new DataContainer</returns>
         public T Add()
         {
-            var type = typeof(T);
-            var cont = Activator.CreateInstance(type, this) as T;
-            DynContainersChanged(actionType: UndoAction.Add,
-                                 index: base.Containers.IndexOf(cont),
-                                 oldContainers: new List<DataDynContainer>(),
-                                 newContainers: new List<DataDynContainer>() { cont });
-            return cont;
+            var item = Activator.CreateInstance(typeof(T), this) as T;
+            DynContainersChanged(
+                actionType: UndoAction.Add,
+                index: Children.IndexOf(item),
+                oldContainers: new List<DataDynContainer>(),
+                newContainers: new List<DataDynContainer>() { item });
+            return item;
         }
 
         /// <summary>
@@ -104,9 +108,9 @@ namespace DataBase.Container
         /// <returns>The new DataContainer</returns>
         public T Add(Action<T> initAction)
         {
-            var cont = Add();
-            initAction?.Invoke(cont);
-            return cont;
+            var item = Add();
+            initAction?.Invoke(item);
+            return item;
         }
 
         /// <summary>
@@ -114,22 +118,23 @@ namespace DataBase.Container
         /// </summary>
         private void Insert(int index, T container)
         {
-            base.Containers.Insert(index, container);
-            DynContainersChanged(actionType: UndoAction.Add,
-                                 index: index,
-                                 oldContainers: new List<DataDynContainer>(),
-                                 newContainers: new List<DataDynContainer>() { container });
+            Children.Insert(index, container);
+            DynContainersChanged(
+                actionType: UndoAction.Add,
+                index: index,
+                oldContainers: new List<DataDynContainer>(),
+                newContainers: new List<DataDynContainer>() { container });
         }
 
         /// <summary>
         /// Inserts a new container at the specified index position
         /// </summary>
+        /// <returns>The new container, created by this call.</returns>
         public T Insert(int index)
         {
-            var type = typeof(T);
-            var cont = Activator.CreateInstance(type, this) as T;
-            Insert(index, cont);
-            return cont;
+            var item = Activator.CreateInstance(typeof(T), this) as T;
+            Insert(index, item);
+            return item;
         }
 
         /// <summary>
@@ -137,31 +142,29 @@ namespace DataBase.Container
         /// </summary>
         public T Insert(int index, Action<T> initAction)
         {
-            var cont = Insert(index);
-            initAction?.Invoke(cont);
-            Insert(index, cont);
-            return cont;
+            var item = Insert(index);
+            initAction?.Invoke(item);
+            Insert(index, item);
+            return item;
         }
 
         /// <summary>
         /// Deletes the specified dynamic sub container from the list
         /// </summary>
-        public void Remove(T container)
-        {
-            RemoveAt(base.Containers.IndexOf(container));
-        }
+        public void Remove(T container) => RemoveAt(base.Children.IndexOf(container));
 
         /// <summary>
         /// Deletes the dynamic sub container at the specified index from the list
         /// </summary>
         public void RemoveAt(int index)
         {
-            var cont = Containers[index];
-            base.Containers.RemoveAt(index);
-            DynContainersChanged(actionType: UndoAction.Remove,
-                                 index: index,
-                                 oldContainers: new List<DataDynContainer>() { cont },
-                                 newContainers: new List<DataDynContainer>());
+            var item = Items[index];
+            Children.RemoveAt(index);
+            DynContainersChanged(
+                actionType: UndoAction.Remove,
+                index: index,
+                oldContainers: new List<DataDynContainer>() { item },
+                newContainers: new List<DataDynContainer>());
         }
 
         /// <summary>
@@ -169,10 +172,10 @@ namespace DataBase.Container
         /// </summary>
         public T Pop()
         {
-            var index = Containers.Count - 1;
-            var cont = Containers.Last();
+            var index = Items.Count - 1;
+            var item = Items.Last();
             RemoveAt(index);
-            return cont;
+            return item;
         }
 
         /// <summary>
@@ -180,11 +183,12 @@ namespace DataBase.Container
         /// </summary>
         public void Clear()
         {
-            base.Containers.Clear();
-            DynContainersChanged(actionType: UndoAction.Clear,
-                                 index: -1,
-                                 oldContainers: Containers.Cast<DataDynContainer>().ToList(),
-                                 newContainers: new List<DataDynContainer>());
+            Children.Clear();
+            DynContainersChanged(
+                actionType: UndoAction.Clear,
+                index: -1,
+                oldContainers: Items.Cast<DataDynContainer>().ToList(),
+                newContainers: new List<DataDynContainer>());
         }
 
         /// <summary>
@@ -193,14 +197,18 @@ namespace DataBase.Container
         /// <param name="parentXmlNode">The parent node</param>
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContnTag, Id);
-            if (xmlNode == null) return;
+            var xmlNode = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContainerTag, Id);
+            if (xmlNode == null)
+            {
+                return;
+            }
 
             Clear();
 
-            xmlNode.ChildNodes.Cast<XmlNode>().
-                Where(ch => ch.Name == XmlHelper.ContnTag).
-                ForEach(ch => Add().LoadFromXml(ch));
+            xmlNode.ChildNodes
+                .Cast<XmlNode>()
+                .Where(ch => ch.Name == XmlHelper.ContainerTag)
+                .ForEach(ch => Add().LoadFromXml(ch));
 
             Params.ForEach(p => p.LoadFromXml(xmlNode));
         }
@@ -211,14 +219,17 @@ namespace DataBase.Container
         internal override void CloneFrom(DataContainer aContainer)
         {
             if (aContainer.PathId != PathId || aContainer.GetType() != GetType())
-                throw new InvalidOperationException("DataDynParentContainer.CloneFrom: container ids or types not matching");
-
-            for (var i = 0; i < aContainer.Containers.Count; i++)
             {
-                if (Containers.Count >= i) Add();
-                Containers[i].CloneFrom(aContainer.Containers[i]);
+                throw new InvalidOperationException("DataDynParentContainer.CloneFrom: container ids or types not matching");
             }
-
+            for (var i = 0; i < aContainer.Children.Count; i++)
+            {
+                if (Items.Count >= i)
+                {
+                    Add();
+                }
+                Items[i].CloneFrom(aContainer.Children[i]);
+            }
             for (var i = 0; i < Params.Count; i++)
             {
                 Params[i].CloneFrom(aContainer.Params[i]);
@@ -230,32 +241,43 @@ namespace DataBase.Container
         /// </summary>
         public void Set(object value)
         {
-            var undoData = (DynContainerUndoData) value;
-
+            var undoData = (DynContainerUndoData)value;
             switch (undoData.ActionType)
             {
                 // Child container added
                 case UndoAction.Add:
                     if (undoData.Containers.Count == 0)
+                    {
                         RemoveAt(undoData.Index);                               // Undo
+                    }
                     else
-                        Insert(undoData.Index, (T) undoData.Containers[0]);     // Redo
+                    {
+                        Insert(undoData.Index, (T)undoData.Containers[0]);     // Redo
+                    }
                     break;
 
                 // Child container removed
                 case UndoAction.Remove:
                     if (undoData.Containers.Count > 0)
-                        Insert(undoData.Index, (T) undoData.Containers[0]);     // Undo
+                    {
+                        Insert(undoData.Index, (T)undoData.Containers[0]);     // Undo
+                    }
                     else
+                    {
                         RemoveAt(undoData.Index);                               // Redo
+                    }
                     break;
 
                 // all child containers removed
                 case UndoAction.Clear:
                     if (undoData.Containers.Count > 0)
-                        undoData.Containers.ForEach((i, c) => Insert(i, (T) c)); // Undo
+                    {
+                        undoData.Containers.ForEach((i, c) => Insert(i, (T)c)); // Undo
+                    }
                     else
+                    {
                         Clear();                                                 // Redo
+                    }
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -265,8 +287,9 @@ namespace DataBase.Container
         /// <summary>
         /// Returns true if one of it's parameters or the parameters of one of it's sub- (and sub-sub) containers is modified
         /// </summary>
-        public override bool IsModified => base.IsModified && 
-                                           base.Containers.Count != _bufferedContainers.Count;
+        public override bool IsModified =>
+            base.IsModified ||
+            Children.Count != _bufferedContainers.Count;
 
         /// <summary>
         /// Sets the values of all parameters and of those of the sub-containers to the buffered value
@@ -274,17 +297,18 @@ namespace DataBase.Container
         public override void Restore()
         {
             Clear();
-            _bufferedContainers.ForEach(b => base.Containers.Add(b));
+            _bufferedContainers.ForEach(b => base.Children.Add(b));
         }
 
 
         /// <summary>
         /// Resets the modified flag of all parameters and those of the sub-containers to false by setting the buffered value to the current value
         /// </summary>
-        public override void ResetModified()
+        public override void ResetModifiedState()
         {
             _bufferedContainers.Clear();
-            Containers.ForEach(c => _bufferedContainers.Add(c));
+            Items.ForEach(c => _bufferedContainers.Add(c));
+            base.ResetModifiedState();
         }
 
         /// <summary>
@@ -295,5 +319,9 @@ namespace DataBase.Container
             Clear();
             _initDefaultContainers?.Invoke(this);
         }
+
+        public IEnumerator<T> GetEnumerator() => Items.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

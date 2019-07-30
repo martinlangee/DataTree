@@ -16,9 +16,7 @@ namespace DataBase.Parameters
         /// <param name="designation"></param>
         /// <param name="defaultValue"></param>
         public IntParameter(DataContainer parent, string id, string designation, int defaultValue)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
+            : base(parent, id, designation, defaultValue) { }
 
         /// <summary>
         /// Gets or sets the string representation of the value
@@ -29,9 +27,13 @@ namespace DataBase.Parameters
             set
             {
                 if (int.TryParse(value, out var intVal))
+                {
                     Value = intVal;
+                }
                 else
+                {
                     throw new ArgumentException($"IntParameter.SetAsString: cannot convert '{value}' to int.");
+                }
             }
         }
     }

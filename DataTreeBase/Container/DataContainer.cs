@@ -16,54 +16,36 @@ namespace DataBase.Container
         private bool _isRoot;
 
         /// <summary>
-        /// C'tor
-        /// </summary>
-        /// <param name="parent">Parent container</param>
-        /// <param name="id">Container identfication</param>
-        /// <param name="designation">Container name</param>
-        /// <param name="undoRedoActivated">True if undo/redo mechanism should be activated</param>
-        protected DataContainer(DataContainer parent, string id, string designation = "", bool undoRedoActivated = true) 
-            : base(parent, id, designation)
-        {
-            Containers = new List<DataContainer>();
-            Params = new List<DataParameterBase>();
-
-            Parent?.Containers.Add(this);
-
-            DetermineRoot();
-
-            UndoRedo = undoRedoActivated
-                           ? (_isRoot ? new UndoRedoStack() : Root.UndoRedo)
-                           : null;
-        }
-
-        /// <summary>
         /// Contains the top most container (traversing upwards the first one that has a null parent container)
         /// </summary>
         internal DataContainer Root;
 
         /// <summary>
-        /// Determines the root container (traversing upwards the first one that has a null parent container)
+        /// C'tor
         /// </summary>
-        private void DetermineRoot()
+        /// <param name="parent">Parent container</param>
+        /// <param name="id">Container identification</param>
+        /// <param name="designation">Container name</param>
+        /// <param name="undoRedoActivated">True if undo/redo mechanism should be activated</param>
+        protected DataContainer(DataContainer parent, string id, string designation = "", bool undoRedoActivated = true) 
+            : base(parent, id, designation)
         {
-            var cont = this;
-            while (true)
-            {
-                if (cont?.Parent == null)
-                {
-                    Root = cont;
-                    _isRoot = true;
-                    return;
-                }
-                cont = cont?.Parent;
-            }
+            Children = new List<DataContainer>();
+            Params = new List<DataParameterBase>();
+
+            Parent?.Children.Add(this);
+
+            DetermineRoot();
+
+            UndoRedo = undoRedoActivated
+                ? (_isRoot ? new UndoRedoStack() : Root.UndoRedo)
+                : null;
         }
 
         /// <summary>
         /// List of sub-containers
         /// </summary>
-        public IList<DataContainer> Containers { get; }
+        public IList<DataContainer> Children { get; }
 
         /// <summary>
         /// List of parameters
@@ -73,7 +55,7 @@ namespace DataBase.Container
         /// <summary>
         /// Returns the list of child nodes unaffected if container or parameter
         /// </summary>
-        public IList<DataNode> Nodes => Containers.Concat(Params.Cast<DataNode>()).ToList();
+        public IList<DataNode> Nodes => Children.Concat(Params.Cast<DataNode>()).ToList();
 
         /// <summary>
         /// Returns the undo/redo stack object
@@ -94,8 +76,8 @@ namespace DataBase.Container
         /// Returns true if one of it's parameters or the parameters of one of it's sub- (and sub-sub) containers is modified
         /// </summary>
         public override bool IsModified =>
-                Containers.Any(c => c.IsModified) ||
-                Params.Any(p => p.IsModified);
+            Children.Any(c => c.IsModified) ||
+            Params.Any(p => p.IsModified);
 
         /// <summary>
         /// Saves the container to the specified parent xml node
@@ -110,36 +92,25 @@ namespace DataBase.Container
             if (parentXmlNode == null)
             {
                 doc = new XmlDocument();
-                doc.LoadXml($"<{XmlHelper.ContnTag}/>");
+                doc.LoadXml($"<{XmlHelper.ContainerTag}/>");
                 xmlNode = doc.DocumentElement;
             }
             else
             {
                 xmlNode = GetOwnXmlNode(parentXmlNode) ??
-                          parentXmlNode.AppendChildNode(XmlHelper.ContnTag);
+                    parentXmlNode.AppendChildNode(XmlHelper.ContainerTag);
             }
 
             xmlNode.SetAttributes(new List<Tuple<string, string>>
-                                  {
-                                      new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                                      new Tuple<string, string>(XmlHelper.Attr.Name, Designation)
-                                  });
+            {
+                new Tuple<string, string>(XmlHelper.Attr.Id, Id),
+                new Tuple<string, string>(XmlHelper.Attr.Name, Designation)
+            });
 
             Params.ForEach(p => p.SaveToXml(xmlNode));
-            Containers.ForEach(c => c.SaveToXml(xmlNode));
+            Children.ForEach(c => c.SaveToXml(xmlNode));
 
             return doc;
-        }
-
-        /// <summary>
-        /// Returns the xml node as child of the parent node that shows the id of this node.
-        /// If not found new node is created and returned.
-        /// </summary>
-        /// <param name="parentXmlNode">The parent xml node</param>
-        /// <returns></returns>
-        protected virtual XmlNode GetOwnXmlNode(XmlNode parentXmlNode)
-        {
-            return parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContnTag, Id);
         }
 
         /// <summary>
@@ -148,13 +119,13 @@ namespace DataBase.Container
         internal virtual void CloneFrom(DataContainer aContainer)
         {
             if (aContainer.PathId != PathId || aContainer.GetType() != GetType())
-                throw new InvalidOperationException("DataContainer.CloneFrom: container ids or types not matching");
-
-            for (var i = 0; i < Containers.Count; i++)
             {
-                Containers[i].CloneFrom(aContainer.Containers[i]);
+                throw new InvalidOperationException("DataContainer.CloneFrom: container ids or types not matching");
             }
-
+            for (var i = 0; i < Children.Count; i++)
+            {
+                Children[i].CloneFrom(aContainer.Children[i]);
+            }
             for (var i = 0; i < Params.Count; i++)
             {
                 Params[i].CloneFrom(aContainer.Params[i]);
@@ -167,33 +138,39 @@ namespace DataBase.Container
         /// <param name="parentXmlNode"></param>
         public virtual void LoadFromXml(XmlNode parentXmlNode)
         {
-            var xmlNode = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContnTag, Id);
+            var xmlNode = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContainerTag, Id);
             if (xmlNode == null)
+            {
                 return;
-
+            }
             Params.ForEach(p => p.LoadFromXml(xmlNode));
-            Containers.ForEach(c => c.LoadFromXml(xmlNode));
+            Children.ForEach(c => c.LoadFromXml(xmlNode));
         }
 
         /// <summary>
         /// Loads the container and it's sub-containers from the specified file
         /// </summary>
         /// <param name="fileName">The file name</param>
-        /// <param name="resetModified">True if the modified flag should be reset after loading</param>
-        public void LoadFromFile(string fileName, bool resetModified = true)
+        /// <param name="shallResetModifiedState">True if the modified flag should be reset after loading</param>
+        public void LoadFromFile(string fileName, bool shallResetModifiedState = true)
         {
             var doc = new XmlDocument();
             doc.Load(fileName);
             UndoRedo.IsMuted = true;
+
             try
             {
-                Containers.ForEach(c => c.LoadFromXml(doc.DocumentElement));
+                Children.ForEach(c => c.LoadFromXml(doc.DocumentElement));
             }
             finally
             {
                 UndoRedo.IsMuted = false;
             }
-            if (resetModified) ResetModified();
+
+            if (shallResetModifiedState)
+            {
+                ResetModifiedState();
+            }
         }
 
         /// <summary>
@@ -204,16 +181,19 @@ namespace DataBase.Container
         public void SaveToFile(string fileName, bool resetModified = true)
         {
             SaveToXml(null).Save(fileName);
-            if (resetModified) ResetModified();
+            if (resetModified)
+            {
+                ResetModifiedState();
+            }
         }
 
         /// <summary>
         /// Resets the modified flag of all parameters and those of the sub-containers to false by setting the buffered value to the current value
         /// </summary>
-        public override void ResetModified()
+        public override void ResetModifiedState()
         {
-            Params.ForEach(p => p.ResetModified());
-            Containers.ForEach(c => c.ResetModified());
+            Params.ForEach(p => p.ResetModifiedState());
+            Children.ForEach(c => c.ResetModifiedState());
         }
 
         /// <summary>
@@ -222,7 +202,7 @@ namespace DataBase.Container
         public override void Restore()
         {
             Params.ForEach(p => p.Restore());
-            Containers.ForEach(c => c.Restore());
+            Children.ForEach(c => c.Restore());
         }
 
         /// <summary>
@@ -231,7 +211,33 @@ namespace DataBase.Container
         public override void SetToDefault()
         {
             Params.ForEach(p => p.SetToDefault());
-            Containers.ForEach(c => c.SetToDefault());
+            Children.ForEach(c => c.SetToDefault());
+        }
+
+        /// <summary>
+        /// Returns the xml node as child of the parent node that shows the id of this node.
+        /// If not found new node is created and returned.
+        /// </summary>
+        /// <param name="parentXmlNode">The parent xml node</param>
+        /// <returns></returns>
+        protected virtual XmlNode GetOwnXmlNode(XmlNode parentXmlNode) => parentXmlNode.ChildNodeByTagAndId(XmlHelper.ContainerTag, Id);
+
+        /// <summary>
+        /// Determines the root container (traversing upwards the first one that has a null parent container)
+        /// </summary>
+        private void DetermineRoot()
+        {
+            var container = this;
+            while (true)
+            {
+                if (container.Parent == null)
+                {
+                    Root = container;
+                    _isRoot = true;
+                    return;
+                }
+                container = container.Parent;
+            }
         }
     }
 }

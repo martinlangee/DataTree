@@ -23,7 +23,7 @@ namespace DataBase
     internal static class XmlHelper
     {
         // XML tags
-        internal const string ContnTag = "Cnt";
+        internal const string ContainerTag = "Cnt";
         internal const string ParamTag = "Pm";
 
         // Path delimiter
@@ -33,13 +33,13 @@ namespace DataBase
         /// Returns the initialized static Attr property
         /// </summary>
         internal static Attributes Attr = new Attributes
-                                          {
-                                              Id = "id",
-                                              Name = "name",
-                                              Value = "val",
-                                              ValueStr = "valStr",
-                                              Unit = "unit"
-                                          };
+        {
+            Id = "id",
+            Name = "name",
+            Value = "val",
+            ValueStr = "valStr",
+            Unit = "unit"
+        };
 
         /// <summary>
         /// Returns the xml attribute object of the specified xml node with the specified name,
@@ -49,10 +49,12 @@ namespace DataBase
         /// <param name="name">The attribute name</param>
         internal static XmlAttribute AttributeByName(this XmlNode xmlNode, string name)
         {
-            for (var z = 0; z < xmlNode.Attributes?.Count; z++)
+            for (var i = 0; i < (xmlNode.Attributes?.Count ?? 0); i++)
             {
-                if (xmlNode.Attributes[z].Name == name)
-                    return xmlNode.Attributes[z];
+                if (xmlNode.Attributes[i].Name == name)
+                {
+                    return xmlNode.Attributes[i];
+                }
             }
             return null;
         }
@@ -66,8 +68,11 @@ namespace DataBase
         /// <param name="id">The id attribute</param>
         internal static XmlNode ChildNodeByTagAndId(this XmlNode xmlNode, string tag, string id)
         {
-            return xmlNode.ChildNodes.Cast<XmlNode>().
-                FirstOrDefault(childNode => childNode.Name == tag && childNode.AttributeByName(Attr.Id)?.Value == id);
+            return xmlNode.ChildNodes
+                .Cast<XmlNode>()
+                .FirstOrDefault(
+                    childNode => childNode.Name == tag &&
+                    childNode.AttributeByName(Attr.Id)?.Value == id);
         }
 
         /// <summary>
@@ -77,15 +82,18 @@ namespace DataBase
         /// <param name="attributes"></param>
         internal static void SetAttributes(this XmlNode xmlNode, List<Tuple<string, string>> attributes = null)
         {
-            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.SetAttributes: owner document not set");
-
+            if (xmlNode.OwnerDocument == null)
+            {
+                throw new NullReferenceException("XmlHelper.SetAttributes: owner document not set");
+            }
             xmlNode.Attributes?.RemoveAll();
-
             attributes?.ForEach(a =>
             {
                 var attr = xmlNode.Attributes?.Append(xmlNode.OwnerDocument.CreateAttribute(a.Item1));
                 if (attr != null)
+                {
                     attr.Value = a.Item2;
+                }
             });
         }
 
@@ -98,7 +106,10 @@ namespace DataBase
         /// <returns></returns>
         internal static XmlNode AppendChildNode(this XmlNode xmlNode, string nodeName, List<Tuple<string, string>> attributes = null)
         {
-            if (xmlNode.OwnerDocument == null) throw new NullReferenceException("XmlHelper.AppendChildNode: owner document not set");
+            if (xmlNode.OwnerDocument == null)
+            {
+                throw new NullReferenceException("XmlHelper.AppendChildNode: owner document not set");
+            }
 
             var childNode = xmlNode.AppendChild(xmlNode.OwnerDocument.CreateElement(nodeName));
             childNode?.SetAttributes(attributes);
