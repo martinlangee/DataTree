@@ -44,9 +44,9 @@ namespace DataTree.Ui.ViewModels
                 Nodes.Add(ParameterProxyFactory.CreateParam(param));
             }
 
-            foreach (var cont in _cont.Containers)
+            foreach (var child in _cont.Children)
             {
-                Nodes.Add(new ContainerViewModel(cont));
+                Nodes.Add(new ContainerViewModel(child));
             }
         }
 

@@ -172,5 +172,10 @@ namespace DataBase.Parameters
         /// Returns true if the specified generic typed values are equal
         /// </summary>
         protected virtual bool IsEqualValue(T value1, T value2) => Comparer<T>.Default.Compare(value1, value2) == 0;
+
+        /// <summary>
+        /// Returns the value type of the parameter
+        /// </summary>
+        public override Type ValueType => typeof(T);
     }
 }
