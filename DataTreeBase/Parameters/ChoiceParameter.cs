@@ -57,16 +57,22 @@ namespace DataBase.Parameters
         /// </summary>
         private void CheckAndAssignChoices(List<Tuple<int, string>> choices)
         {
-            if ((choices == null) || (choices.Count < 1))
+            if (choices == null || choices.Count < 1)
+            {
                 throw new ArgumentNullException($"{nameof(ChoiceParameter)}: invalid or empty choice list");
+            }
 
             if (choices.GroupBy(ch => ch.Item1).Any(g => g.Count() > 1))
+            {
                 throw new ArgumentException($"{nameof(ChoiceParameter)}: choice values are not unambiguously");
+            }
 
             // This does not necessarily have to be checked but i prefer to be more strict. 
             // Furthermore it prevents the 'AsString' assignment from being ambiguously.
             if (choices.GroupBy(ch => ch.Item2).Any(g => g.Count() > 1))
+            {
                 throw new ArgumentException($"{nameof(ChoiceParameter)}: choice descriptions are not unambiguously");
+            }
 
             _choices = choices;
         }
@@ -78,7 +84,6 @@ namespace DataBase.Parameters
         {
             var attr = base.GetXmlAttributes();
             attr.Add(new Tuple<string, string>(XmlHelper.Attr.ValueStr, AsString));
-
             return attr;
         }
 
@@ -87,13 +92,19 @@ namespace DataBase.Parameters
         /// </summary>
         public override string AsString
         {
-            get { return Choices.First(ch => ch.Item1 == Value).Item2; }
+            get => Choices.First(ch => ch.Item1 == Value).Item2;
             set
             {
-                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
+                if (IsChanging)
+                {
+                    throw new InvalidOperationException("ChoiceParameter.SetAsString: changing value while executing OnChanged is not allowed");
+                }
 
                 var newChoice = Choices.FirstOrDefault(i => i.Item2 == value);
-                if (newChoice == null) throw new ArgumentOutOfRangeException($"ChoiceParameter.SetAsString: no choice found for string '{value}'");
+                if (newChoice == null)
+                {
+                    throw new ArgumentOutOfRangeException($"ChoiceParameter.SetAsString: no choice found for string '{value}'");
+                }
 
                 Value = newChoice.Item1;
             }
@@ -111,7 +122,9 @@ namespace DataBase.Parameters
         public override void LoadFromXml(XmlNode parentXmlNode)
         {
             if (int.TryParse(parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value, out var val))
+            {
                 Value = val;
+            }
         }
 
         /// <summary>
@@ -138,8 +151,10 @@ namespace DataBase.Parameters
             get => base.Value;
             set
             {
-                if (_choices.All(c => c.Item1 != value)) throw new ArgumentOutOfRangeException($"{nameof(ChoiceParameter)}.{nameof(Value)}: no such item");
-
+                if (_choices.All(c => c.Item1 != value))
+                {
+                    throw new ArgumentOutOfRangeException($"{nameof(ChoiceParameter)}.{nameof(Value)}: no such item");
+                }
                 base.Value = value;
             }
         }
@@ -152,8 +167,10 @@ namespace DataBase.Parameters
             get => _choices.IndexOf(new Tuple<int, string>(Value, AsString));
             set
             {
-                if (IsChanging) throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");
-
+                if (IsChanging)
+                {
+                    throw new InvalidOperationException("ChoiceParameter.SetValueIdx: changing value while executing OnChanged is not allowed");
+                }
                 Value = _choices[value].Item1;
             }
         }

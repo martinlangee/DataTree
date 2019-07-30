@@ -92,7 +92,7 @@ namespace Data.Tests.Parameters
             var p = CreateParam(); 
 
             p.Value = 8;
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
 
             p.Value = 5;

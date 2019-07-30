@@ -39,15 +39,13 @@ namespace DataBase.Container
         /// <param name="id">Identificator</param>
         /// <param name="designation">Container name</param>
         protected DataDynContainer(DataContainer parent, string id, string designation)
-            : base(parent, id, designation)
-        {
-        }
+            : base(parent, id, designation) { }
 
         public override string PathId
         {
             get
             {
-                var idx = Parent?.Containers.IndexOf(this);
+                var idx = Parent?.Children.IndexOf(this);
                 return (Parent != null ? Parent.PathId + $"{XmlHelper.PathDelimiter}" : "") + $"{Id}[{idx}]";
             }
         }
@@ -59,7 +57,7 @@ namespace DataBase.Container
         public override void LoadFromXml(XmlNode xmlNode)
         {
             Params.ForEach(p => p.LoadFromXml(xmlNode));
-            Containers.ForEach(c => c.LoadFromXml(xmlNode));
+            Children.ForEach(c => c.LoadFromXml(xmlNode));
         }
 
         /// <summary>
@@ -67,9 +65,6 @@ namespace DataBase.Container
         /// If not found new node is created and returned.
         /// </summary>
         /// <param name="parentXmlNode">The parent xml node</param>
-        protected override XmlNode GetOwnXmlNode(XmlNode parentXmlNode)
-        {
-            return parentXmlNode.AppendChildNode(XmlHelper.ContnTag);
-        }
+        protected override XmlNode GetOwnXmlNode(XmlNode parentXmlNode) => parentXmlNode.AppendChildNode(XmlHelper.ContainerTag);
     }
 }

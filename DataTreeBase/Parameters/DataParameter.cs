@@ -59,23 +59,43 @@ namespace DataBase.Parameters
         }
 
         /// <summary>
-        /// Fires the OnChanged event
+        /// Generic typed parameter value
         /// </summary>
-        protected void FireOnChanged()
+        public virtual T Value
         {
-            OnChanged(this);
+            get => _value;
+            set
+            {
+                if (IsEqualValue(value, _value))
+                {
+                    return;
+                }
+                if (IsChanging)
+                {
+                    throw new InvalidOperationException("DataParameter.SetValue: changing value while executing OnChanged is not allowed");
+                }
+
+                IsChanging = true;
+                try
+                {
+                    AssignValueAndNotify(value);
+                }
+                finally
+                {
+                    IsChanging = false;
+                }
+            }
         }
 
         /// <summary>
-        /// Value is assigned from specified value and returned. May be overridden to manipulated value befor assigning it.
+        /// Returns the buffered value set on creation or ResetModified
         /// </summary>
-        protected virtual void AssignValueAndNotify(T value)
-        {
-            string oldValue = AsString;
-            _value = value;
-            _undoRedo?.ValueChanged(this, oldValue, AsString);
-            FireOnChanged();
-        }
+        public T BufferedValue { get; private set; }
+
+        /// <summary>
+        /// Returns true if the parameter is changed compared to the buffered value
+        /// </summary>
+        public override bool IsModified => !IsEqualValue(Value, BufferedValue);
 
         /// <summary>
         /// Value, BufferedValue and DefaultValue are set to the passed value
@@ -89,57 +109,15 @@ namespace DataBase.Parameters
         }
 
         /// <summary>
-        /// Generic typed parameter value
-        /// </summary>
-        public virtual T Value
-        {
-            get => _value;
-            set
-            {
-                if (IsEqualValue(value, _value)) return;
-                if (IsChanging) throw new InvalidOperationException("DataParameter.SetValue: changing value while executing OnChanged is not allowed");
-
-                IsChanging = true;
-                try
-                {
-                    AssignValueAndNotify(value);
-                }
-                finally
-                {
-                    IsChanging = false;
-                }
-            } 
-        }
-
-        /// <summary>
-        /// Clones the parameter state from the specified parameter
-        /// </summary>
-        internal override void CloneFrom(DataParameterBase param)
-        {
-            base.CloneFrom(param);
-            BufferedValue = ((DataParameter<T>) param).BufferedValue;
-        }
-
-        /// <summary>
-        /// Returns the buffered value set on creation or ResetModified
-        /// </summary>
-        public T BufferedValue { get; private set; }
-
-        /// <summary>
         /// Event fired when the parameter value hase changed
         /// Specifies the changed parameter object
         /// </summary>
         public event Action<DataParameterBase> OnChanged = parameter => {};
 
         /// <summary>
-        /// Returns true if the parameter is changed compared to the buffered value
-        /// </summary>
-        public override bool IsModified => !IsEqualValue(Value, BufferedValue);
-
-        /// <summary>
         /// Resets the modified flag to false by setting the buffered value to the current value
         /// </summary>
-        public override void ResetModified()
+        public override void ResetModifiedState()
         {
             BufferedValue = Value;
             FireOnChanged();   // fired since 'IsModified' has possibly changed
@@ -148,25 +126,25 @@ namespace DataBase.Parameters
         /// <summary>
         /// Sets the value to the buffered value
         /// </summary>
-        public override void Restore()
-        {
-            Value = BufferedValue;
-        }
+        public override void Restore() => Value = BufferedValue;
 
         /// <summary>
         /// Sets the value to the default value
         /// </summary>
-        public override void SetToDefault()
-        {
-            Value = _defaultValue;
-        }
+        public override void SetToDefault() => Value = BufferedValue = _defaultValue;
 
         /// <summary>
-        /// Returns true if the specified generic typed values are equal
+        /// Set the new value as result of the undo or redo process
         /// </summary>
-        protected virtual bool IsEqualValue(T value1, T value2)
+        public void Set(object value) => AsString = (string)value;
+
+        /// <summary>
+        /// Clones the parameter state from the specified parameter
+        /// </summary>
+        internal override void CloneFrom(DataParameterBase param)
         {
-            return Comparer<T>.Default.Compare(value1, value2) == 0;
+            base.CloneFrom(param);
+            BufferedValue = ((DataParameter<T>)param).BufferedValue;
         }
 
         /// <summary>
@@ -175,16 +153,24 @@ namespace DataBase.Parameters
         internal Action<DataParameterBase, object, object> OnChangedForUndoRedo { get; set; }
 
         /// <summary>
-        /// Set the new value as result of the undo or redo process
+        /// Fires the OnChanged event
         /// </summary>
-        public void Set(object value)
+        protected void FireOnChanged() => OnChanged(this);
+
+        /// <summary>
+        /// Value is assigned from specified value and returned. May be overridden to manipulated value befor assigning it.
+        /// </summary>
+        protected virtual void AssignValueAndNotify(T value)
         {
-            AsString = (string) value;
+            string oldValue = AsString;
+            _value = value;
+            _undoRedo?.ValueChanged(this, oldValue, AsString);
+            FireOnChanged();
         }
 
         /// <summary>
-        /// Returns the value type of the parameter
+        /// Returns true if the specified generic typed values are equal
         /// </summary>
-        public override Type ValueType => typeof(T);
+        protected virtual bool IsEqualValue(T value1, T value2) => Comparer<T>.Default.Compare(value1, value2) == 0;
     }
 }

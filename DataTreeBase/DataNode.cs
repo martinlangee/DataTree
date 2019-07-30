@@ -53,27 +53,21 @@ namespace DataBase
         /// <param name="parent">Parent container</param>
         /// <param name="id">Node identificator</param>
         /// <param name="designation">Node name</param>
-        protected DataNode(DataContainer parent, string id, string designation= "")
+        protected DataNode(DataContainer parent, string id, string designation = "")
         {
             if (id.Contains(XmlHelper.PathDelimiter))
+            {
                 throw new ArgumentOutOfRangeException($"DataNode: node id may not contain path delimiter '{XmlHelper.PathDelimiter}'");
-
+            }
             Parent = parent;
             Id = id;
             Designation = string.IsNullOrEmpty(designation) ? id : designation;
         }
 
         /// <summary>
-        /// Gets or sets the parent container.
-        /// Setting the parent container relocates the node and all of it's sub-nodes.
-        /// Setting it to null detaches it from the data tree.
-        /// </summary>
-        internal DataContainer Parent { get; }
-
-        /// <summary>
         /// Returns the node identificator used for serialization
         /// </summary>
-        public string Id { get; }
+        public string Id { get; internal set; }
 
         /// <summary>
         /// Returns the full slash-seperated path of ids containing all parent ids
@@ -83,7 +77,7 @@ namespace DataBase
         /// <summary>
         /// Returns the Node name
         /// </summary>
-        public string Designation { get; }
+        public string Designation { get; internal set; }
 
         /// <summary>
         /// Returns true if the node has been modified since last modified reset
@@ -91,9 +85,16 @@ namespace DataBase
         public abstract bool IsModified { get; }
 
         /// <summary>
+        /// Gets or sets the parent container.
+        /// Setting the parent container relocates the node and all of it's sub-nodes.
+        /// Setting it to null detaches it from the data tree.
+        /// </summary>
+        internal DataContainer Parent { get; }
+
+        /// <summary>
         /// Resets the modified flag to false by setting the buffered value to the current value
         /// </summary>
-        public abstract void ResetModified();
+        public abstract void ResetModifiedState();
 
         /// <summary>
         /// Sets the value to the buffered value

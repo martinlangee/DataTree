@@ -34,7 +34,7 @@ namespace DataBase.Parameters
     /// Represents an abstract base parameter class
     /// </summary>
     [DebuggerDisplay("{GetType().Name}, {PathId}, {AsString}, {IsModified}")]
-    public abstract class DataParameterBase: DataNode
+    public abstract class DataParameterBase : DataNode
     {
         /// <summary>
         /// C'tor
@@ -53,13 +53,12 @@ namespace DataBase.Parameters
         /// </summary>
         protected virtual List<Tuple<string, string>> GetXmlAttributes()
         {
-            return
-                    new List<Tuple<string, string>>
-                    {
-                        new Tuple<string, string>(XmlHelper.Attr.Id, Id),
-                        new Tuple<string, string>(XmlHelper.Attr.Name, Designation),
-                        new Tuple<string, string>(XmlHelper.Attr.Value, XmlValue),
-                    };
+            return new List<Tuple<string, string>>
+            {
+                new Tuple<string, string>(XmlHelper.Attr.Id, Id),
+                new Tuple<string, string>(XmlHelper.Attr.Name, Designation),
+                new Tuple<string, string>(XmlHelper.Attr.Value, XmlValue),
+            };
         }
 
         /// <summary>
@@ -69,23 +68,23 @@ namespace DataBase.Parameters
         public void SaveToXml(XmlNode parentXmlNode)
         {
             var xmlNode = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id);
-
             var attr = GetXmlAttributes();
-
             if (xmlNode == null)
+            {
                 parentXmlNode.AppendChildNode(XmlHelper.ParamTag, attr);
+            }
             else
+            {
                 xmlNode.SetAttributes(attr);
+            }
         }
 
         /// <summary>
         /// Loads the parameter value from the id-matching child xml node of the specified parent xml node
         /// </summary>
         /// <param name="parentXmlNode">The parent xml node</param>
-        public virtual void LoadFromXml(XmlNode parentXmlNode)
-        {
+        public virtual void LoadFromXml(XmlNode parentXmlNode) =>
             AsStringInvCult = parentXmlNode.ChildNodeByTagAndId(XmlHelper.ParamTag, Id)?.AttributeByName(XmlHelper.Attr.Value).Value;
-        }
 
         /// <summary>
         /// Clones the parameter state from the specified parameter
@@ -93,8 +92,9 @@ namespace DataBase.Parameters
         internal virtual void CloneFrom(DataParameterBase param)
         {
             if (param.Id != Id || param.GetType() != GetType())
+            {
                 throw new InvalidOperationException("DataParameterBase.CloneFrom: parameter ids or types not matching");
-
+            }
             AsString = param.AsString;
         }
 

@@ -81,7 +81,7 @@ namespace Data.Tests.Parameters
             var p = new IntParameter(null, "myIntId", "myIntName", 123);
 
             p.Value = 555555;
-            p.ResetModified();
+            p.ResetModifiedState();
             Assert.AreEqual(p.BufferedValue, p.Value, "BufferedValue not set correctly");
         }
 

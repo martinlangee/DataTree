@@ -37,22 +37,26 @@ namespace DataBase.UndoRedo
         /// <summary>
         /// Container for a single undo/redo item
         /// </summary>
+        private struct UndoRedoItem
+        {
+            internal IUndoRedoableNode Node { get; set; }
+            internal object OldValue { get; set; }
+            internal object NewValue { get; set; }
+        }
+/*
         internal sealed class UndoRedoItem
         {
             public IUndoRedoableNode Node { get; set; }
             public object OldValue { get; set; }
             public object NewValue { get; set; }
         }
-
+*/
         private bool _undoRedoing;
         private readonly List<UndoRedoItem> _stack = new List<UndoRedoItem>();
         private bool _canUndo;
         private bool _canRedo;
 
-        public UndoRedoStack()
-        {
-            UpdateCanUndoRedo();
-        }
+        public UndoRedoStack() => UpdateCanUndoRedo();
 
         /// <summary>
         /// Set the specified value avoiding recursive loop
@@ -60,7 +64,9 @@ namespace DataBase.UndoRedo
         private void SafeSetValue(object value)
         {
             if (_undoRedoing)
+            {
                 return;
+            }
 
             _undoRedoing = true;
             try
@@ -90,7 +96,9 @@ namespace DataBase.UndoRedo
         public void Undo(int count = 1)
         {
             if (Pointer < 0)
+            {
                 throw new InvalidOperationException("DataContainer.Undo: pointer to undo stack already at lower limit");
+            }
 
             count.TimesDo(i =>
             {
@@ -108,7 +116,9 @@ namespace DataBase.UndoRedo
         public void Redo(int count = 1)
         {
             if (Pointer >= (_stack.Count - 1))
+            {
                 throw new InvalidOperationException("DataContainer.Undo: pointer to redo stack already at upper limit");
+            }
 
             count.TimesDo(i =>
             {
@@ -128,7 +138,10 @@ namespace DataBase.UndoRedo
             get => _canUndo;
             private set
             {
-                if (CanUndo == value) return; 
+                if (CanUndo == value)
+                {
+                    return;
+                }
 
                 _canUndo = value;
                 CanUndoRedoChanged?.Invoke();
@@ -143,7 +156,10 @@ namespace DataBase.UndoRedo
             get => _canRedo;
             private set
             {
-                if (CanRedo == value) return;
+                if (CanRedo == value)
+                {
+                    return;
+                }
 
                 _canRedo = value;
                 CanUndoRedoChanged?.Invoke();
@@ -169,18 +185,22 @@ namespace DataBase.UndoRedo
         internal void ValueChanged(IUndoRedoableNode dataNode, object oldValue, object newValue)
         {
             if (_undoRedoing || IsMuted)
+            {
                 return;
+            }
 
             // clear "Redo"-Entries when new change has occurred
             if (_stack.Count > 0 && Pointer < (_stack.Count - 1))
+            {
                 _stack.RemoveRange(Pointer + 1, _stack.Count - Pointer - 1);
+            }
 
             var undoItem = new UndoRedoItem()
-                           {
-                               Node = dataNode,
-                               OldValue = oldValue,
-                               NewValue = newValue
-                           };
+            {
+                Node = dataNode,
+                OldValue = oldValue,
+                NewValue = newValue
+            };
             _stack.Add(undoItem);
             Pointer++;
 
@@ -208,13 +228,14 @@ namespace DataBase.UndoRedo
             get
             {
                 var result = new List<string>();
-                if (Pointer < 0) return result;
-
+                if (Pointer < 0)
+                {
+                    return result;
+                }
                 for (var i = Pointer; i >= 0; i--)
                 {
                     result.Add($"{_stack[i].Node.Designation}: {_stack[i].NewValue} -> {_stack[i].OldValue}");
                 }
-
                 return result;
             }
         }
@@ -227,12 +248,10 @@ namespace DataBase.UndoRedo
             get
             {
                 var result = new List<string>();
-
                 for (var i = Pointer + 1; i < _stack.Count; i++)
                 {
                     result.Add($"{_stack[i].Node.Designation}: {_stack[i].OldValue} -> {_stack[i].NewValue}");
                 }
-
                 return result;
             }
         }

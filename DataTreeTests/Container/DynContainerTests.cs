@@ -40,18 +40,18 @@ namespace Data.Tests.Container
         {
             var model = new DynTestRoot();
 
-            Assert.IsTrue(model.Tc1.Containers.Count == 2,
-                $"Number of sub containers of Tc1 must be 2 but are {model.Tc1.Containers.Count}");
+            Assert.IsTrue(model.Tc1.Children.Count == 2,
+                $"Number of sub containers of Tc1 must be 2 but are {model.Tc1.Items.Count}");
 
-            Assert.IsTrue(model.Tc1.Containers[0].IntParam.Value == 5,
-                $"Value of IntParam in container 0 must be 5 but is {model.Tc1.Containers[0].IntParam.Value}");
-            Assert.IsTrue(model.Tc1.Containers[0].IntParam.BufferedValue == 5,
-                $"BufferedValue of IntParam in container 0 must be 5 but is {model.Tc1.Containers[0].IntParam.BufferedValue}");
+            Assert.IsTrue(model.Tc1.Items[0].IntParam.Value == 5,
+                $"Value of IntParam in container 0 must be 5 but is {model.Tc1.Items[0].IntParam.Value}");
+            Assert.IsTrue(model.Tc1.Items[0].IntParam.BufferedValue == 5,
+                $"BufferedValue of IntParam in container 0 must be 5 but is {model.Tc1.Items[0].IntParam.BufferedValue}");
 
-            Assert.IsTrue(model.Tc1.Containers[1].IntParam.Value == 16683,
-                $"Value of IntParam in container 1 must be 16683 but is {model.Tc1.Containers[1].IntParam.Value}");
-            Assert.IsTrue(model.Tc1.Containers[1].IntParam.BufferedValue == 16683,
-                $"BufferedValue of IntParam in container 1 must be 16683 but is {model.Tc1.Containers[1].IntParam.BufferedValue}");
+            Assert.IsTrue(model.Tc1.Items[1].IntParam.Value == 16683,
+                $"Value of IntParam in container 1 must be 16683 but is {model.Tc1.Items[1].IntParam.Value}");
+            Assert.IsTrue(model.Tc1.Items[1].IntParam.BufferedValue == 16683,
+                $"BufferedValue of IntParam in container 1 must be 16683 but is {model.Tc1.Items[1].IntParam.BufferedValue}");
         }
 
         [TestMethod]

@@ -40,9 +40,7 @@ namespace DataBase.Parameters
         /// <param name="designation">Parameter name</param>
         /// <param name="defaultValue">Float parameter default value</param>
         public StringParameter(DataContainer parent, string id, string designation, string defaultValue)
-            : base(parent, id, designation, defaultValue)
-        {
-        }
+            : base(parent, id, designation, defaultValue) { }
 
         /// <summary>
         /// Gets or sets the string representation of the value
