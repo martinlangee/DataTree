@@ -104,7 +104,16 @@ namespace DataBase.Parameters
         public abstract string AsString { get; set; }
 
         /// <summary>
-        /// Gets or sets the string representation of the parameter value using the invariant culture
+        /// Returns the textual representation of the parameter value using the current culture (normally same as <see cref="AsString"/>)
+        /// </summary>
+        public virtual string AsText
+        {
+            get => AsString;
+            set => AsString = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the string representation of the parameter value using the invariant culture (used for serialization)
         /// </summary>
         public virtual string AsStringInvCult
         {
@@ -116,5 +125,10 @@ namespace DataBase.Parameters
         /// Returns the value written to xml file on save
         /// </summary>
         protected virtual string XmlValue => AsStringInvCult;
+
+        /// <summary>
+        /// Returns the value type of the parameter
+        /// </summary>
+        public abstract Type ValueType { get; }
     }
 }

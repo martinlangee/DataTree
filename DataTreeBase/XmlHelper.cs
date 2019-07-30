@@ -32,7 +32,7 @@ namespace DataBase
     /// <summary>
     /// Container for the xml attributes used for serialization
     /// </summary>
-    internal struct Attributes
+    internal struct ParamAttributes
     {
         internal string Id;
         internal string Name;
@@ -56,7 +56,7 @@ namespace DataBase
         /// <summary>
         /// Returns the initialized static Attr property
         /// </summary>
-        internal static Attributes Attr = new Attributes
+        internal static ParamAttributes Attr = new ParamAttributes
                                           {
                                               Id = "id",
                                               Name = "name",

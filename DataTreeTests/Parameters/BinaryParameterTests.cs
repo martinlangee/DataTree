@@ -88,9 +88,10 @@ namespace Data.Tests.Parameters
         [TestMethod]
         public void BufferTest()
         {
-            var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue);
-
-            p.Value = new byte[] { 50, 61, 72, 83, 234, 29, 44, 71 };
+            var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue)
+            {
+                Value = new byte[] { 50, 61, 72, 83, 234, 29, 44, 71 }
+            };
             p.ResetModified();
             Assert.IsTrue(p.BufferedValue.SequenceEqual(p.Value), "BufferedValue not set correctly");
         }
@@ -98,9 +99,10 @@ namespace Data.Tests.Parameters
         [TestMethod]
         public void SetValueTest()
         {
-            var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue);
-
-            p.Value = new byte[] { 10, 21, 32, 43 , 55, 123, 222, 12, 22, 3, 2, 56, 78, 99, 255 };
+            var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", _defValue)
+            {
+                Value = new byte[] { 10, 21, 32, 43, 55, 123, 222, 12, 22, 3, 2, 56, 78, 99, 255 }
+            };
             Assert.AreEqual(p.AsString, "ChUgKzd73gwWAwI4TmP/", "AsString expected equal but was not");
 
             p.Value = new byte[0];
@@ -108,6 +110,32 @@ namespace Data.Tests.Parameters
 
             p.Value = null;
             Assert.AreEqual(p.AsString, "", "Empty string expected but is not");
+        }
+
+        [TestMethod]
+        public void AsTextTest()
+        {
+            var p = new BinaryParameter(null, "myBinaryId", "myBinaryName", new byte[] { 55, 66, 77, 88, 99, 111 });
+
+            var text = p.AsText;
+            Assert.AreEqual("37-42-4D-58-63-6F", text, "AsText expected equal but as not");
+
+            p.AsText = "dE-12-45-ef";
+            Assert.AreEqual("3hJF7w==", p.AsString, "AsText expected equal but as not");
+
+            var exceptionThrown = false;
+            try
+            {
+                p.AsText = "dE-xx12-45ef";
+            }
+            catch (FormatException)
+            {
+                exceptionThrown = true;
+            }
+            Assert.IsTrue(exceptionThrown, "FormatException expected but did not occur");
+
+            p.HexSeperator = '.';
+            Assert.AreEqual("DE.12.45.EF", p.AsText, "AsText expected equal but as not");
         }
 
         [TestMethod]

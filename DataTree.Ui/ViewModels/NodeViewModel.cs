@@ -22,15 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 #endregion
 
+using DataTree.Ui.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
-namespace DataTree.Ui.ViewModels
+namespace DataTree.Ui.Proxies
 {
-    public abstract class BaseNodeViewModel: BaseNotification
+    public abstract class NodeViewModel : BaseNotification, INodeProxy
     {
+        protected NodeViewModel()
+        {
+            Nodes = new ObservableCollection<INodeProxy>();
+        }
+
+        public string Designation { get; protected set; } 
+
+        public abstract string Value { get; set; }
+
+        public abstract bool IsModified { get; }
+
+        public ObservableCollection<INodeProxy> Nodes { get; }
+
+        public abstract NodeType NodeType { get; }
+
+        public abstract string ValueType { get; }
     }
 }

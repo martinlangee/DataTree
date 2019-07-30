@@ -22,15 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 #endregion
 
+using DataBase.Parameters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DataTree.Ui.ViewModels
+namespace DataTree.Ui.Proxies
 {
-    public class DataBrowserViewModel: BaseNotification
+    internal static class ParameterProxyFactory
     {
+        internal static INodeProxy CreateParam(DataParameterBase param)
+        {
+            if (param is BoolParameter)
+                return new ParameterProxy<bool>((BoolParameter) param);
+
+            if (param is FloatParameter)
+                return new FloatParameterProxy((FloatParameter) param);
+
+            if (param is ChoiceParameter)
+                return new ChoiceParameterProxy((ChoiceParameter) param);
+
+            if (param is IntParameter)
+                return new ParameterProxy<int>((IntParameter) param);
+
+            if (param is StringParameter)
+                return new ParameterProxy<string>((StringParameter) param);
+
+            if (param is BinaryParameter)
+                return new ParameterProxy<byte[]>((BinaryParameter) param);
+
+            throw new ArgumentOutOfRangeException("ParameterProxyFactory.CreateParam: Parameter type not recognized");
+        }
     }
 }

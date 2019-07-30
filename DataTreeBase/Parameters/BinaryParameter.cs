@@ -54,6 +54,31 @@ namespace DataBase.Parameters
         }
 
         /// <summary>
+        /// Returns the Hex representation of the parameter value
+        /// Required format: AB-CD-12-34 using the <see cref="HexSeperator"/>
+        /// </summary>
+        public override string AsText
+        {
+            get => BitConverter.ToString(Value).Replace('-', HexSeperator);
+            set
+            {
+                int byteCount = (value.Length + 1) / 3;
+                var hexNumbers = value.Split(HexSeperator);
+                byte[] bytes = new byte[byteCount];
+
+                for (int i = 0; i < byteCount; i++)
+                    bytes[i] = Convert.ToByte(hexNumbers[i], 16);
+
+                Value = bytes;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the seperator character used for the format of the <see cref="AsText"/> property value
+        /// </summary>
+        public Char HexSeperator { get; set; } = '-';
+
+        /// <summary>
         /// Returns the base-64 representation of the value
         /// </summary>
         public override string AsString

@@ -64,7 +64,7 @@ namespace DataBase.Parameters
                 throw new ArgumentException($"{nameof(ChoiceParameter)}: choice values are not unambiguously");
 
             // This does not necessarily have to be checked but i prefer to be more strict. 
-            // Furthermore it makes the 'AsString' assignment unambiguously.
+            // Furthermore it prevents the 'AsString' assignment from being ambiguously.
             if (choices.GroupBy(ch => ch.Item2).Any(g => g.Count() > 1))
                 throw new ArgumentException($"{nameof(ChoiceParameter)}: choice descriptions are not unambiguously");
 

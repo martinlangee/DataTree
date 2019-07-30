@@ -181,5 +181,10 @@ namespace DataBase.Parameters
         {
             AsString = (string) value;
         }
+
+        /// <summary>
+        /// Returns the value type of the parameter
+        /// </summary>
+        public override Type ValueType => typeof(T);
     }
 }

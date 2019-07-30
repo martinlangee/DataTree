@@ -22,30 +22,46 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 #endregion
 
-using DataBase.Parameters;
+
 using System;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
 
-namespace DataTree.Ui.ParameterProxies
+namespace DataTree.Ui.Proxies
 {
-    /// <summary>
-    /// Implements a common proxy class used to bind a <see cref="DataParameterBase"/> to a UI element.
-    /// Bidirectional change notification is ensured.
-    /// </summary>
-    [DebuggerDisplay("{Param.PathId}, {Value}")]
-    public class FloatParameterProxy : ParameterProxy<double>, IDisposable
+    public enum NodeType
     {
-        private FloatParameter FloatParam => (FloatParameter) Param;
+        Parameter,
+        Container
+    }
+
+    public interface INodeProxy
+    {
+        /// <summary>
+        /// Gets the parameter designation
+        /// </summary>
+        string Designation { get; }
 
         /// <summary>
-        /// C'tor
+        /// The value of the attached parameter
         /// </summary>
-        /// <param name="param">The <see cref="FloatParameter"/> this proxy is connected to</param>
-        public FloatParameterProxy(FloatParameter param) : base(param) { }
+        string Value { get; set; }
 
         /// <summary>
-        /// Gets the physical unit of the attached parameter
+        /// Gets the Modified status of the attached parameter
         /// </summary>
-        public string Unit => FloatParam.Unit;
+        bool IsModified { get; }
+
+        /// <summary>
+        /// Returns the list of child nodes
+        /// </summary>
+        ObservableCollection<INodeProxy> Nodes { get; }
+
+        /// <summary>
+        /// Returns the type of the node
+        /// </summary>
+        NodeType NodeType { get; }
+
+        string ValueType { get; }
+
     }
 }

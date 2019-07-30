@@ -40,7 +40,7 @@ namespace SampleModel
             IntParam3 = new IntParameter(this, "IntParam3", "IntParam3", 0);
             StrParam4 = new StringParameter(this, "StrParam4", "StrParam4", "def");
             BoolParam5 = new BoolParameter(this, "BoolParam5", "BoolParam5", true);
-            ChParam6 = new ChoiceParameter(this, "ChParam6", "ChParam6", 2,
+            ChParam6 = new ChoiceParameter(this, "ChParam6", "ChParam6", 5,
                                            new List<Tuple<int, string>>
                                            {
                                                new Tuple<int, string>(0, "rot"),

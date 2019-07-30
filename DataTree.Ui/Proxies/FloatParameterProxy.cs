@@ -23,50 +23,29 @@ SOFTWARE. */
 #endregion
 
 using DataBase.Parameters;
-using System.Collections.ObjectModel;
+using System;
 using System.Diagnostics;
 
-namespace DataTree.Ui.ParameterProxies
+namespace DataTree.Ui.Proxies
 {
     /// <summary>
-    /// Implements a common proxy class used to bind a <see cref="ChoiceParameter"/> to a UI element.
+    /// Implements a common proxy class used to bind a <see cref="DataParameterBase"/> to a UI element.
     /// Bidirectional change notification is ensured.
     /// </summary>
-    /// <typeparam name="T">The value type of the parameter</typeparam>
     [DebuggerDisplay("{Param.PathId}, {Value}")]
-    public class ChoiceParameterProxy : ParameterProxy<int>
+    public class FloatParameterProxy : ParameterProxy<double>, IDisposable
     {
-        private ChoiceParameter ChoiceParam => (ChoiceParameter) Param;
-
-        protected override void OnSourceChanged(DataParameterBase param)
-        {
-            FirePropertiesChanged(nameof(Value), nameof(SelectedIndex), nameof(IsModified));
-        }
+        private FloatParameter FloatParam => (FloatParameter) Param;
 
         /// <summary>
         /// C'tor
         /// </summary>
-        /// <param name="param">The <see cref="DataParameterBase"/> this proxy is connected to</param>
-        public ChoiceParameterProxy(ChoiceParameter param) : base(param)
-        {
-            foreach (var choice in param.Choices)
-            {
-                Choices.Add(choice.Item2);
-            }
-        }
+        /// <param name="param">The <see cref="FloatParameter"/> this proxy is connected to</param>
+        public FloatParameterProxy(FloatParameter param) : base(param) { }
 
         /// <summary>
-        /// List of strings that represent the choices
+        /// Gets the physical unit of the attached parameter
         /// </summary>
-        public ObservableCollection<string> Choices { get; } = new ObservableCollection<string>();
-
-        /// <summary>
-        /// Gets or sets the index of the currently selected choice
-        /// </summary>
-        public int SelectedIndex
-        {
-            get => ChoiceParam.ValueIdx;
-            set => SetProperty(validx => ChoiceParam.ValueIdx = validx, ChoiceParam.ValueIdx, value, nameof(SelectedIndex), nameof(IsModified));
-        }
+        public string Unit => FloatParam.Unit;
     }
 }

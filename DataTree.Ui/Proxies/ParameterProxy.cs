@@ -23,11 +23,10 @@ SOFTWARE. */
 #endregion
 
 using DataBase.Parameters;
-using DataTree.Ui.ViewModels;
 using System;
 using System.Diagnostics;
 
-namespace DataTree.Ui.ParameterProxies
+namespace DataTree.Ui.Proxies
 {
     /// <summary>
     /// Implements a common proxy class used to bind a <see cref="DataParameterBase"/> to a UI element.
@@ -35,7 +34,7 @@ namespace DataTree.Ui.ParameterProxies
     /// </summary>
     /// <typeparam name="T">The value type of the attached parameter</typeparam>
     [DebuggerDisplay("{Param.PathId}, {Value}")]
-    public class ParameterProxy<T> : BaseNotification, IDisposable
+    public class ParameterProxy<T> : NodeViewModel, IDisposable
     {
         protected DataParameter<T> Param;
 
@@ -43,30 +42,27 @@ namespace DataTree.Ui.ParameterProxies
         /// C'tor
         /// </summary>
         /// <param name="param">The <see cref="DataParameterBase"/> this proxy is connected to</param>
-        public ParameterProxy(DataParameter<T> param)
+        public ParameterProxy(DataParameter<T> param): base()
         {
             Param = param;
             Param.OnChanged += OnSourceChanged;
+
+            Designation = param.Designation;
 
             FirePropertyChanged();
         }
 
         /// <summary>
-        /// Gets the parameter designation
-        /// </summary>
-        public string Designation => Param.Designation;
-
-        /// <summary>
         /// The value of the attached parameter
         /// </summary>
-        public string Value
+        public override string Value
         {
-            get => Param.AsString;
+            get => Param.AsText;
             set
             {
-                if (value.Equals(Param.AsString)) return;
+                if (value.Equals(Param.AsText)) return;
 
-                Param.AsString = value;
+                Param.AsText = value;
                 FirePropertiesChanged(nameof(IsModified));
             }
         }
@@ -79,7 +75,14 @@ namespace DataTree.Ui.ParameterProxies
         /// <summary>
         /// Gets the Modified status of the attached parameter
         /// </summary>
-        public bool IsModified => Param.IsModified;
+        public override bool IsModified => Param.IsModified;
+
+        /// <summary>
+        /// Returns the type of the node
+        /// </summary>
+        public override NodeType NodeType => NodeType.Parameter;
+
+        public override string ValueType => Param.ValueType.Name;
 
         /// <summary>
         /// Disconnection all events

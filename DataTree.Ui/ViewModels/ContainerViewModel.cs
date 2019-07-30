@@ -23,14 +23,39 @@ SOFTWARE. */
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataBase.Container;
+using DataTree.Ui.Proxies;
 
 namespace DataTree.Ui.ViewModels
 {
-    public class DataNodeViewModel: BaseNodeViewModel
+    public class ContainerViewModel: NodeViewModel, INodeProxy
     {
+        readonly DataContainer _cont;
+
+        public ContainerViewModel(DataContainer container) : base()
+        {
+            _cont = container;
+
+
+            Designation = _cont.Designation;
+
+            foreach (var param in _cont.Params)
+            {
+                Nodes.Add(ParameterProxyFactory.CreateParam(param));
+            }
+
+            foreach (var cont in _cont.Containers)
+            {
+                Nodes.Add(new ContainerViewModel(cont));
+            }
+        }
+
+        public override string Value { get => ""; set => throw new InvalidOperationException("Set_Value"); }
+
+        public override bool IsModified => _cont.IsModified;
+
+        public override NodeType NodeType => NodeType.Container;
+
+        public override string ValueType => null;
     }
 }
