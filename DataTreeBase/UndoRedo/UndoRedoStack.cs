@@ -234,7 +234,8 @@ namespace DataBase.UndoRedo
                 }
                 for (var i = Pointer; i >= 0; i--)
                 {
-                    result.Add($"{_stack[i].Node.Designation}: {_stack[i].NewValue} -> {_stack[i].OldValue}");
+                    var item = _stack[i];
+                    result.Add($"{item.Node.Designation}: {item.NewValue} -> {item.OldValue}");
                 }
                 return result;
             }
@@ -250,7 +251,8 @@ namespace DataBase.UndoRedo
                 var result = new List<string>();
                 for (var i = Pointer + 1; i < _stack.Count; i++)
                 {
-                    result.Add($"{_stack[i].Node.Designation}: {_stack[i].OldValue} -> {_stack[i].NewValue}");
+                    var item = _stack[i];
+                    result.Add($"{item.Node.Designation}: {item.OldValue} -> {item.NewValue}");
                 }
                 return result;
             }
