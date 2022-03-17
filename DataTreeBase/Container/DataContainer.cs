@@ -44,6 +44,8 @@ namespace DataBase.Container
         /// </summary>
         internal DataContainer Root;
 
+        public event Action OnDataLoaded = () => { };
+
         /// <summary>
         /// C'tor
         /// </summary>
@@ -77,7 +79,7 @@ namespace DataBase.Container
         public IList<DataParameterBase> Params { get; }
 
         /// <summary>
-        /// Returns the list of child nodes unaffected if container or parameter
+        /// Returns the list of child nodes regardless if container or parameter
         /// </summary>
         public IList<DataNode> Nodes => Children.Concat(Params.Cast<DataNode>()).ToList();
 
@@ -195,6 +197,8 @@ namespace DataBase.Container
             {
                 ResetModifiedState();
             }
+
+            OnDataLoaded();
         }
 
         /// <summary>
@@ -252,12 +256,12 @@ namespace DataBase.Container
         private void DetermineRoot()
         {
             var container = this;
+            _isRoot = container.Parent == null;
             while (true)
             {
                 if (container.Parent == null)
                 {
                     Root = container;
-                    _isRoot = true;
                     return;
                 }
                 container = container.Parent;
